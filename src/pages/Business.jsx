@@ -5,11 +5,12 @@ const Business = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const API_URL = process.env.REACT_APP_API_URL; // Use environment variable
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/blogs");
+        const response = await fetch(`${API_URL}/api/blogs`);
         if (!response.ok) throw new Error("Network response was not ok");
 
         const data = await response.json();
@@ -27,7 +28,7 @@ const Business = () => {
     };
 
     fetchBlogs();
-  }, []);
+  }, [API_URL]);
 
   if (loading) return <p style={{ textAlign: "center" }}>Loading...</p>;
   if (error) return <p style={{ textAlign: "center" }}>Error: {error}</p>;
@@ -62,16 +63,17 @@ const Business = () => {
               }}
             >
               {blog.image && (
-               <img
+                <img
                   src={blog.image}
                   alt={blog.title}
                   style={{
                     width: "100%",
-                    height: "auto", // keep aspect ratio
-                    maxHeight: "250px", // optional, prevents huge images
-                    objectFit: "contain", // show full image without cropping
+                    height: "auto",
+                    maxHeight: "250px",
+                    objectFit: "contain",
                     borderRadius: "8px",
                   }}
+                  onError={(e) => (e.target.src = "/fallback-image.png")}
                 />
               )}
 

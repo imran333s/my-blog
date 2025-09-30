@@ -15,7 +15,7 @@ const AddBlog = () => {
   const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
-
+  const API_URL = process.env.REACT_APP_API_URL;
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -29,7 +29,7 @@ const AddBlog = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/blogs", {
+      await axios.post(`${API_URL}/api/blogs`,{
         title,
         image,
         content: description,

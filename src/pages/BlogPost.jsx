@@ -8,26 +8,27 @@ const BlogPost = () => {
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
+  const API_URL = process.env.REACT_APP_API_URL; // Use environment variable
 
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/blogs/${id}`);
+        const res = await axios.get(`${API_URL}/api/blogs/${id}`);
         setBlog(res.data);
-        setLoading(false);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching blog:", err);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchBlog();
-  }, [id]);
+  }, [id, API_URL]);
 
   if (loading) return <p className="loading">Loading blog...</p>;
   if (!blog) return <p className="not-found">Blog not found.</p>;
 
-  // ✅ Navigate to edit page
+  // Navigate to edit page
   const handleEdit = () => {
     navigate(`/edit-blog/${id}`);
   };
@@ -45,7 +46,8 @@ const BlogPost = () => {
           <p>{blog.content}</p>
         </div>
 
-        
+        {/* Optional: Edit button if admin functionality is needed */}
+        {/* <button onClick={handleEdit} className="edit-btn">Edit</button> */}
       </div>
     </main>
   );

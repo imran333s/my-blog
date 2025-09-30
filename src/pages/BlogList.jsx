@@ -7,19 +7,20 @@ import "../App.css";
 const AdminBlogList = () => {
   const [blogs, setBlogs] = useState([]);
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL; // Use environment variable
 
   // Fetch blogs from backend
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/blogs");
+        const res = await axios.get(`${API_URL}/api/blogs`);
         setBlogs(res.data);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching blogs:", err);
       }
     };
     fetchBlogs();
-  }, []);
+  }, [API_URL]);
 
   // Handle edit click
   const handleEditClick = (id) => {
@@ -41,7 +42,7 @@ const AdminBlogList = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/blogs/${id}`);
+      await axios.delete(`${API_URL}/api/blogs/${id}`);
       setBlogs(blogs.filter((blog) => blog._id !== id));
 
       Swal.fire({
@@ -75,7 +76,7 @@ const AdminBlogList = () => {
                 <th>Image</th>
                 <th>Title</th>
                 <th>Content</th>
-                <th>Category</th> {/* Added category column */}
+                <th>Category</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -103,7 +104,7 @@ const AdminBlogList = () => {
                       ? blog.content.substring(0, 100) + "..."
                       : blog.content}
                   </td>
-                  <td>{blog.category || "N/A"}</td> {/* Show category */}
+                  <td>{blog.category || "N/A"}</td>
                   <td style={{ display: "flex", gap: "10px" }}>
                     <button
                       onClick={() => handleEditClick(blog._id)}

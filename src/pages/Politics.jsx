@@ -5,18 +5,17 @@ const Politics = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/blogs");
+        const response = await fetch(`${API_URL}/api/blogs`);
         if (!response.ok) throw new Error("Network response was not ok");
 
         const data = await response.json();
-        // Filter only Politics category blogs
         const politicsBlogs = data.filter(
-          (blog) =>
-            blog.category && blog.category.toLowerCase().includes("politics")
+          (blog) => blog.category && blog.category.toLowerCase().includes("politics")
         );
         setBlogs(politicsBlogs);
       } catch (err) {
@@ -27,7 +26,7 @@ const Politics = () => {
     };
 
     fetchBlogs();
-  }, []);
+  }, [API_URL]);
 
   if (loading) return <p style={{ textAlign: "center" }}>Loading...</p>;
   if (error) return <p style={{ textAlign: "center" }}>Error: {error}</p>;
@@ -62,19 +61,18 @@ const Politics = () => {
               }}
             >
               {blog.image && (
-               <img
+                <img
                   src={blog.image}
                   alt={blog.title}
                   style={{
                     width: "100%",
-                    height: "auto", // keep aspect ratio
-                    maxHeight: "250px", // optional, prevents huge images
-                    objectFit: "contain", // show full image without cropping
+                    height: "auto",
+                    maxHeight: "250px",
+                    objectFit: "contain",
                     borderRadius: "8px",
                   }}
                 />
               )}
-
               <h3
                 style={{
                   fontSize: "1.2rem",
@@ -85,7 +83,6 @@ const Politics = () => {
               >
                 {blog.title}
               </h3>
-
               <p
                 style={{
                   fontSize: "0.95rem",
@@ -99,14 +96,9 @@ const Politics = () => {
               >
                 {blog.content}
               </p>
-
               <Link
                 to={`/blog/${blog._id}`}
-                style={{
-                  textDecoration: "none",
-                  color: "#007bff",
-                  fontWeight: "500",
-                }}
+                style={{ textDecoration: "none", color: "#007bff", fontWeight: "500" }}
               >
                 Read More
               </Link>

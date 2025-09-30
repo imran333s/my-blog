@@ -15,6 +15,7 @@ const categoryOptions = [
 const EditBlog = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL; // Use environment variable
 
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
@@ -24,7 +25,7 @@ const EditBlog = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/blogs/${id}`);
+        const res = await axios.get(`${API_URL}/api/blogs/${id}`);
         setTitle(res.data.title);
         setImage(res.data.image);
         setDescription(res.data.content);
@@ -42,7 +43,7 @@ const EditBlog = () => {
       }
     };
     fetchBlog();
-  }, [id]);
+  }, [id, API_URL]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,7 +58,7 @@ const EditBlog = () => {
     }
 
     try {
-      await axios.put(`http://localhost:5000/api/blogs/${id}`, {
+      await axios.put(`${API_URL}/api/blogs/${id}`, {
         title,
         image,
         content: description,
