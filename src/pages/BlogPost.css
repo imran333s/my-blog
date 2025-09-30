@@ -1,0 +1,38 @@
+.blog-post {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 15px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #222;
+  text-align: center;
+}
+
+.post-image {
+  width: 50%;
+  height:50%;
+  margin: 20px 0;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.post-body {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #444;
+  text-align: justify;
+}
+
+.loading,
+.not-found {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 1.2rem;
+}
