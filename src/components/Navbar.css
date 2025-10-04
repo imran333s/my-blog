@@ -12,17 +12,24 @@
 
 .navbar-container {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: center;
-}
+    padding: 0 20px; /* Add horizontal padding */
 
+
+}
+.nav-menu{
+  margin-left: 550px
+}
 .logo a {
   font-size: 24px;
   font-weight: 700;
   color: #333;
   text-decoration: none;
 }
-
+.logo{
+  margin-left: 20px;
+}
 .nav-menu ul {
   list-style: none;
   margin: 0;
@@ -79,11 +86,11 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.navbar-container {
+/* .navbar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
+} */
 
 .logo-img {
   height: 40px;

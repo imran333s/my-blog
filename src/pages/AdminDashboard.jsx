@@ -3,21 +3,19 @@ import { useNavigate } from "react-router-dom";
 import AddBlog from "./AddBlog";
 import BlogList from "./BlogList";
 
-const AdminDashboard = ({onLogout}) => {
+const AdminDashboard = ({ onLogout }) => {
   const [activePage, setActivePage] = useState("add-blog");
   const navigate = useNavigate();
 
   const handleLogout = () => {
     // Clear login/session data if stored
     localStorage.removeItem("adminLoggedIn");
-      if (onLogout) {
+    if (onLogout) {
       onLogout();
     }
 
     // Redirect to home page
     navigate("/");
-
-    
   };
 
   const renderContent = () => {
@@ -39,10 +37,12 @@ const AdminDashboard = ({onLogout}) => {
           width: "220px",
           background: "#f8f9fa",
           padding: "20px",
-          boxShadow: "2px 0 5px rgba(0,0,0,0.1)"
+          boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
         }}
       >
-        <h2 style={{ marginBottom: "20px" }}>Admin Panel</h2>
+        <h2 style={{ fontSize: "1.5rem", marginBottom: "30px" }}>
+          Admin Panel
+        </h2>
         <button
           style={sidebarBtnStyle(activePage === "add-blog")}
           onClick={() => setActivePage("add-blog")}
@@ -62,7 +62,7 @@ const AdminDashboard = ({onLogout}) => {
             ...sidebarBtnStyle(false),
             background: "#dc3545",
             color: "#fff",
-            marginTop: "30px"
+            marginTop: "30px",
           }}
           onClick={handleLogout}
         >
@@ -80,15 +80,35 @@ const AdminDashboard = ({onLogout}) => {
 const sidebarBtnStyle = (active) => ({
   display: "block",
   width: "100%",
-  padding: "10px 15px",
-  marginBottom: "10px",
+  padding: "12px 15px",
+  marginBottom: "15px",
   border: "none",
-  borderRadius: "4px",
-  background: active ? "#007bff" : "#ffffff",
-  color: active ? "#ffffff" : "#333",
+  borderRadius: "8px",
+  background: active
+    ? "linear-gradient(90deg, #79da84ff )" // gradient for active
+    : "#374151", // dark grey for inactive
+  color: active ? "#1f2937" : "#e5e7eb",
   textAlign: "left",
   cursor: "pointer",
-  fontWeight: 600
+  fontWeight: 600,
+  fontSize: "0.95rem",
+  boxShadow: active
+    ? "0 4px 12px rgba(160, 206, 99, 0.5)" // subtle shadow for active
+    : "0 2px 5px rgba(0,0,0,0.15)",
+  transition: "all 0.3s ease",
+  position: "relative",
+  overflow: "hidden",
 });
+
+// Add hover effect
+const hoverEffect = (e) => {
+  e.currentTarget.style.transform = "translateX(5px)";
+  e.currentTarget.style.boxShadow = "0 6px 15px rgba(0,0,0,0.2)";
+};
+
+const removeHoverEffect = (e) => {
+  e.currentTarget.style.transform = "translateX(0)";
+  e.currentTarget.style.boxShadow = sidebarBtnStyle(false).boxShadow;
+};
 
 export default AdminDashboard;

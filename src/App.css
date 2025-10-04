@@ -1,16 +1,11 @@
-/* body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f8f8f8;
-    color: #333;
-    line-height: 1.6;
+/* For the main app wrapper */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* full viewport height */
 }
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+.main-content {
+  flex: 1; /* this pushes footer to bottom if content is short */
 }
 
 /* Header Styling */

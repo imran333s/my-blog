@@ -17,11 +17,21 @@ const Navbar = () => {
 
         <nav className="nav-menu">
           <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/sports">Sports</Link></li>
-            <li><Link to="/business">Business</Link></li>
-            <li><Link to="/politics">Politics</Link></li>
-            <li><Link to="/entertainment">Entertainment</Link></li>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/news/sports">Sports</Link>
+            </li>
+            <li>
+              <Link to="/news/business">Business</Link>
+            </li>
+            <li>
+              <Link to="/news/politics">Politics</Link>
+            </li>
+            <li>
+              <Link to="/news/entertainment">Entertainment</Link>
+            </li>
 
             <li>
               <button
@@ -31,7 +41,7 @@ const Navbar = () => {
                 Admin Login
               </button>
             </li>
-         
+
             {/* <li>
               <button
                 onClick={() => setIsLoginOpen(true)}
@@ -40,7 +50,6 @@ const Navbar = () => {
                 Register
               </button>
             </li> */}
-
           </ul>
         </nav>
       </div>
@@ -56,5 +65,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
- 
- 

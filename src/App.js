@@ -6,47 +6,45 @@ import "./App.css";
 
 import Blogs from "./pages/Blogs";
 import BlogPost from "./pages/BlogPost";
-import Sports from "./pages/Sports";
-import Business from "./pages/Business";
-import Politics from "./pages/Politics";
-import Entertainment from "./pages/Entertainment";
+ 
 import AdminDashboard from "./pages/AdminDashboard";
 import LoginModal from "./components/LoginModal";
 import EditBlog from "./pages/EditBlog";
+import News from "./pages/News";
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   return (
-    <Router>
-       
-      <Navbar
-        onLoginClick={() => setShowLoginModal(true)}  
-      />
+    <div className="app">
+      <Router>
+        <Navbar onLoginClick={() => setShowLoginModal(true)} />
 
- 
-      <Routes>
-        <Route path="/" element={<Blogs />} />
-        <Route path="/blogs" element={<Blogs />} />
-        <Route path="/blog/:id" element={<BlogPost />} />
-        <Route path="/sports" element={<Sports />} />
-        <Route path="/business" element={<Business />} />
-        <Route path="/politics" element={<Politics />} />
-        <Route path="/entertainment" element={<Entertainment />} />
-        <Route
-          path="/admin/dashboard"
-          element={<AdminDashboard onLogout={() => setShowLoginModal(true)} />}
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Blogs />} />
+            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/blog/:id" element={<BlogPost />} />
+            {/* Generic category route */}
+            <Route path="/news/:category" element={<News />} />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <AdminDashboard onLogout={() => setShowLoginModal(true)} />
+              }
+            />
+            <Route path="/edit-blog/:id" element={<EditBlog />} />
+          </Routes>
+        </main>
+
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
         />
-        <Route path="/edit-blog/:id" element={<EditBlog />} />
-      </Routes>
 
-      {}
-      <LoginModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-      />
-      <Footer />
-    </Router>
+        <Footer />
+      </Router>
+    </div>
   );
 }
 

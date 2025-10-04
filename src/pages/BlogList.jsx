@@ -4,17 +4,32 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../App.css";
 
-const AdminBlogList = () => {
-  const [blogs, setBlogs] = useState([]);
-  const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL; // Use environment variable
+// List of categories for the filter dropdown
+const categories = ["All", "Sports", "Business", "Politics", "Entertainment"];
 
+const AdminBlogList = () => {
+  // State to store all blogs fetched from the backend
+  const [blogs, setBlogs] = useState([]);
+
+  // State to store blogs filtered by category
+  const [filteredBlogs, setFilteredBlogs] = useState([]);
+
+  // State to keep track of the selected category in the filter
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  // =========================
   // Fetch blogs from backend
+  // =========================
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/blogs`);
-        setBlogs(res.data);
+        const reversed = res.data.reverse(); // Show last added blog first
+        setBlogs(reversed);
+        setFilteredBlogs(reversed); // Initially, show all blogs
       } catch (err) {
         console.error("Error fetching blogs:", err);
       }
@@ -22,12 +37,32 @@ const AdminBlogList = () => {
     fetchBlogs();
   }, [API_URL]);
 
-  // Handle edit click
+  // =========================
+  // Handle category filter change
+  // =========================
+  const handleFilterChange = (e) => {
+    const category = e.target.value;
+    setSelectedCategory(category);
+
+    if (category === "All") {
+      // Show all blogs
+      setFilteredBlogs(blogs);
+    } else {
+      // Show blogs only from selected category
+      setFilteredBlogs(blogs.filter((blog) => blog.category === category));
+    }
+  };
+
+  // =========================
+  // Navigate to edit blog page
+  // =========================
   const handleEditClick = (id) => {
     navigate(`/edit-blog/${id}`);
   };
 
-  // Handle delete click
+  // =========================
+  // Delete a blog
+  // =========================
   const handleDeleteClick = async (id) => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
@@ -43,7 +78,15 @@ const AdminBlogList = () => {
 
     try {
       await axios.delete(`${API_URL}/api/blogs/${id}`);
-      setBlogs(blogs.filter((blog) => blog._id !== id));
+
+      // Update the blogs after deletion
+      const updatedBlogs = blogs.filter((blog) => blog._id !== id);
+      setBlogs(updatedBlogs);
+      setFilteredBlogs(
+        selectedCategory === "All"
+          ? updatedBlogs
+          : updatedBlogs.filter((blog) => blog.category === selectedCategory)
+      );
 
       Swal.fire({
         icon: "success",
@@ -65,9 +108,39 @@ const AdminBlogList = () => {
   return (
     <main className="main-content">
       <div className="container">
-        <h2 className="section-title">All Blogs</h2>
+        {/* =========================
+            Section Title
+        ========================= */}
+        <h2 className="section-title">News List</h2>
 
-        {blogs.length === 0 ? (
+        {/* =========================
+            Category Filter Dropdown
+        ========================= */}
+        <div style={{ marginBottom: "20px", marginLeft: "300px" }}>
+          <label
+            htmlFor="categoryFilter"
+            style={{ marginRight: "10px", fontWeight: "bold" }}
+          >
+            Filter by Category:
+          </label>
+          <select
+            id="categoryFilter"
+            value={selectedCategory}
+            onChange={handleFilterChange}
+            style={{ padding: "5px 10px", borderRadius: "4px" }}
+          >
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* =========================
+            Blogs Table
+        ========================= */}
+        {filteredBlogs.length === 0 ? (
           <p>No blogs found.</p>
         ) : (
           <table className="admin-blog-table">
@@ -81,7 +154,7 @@ const AdminBlogList = () => {
               </tr>
             </thead>
             <tbody>
-              {blogs.map((blog) => (
+              {filteredBlogs.map((blog) => (
                 <tr key={blog._id}>
                   <td>
                     {blog.image ? (

@@ -16,6 +16,7 @@ const AddBlog = () => {
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
   const API_URL = process.env.REACT_APP_API_URL;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -29,11 +30,11 @@ const AddBlog = () => {
     }
 
     try {
-      await axios.post(`${API_URL}/api/blogs`,{
+      await axios.post(`${API_URL}/api/blogs`, {
         title,
         image,
         content: description,
-        category: categories.map((c) => c.value).join(", "), // save as comma-separated
+        category: categories.map((c) => c.value).join(", "),
       });
 
       Swal.fire({
@@ -44,7 +45,6 @@ const AddBlog = () => {
         showConfirmButton: false,
       });
 
-      // Reset form
       setTitle("");
       setImage("");
       setDescription("");
@@ -62,44 +62,84 @@ const AddBlog = () => {
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Add New Blog</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-md">
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "10px",
+          flexWrap: "wrap",
+        }}
+      >
         <input
           type="text"
-          placeholder="Enter Blog Title"
-          className="border p-2 rounded"
+          placeholder="Title"
+          style={{
+            flex: 2,
+            padding: "8px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+          }}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
+
         <input
           type="text"
-          placeholder="Eneter Image URL"
-          className="border p-2 rounded"
+          placeholder="Image URL"
+          style={{
+            flex: 2,
+            padding: "8px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+          }}
           value={image}
           onChange={(e) => setImage(e.target.value)}
         />
-        <textarea
-          placeholder="Write Description"
-          className="border p-2 rounded"
-          rows="4"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        ></textarea>
 
-        {/* Drag & Drop Category Selector */}
         <Select
           options={categoryOptions}
           isMulti
           value={categories}
           onChange={setCategories}
           placeholder="Select categories..."
-          className="text-left"
+          styles={{
+            container: (base) => ({ ...base, flex: 2 }), // increase width
+            multiValue: (base) => ({
+              ...base,
+              backgroundColor: "#007bff",
+              color: "#fff",
+            }),
+            multiValueLabel: (base) => ({ ...base, color: "#fff" }),
+          }}
+        />
+
+        <textarea
+          placeholder="Description"
+          rows="2"
+          style={{
+            flex: 3,
+            padding: "8px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+          }}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
         />
 
         <button
           type="submit"
-          className="bg-green-500 text-white py-2 rounded mt-2"
+          style={{
+            flex: 1,
+            backgroundColor: "#28a745",
+            color: "#fff",
+            padding: "8px",
+            borderRadius: "6px",
+            border: "none",
+            cursor: "pointer",
+          }}
         >
           Add Blog
         </button>
