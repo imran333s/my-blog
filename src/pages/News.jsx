@@ -17,9 +17,14 @@ const News = () => {
           throw new Error(`Failed to fetch blogs: ${response.status}`);
         }
         const data = await response.json();
+
         // FILTER ON FRONTEND BASED ON CATEGORY
-        const filtered = data.filter(
-          (blog) => blog.category?.toLowerCase() === category?.toLowerCase()
+         const filtered = data.filter(
+          (blog) =>
+            blog.status &&
+            blog.status.toLowerCase() === "active" &&
+            blog.category &&
+            blog.category.toLowerCase() === category.toLowerCase()
         );
         setBlogs(filtered);
       } catch (err) {

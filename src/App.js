@@ -3,10 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import "./App.css";
-
+import Sidebar from "./components/Sidebar"; // <-- import Sidebar
 import Blogs from "./pages/Blogs";
 import BlogPost from "./pages/BlogPost";
- 
+
 import AdminDashboard from "./pages/AdminDashboard";
 import LoginModal from "./components/LoginModal";
 import EditBlog from "./pages/EditBlog";
@@ -14,12 +14,18 @@ import News from "./pages/News";
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
+    // Add these lines to manage sidebar
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="app">
       <Router>
         <Navbar onLoginClick={() => setShowLoginModal(true)} />
-
+        <Sidebar
+          isOpen={isSidebarOpen}
+          toggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
+          onLoginClick={() => setShowLoginModal(true)}
+        />
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Blogs />} />

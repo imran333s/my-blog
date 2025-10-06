@@ -121,7 +121,7 @@ const AdminBlogList = () => {
             htmlFor="categoryFilter"
             style={{ marginRight: "10px", fontWeight: "bold" }}
           >
-            Filter by Category:
+            Filter :
           </label>
           <select
             id="categoryFilter"
@@ -150,6 +150,7 @@ const AdminBlogList = () => {
                 <th>Title</th>
                 <th>Content</th>
                 <th>Category</th>
+                <th>Status</th> {/* ✅ New Column */}
                 <th>Action</th>
               </tr>
             </thead>
@@ -178,6 +179,20 @@ const AdminBlogList = () => {
                       : blog.content}
                   </td>
                   <td>{blog.category || "N/A"}</td>
+                  <td>
+                    {/* ✅ Show colored status */}
+                    <span
+                      style={{
+                        color:
+                          blog.status?.trim().toLowerCase() === "active"
+                            ? "green"
+                            : "red",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {blog.status}
+                    </span>
+                  </td>
                   <td style={{ display: "flex", gap: "10px" }}>
                     <button
                       onClick={() => handleEditClick(blog._id)}

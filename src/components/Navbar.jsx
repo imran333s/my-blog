@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import "./Navbar.css";
-
+import logo from "../logo192.png"; // ✅ import your logo from src
 const Navbar = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
@@ -11,7 +11,7 @@ const Navbar = () => {
       <div className="container navbar-container">
         <div className="logo">
           <Link to="/">
-            <img src="/logo192.png" alt="MyBlog Logo" className="logo-img" />
+            <img src={logo} alt="MyBlog Logo" className="logo-img" />
           </Link>
         </div>
 

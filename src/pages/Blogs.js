@@ -34,6 +34,9 @@ const BlogList = () => {
   if (error)
     return <p style={{ textAlign: "center", color: "red" }}>Error: {error}</p>;
 
+  // Only active blogs
+  let filteredBlogs = blogs.filter((blog) => blog.status === "Active");
+
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
       <h2 style={{ textAlign: "center", marginBottom: "20px" }}>News</h2>
@@ -45,7 +48,7 @@ const BlogList = () => {
           gap: "20px",
         }}
       >
-        {blogs.map((blog) => (
+        {filteredBlogs.map((blog) => (
           <div
             key={blog._id}
             style={{

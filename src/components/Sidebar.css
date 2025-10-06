@@ -1,0 +1,84 @@
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px; /* hidden by default */
+  width: 220px;
+  height: 100%;
+  background: #1e1e1e;
+  color: #fff;
+  transition: left 0.3s ease;
+  z-index: 1000;
+  padding-top: 60px;
+}
+
+.sidebar.open {
+  left: 0; /* visible when toggled */
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  padding: 15px 20px;
+  border-bottom: 1px solid #333;
+}
+
+.sidebar ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.sidebar ul li a:hover {
+  color: #00bcd4;
+}
+
+/* Menu Button */
+.menu-toggle {
+  position: fixed;
+  top: 20px;
+  left: 1px;
+
+  z-index: 1100;
+  background: transparent;
+  border: none;
+  color: #111;
+  cursor: pointer;
+  font-size: 28px;
+   
+}
+
+/* Overlay for mobile */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 900;
+}
+
+/* Remove always-visible sidebar on desktop */
+@media (min-width: 768px) {
+  /* optional: you can keep sidebar toggled with hamburger even on desktop */
+}
+.sidebar-login-btn {
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #00bcd4;
+  color: #fff;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  margin-top: 10px;
+  border-radius: 4px;
+}
+
+.sidebar-login-btn:hover {
+  background-color: #0097a7;
+}

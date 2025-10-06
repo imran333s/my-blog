@@ -10,11 +10,18 @@ const categoryOptions = [
   { value: "Entertainment", label: "Entertainment" },
 ];
 
+const statusOptions = [
+  { value: "Active", label: "Active" },
+  { value: "Inactive", label: "Inactive" },
+];
+
 const AddBlog = () => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
+  const [status, setStatus] = useState(null);
+
   const API_URL = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async (e) => {
@@ -28,13 +35,21 @@ const AddBlog = () => {
       });
       return;
     }
-
+    // ✅ Add this console.log before sending
+    console.log("Submitting blog:", {
+      title,
+      image,
+      content: description,
+      category: categories.map((c) => c.value).join(", "),
+      status: status.value,
+    });
     try {
       await axios.post(`${API_URL}/api/blogs`, {
         title,
         image,
         content: description,
         category: categories.map((c) => c.value).join(", "),
+         status: status ? status.value : "Active", // ✅ Use this instead of status.value
       });
 
       Swal.fire({
@@ -114,6 +129,22 @@ const AddBlog = () => {
             multiValueLabel: (base) => ({ ...base, color: "#fff" }),
           }}
         />
+
+        {/* ✅ Status (larger width) */}
+        <Select
+  options={statusOptions}
+  value={status} // directly use state
+  onChange={setStatus}
+  placeholder="Select status..."
+  styles={{
+    container: (base) => ({
+      ...base,
+      flex: "1",
+      minWidth: "180px",
+    }),
+  }}
+/>
+
 
         <textarea
           placeholder="Description"

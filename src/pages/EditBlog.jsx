@@ -12,15 +12,21 @@ const categoryOptions = [
   { value: "Entertainment", label: "Entertainment" },
 ];
 
+const statusOptions = [
+  { value: "Active", label: "Active" },
+  { value: "Inactive", label: "Inactive" },
+];
+
 const EditBlog = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL; // Use environment variable
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
+  const [status, setStatus] = useState({ value: "Active", label: "Active" });
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -30,13 +36,21 @@ const EditBlog = () => {
         setImage(res.data.image);
         setDescription(res.data.content);
 
-        // Pre-fill categories (convert comma-separated to array of objects)
+        // Pre-fill categories
         if (res.data.category) {
           const catArray = res.data.category.split(",").map((c) => ({
             value: c.trim(),
             label: c.trim(),
           }));
           setCategories(catArray);
+        }
+
+        // Pre-fill status
+        if (res.data.status) {
+          setStatus({
+            value: res.data.status,
+            label: res.data.status,
+          });
         }
       } catch (err) {
         console.error("Failed to fetch blog:", err);
@@ -56,13 +70,21 @@ const EditBlog = () => {
       });
       return;
     }
-
+      // ✅ Add this console.log before sending
+  console.log("Submitting blog:", {
+    title,
+    image,
+    content: description,
+    category: categories.map((c) => c.value).join(", "),
+    status: status.value,
+  });
     try {
       await axios.put(`${API_URL}/api/blogs/${id}`, {
         title,
         image,
         content: description,
         category: categories.map((c) => c.value).join(", "),
+        status: status.value,
       });
 
       Swal.fire({
@@ -73,7 +95,7 @@ const EditBlog = () => {
         showConfirmButton: false,
       });
 
-      navigate("/admin-blogs");
+      navigate("/admin/dashboard");
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -85,46 +107,110 @@ const EditBlog = () => {
   };
 
   return (
-    <div className="container">
+    <div>
       <h2 className="text-xl font-bold mb-4">Edit Blog</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-md">
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "10px",
+          flexWrap: "wrap",
+          maxWidth: "900px", // ✅ limit total width
+        }}
+      >
         <input
           type="text"
-          placeholder="Blog Title"
-          className="border p-2 rounded"
+          placeholder="Title"
+          style={{
+            flex: "1",
+            padding: "8px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+            minWidth: "200px",
+          }}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
+
         <input
           type="text"
           placeholder="Image URL"
-          className="border p-2 rounded"
+          style={{
+            flex: "1",
+            padding: "8px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+            minWidth: "200px",
+          }}
           value={image}
           onChange={(e) => setImage(e.target.value)}
         />
-        <textarea
-          placeholder="Description"
-          className="border p-2 rounded"
-          rows="4"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        ></textarea>
 
-        {/* Drag & Drop Category Selector */}
         <Select
           options={categoryOptions}
           isMulti
           value={categories}
           onChange={setCategories}
           placeholder="Select categories..."
-          className="text-left"
+          styles={{
+            container: (base) => ({
+              ...base,
+              flex: "1",
+              minWidth: "200px",
+            }),
+            multiValue: (base) => ({
+              ...base,
+              backgroundColor: "#007bff",
+              color: "#fff",
+            }),
+            multiValueLabel: (base) => ({ ...base, color: "#fff" }),
+          }}
+        />
+
+        {/* ✅ Status - compact */}
+        <Select
+          options={statusOptions}
+          value={statusOptions.find((s) => s.value === status.value)} // ✅ fix
+          onChange={setStatus}
+          placeholder="Select status..."
+          styles={{
+            container: (base) => ({
+              ...base,
+              flex: "1",
+              minWidth: "160px",
+            }),
+          }}
+        />
+
+        <textarea
+          placeholder="Description"
+          rows="2"
+          style={{
+            flex: "1 1 100%",
+            padding: "8px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+            minHeight: "80px",
+          }}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
         />
 
         <button
           type="submit"
-          className="bg-blue-500 text-white py-2 rounded mt-2"
+          style={{
+            flex: "1",
+            backgroundColor: "#007bff",
+            color: "#fff",
+            padding: "8px",
+            borderRadius: "6px",
+            border: "none",
+            cursor: "pointer",
+            minWidth: "150px",
+          }}
         >
           Save Changes
         </button>
@@ -132,5 +218,4 @@ const EditBlog = () => {
     </div>
   );
 };
-
 export default EditBlog;
