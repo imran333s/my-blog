@@ -11,16 +11,17 @@ import AdminDashboard from "./pages/AdminDashboard";
 import LoginModal from "./components/LoginModal";
 import EditBlog from "./pages/EditBlog";
 import News from "./pages/News";
-
+import Slideshow from "./pages/Slideshow";
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
-    // Add these lines to manage sidebar
+  // Add these lines to manage sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="app">
       <Router>
         <Navbar onLoginClick={() => setShowLoginModal(true)} />
+        
         <Sidebar
           isOpen={isSidebarOpen}
           toggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
@@ -28,7 +29,16 @@ function App() {
         />
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<Blogs />} />
+            {/* ✅ Show slideshow only on home ("/") route */}
+            <Route
+              path="/"
+              element={
+                <>
+                  <Slideshow />
+                  <Blogs />
+                </>
+              }
+            />
             <Route path="/blogs" element={<Blogs />} />
             <Route path="/blog/:id" element={<BlogPost />} />
             {/* Generic category route */}

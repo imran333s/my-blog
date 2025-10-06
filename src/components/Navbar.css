@@ -1,4 +1,15 @@
+/* Navbar.css */
+@media (max-width: 767px) {
+  .navbar {
+    display: none; /* hide header/navbar on mobile */
+  }
+}
 
+@media (min-width: 768px) {
+  .navbar {
+    display: flex; /* show header/navbar on desktop */
+  }
+}
 .navbar {
    position: sticky;
    top: 0;
@@ -19,7 +30,7 @@
 
 }
 .nav-menu{
-  margin-left: 550px
+  margin-left: 420px;
 }
 .logo a {
   font-size: 24px;
@@ -28,7 +39,7 @@
   text-decoration: none;
 }
 .logo{
-  margin-left: 20px;
+  margin-left: 65px;
 }
 .nav-menu ul {
   list-style: none;

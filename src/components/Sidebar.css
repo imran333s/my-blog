@@ -1,4 +1,4 @@
-/* Sidebar */
+/* Sidebar - hidden by default */
 .sidebar {
   position: fixed;
   top: 0;
@@ -36,19 +36,17 @@
   color: #00bcd4;
 }
 
-/* Menu Button */
+/* Menu Button (hamburger) */
 .menu-toggle {
   position: fixed;
   top: 20px;
-  left: 1px;
-
-  z-index: 1100;
+  left: 10px;
+  z-index: 2000;
   background: transparent;
   border: none;
   color: #111;
   cursor: pointer;
   font-size: 28px;
-   
 }
 
 /* Overlay for mobile */
@@ -59,13 +57,10 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 900;
+  z-index: 1500;
 }
 
-/* Remove always-visible sidebar on desktop */
-@media (min-width: 768px) {
-  /* optional: you can keep sidebar toggled with hamburger even on desktop */
-}
+/* Sidebar Login Button */
 .sidebar-login-btn {
   width: 100%;
   padding: 12px 20px;
@@ -81,4 +76,27 @@
 
 .sidebar-login-btn:hover {
   background-color: #0097a7;
+}
+
+/* ===== MOBILE ONLY ===== */
+@media (max-width: 767px) {
+  .sidebar {
+    display: block; /* sidebar works normally */
+  }
+  .menu-toggle {
+    display: block; /* show hamburger */
+  }
+}
+
+/* ===== DESKTOP ===== */
+@media (min-width: 768px) {
+  .sidebar {
+    display: none; /* hide sidebar completely */
+  }
+  .menu-toggle {
+    display: none; /* hide hamburger */
+  }
+  .overlay {
+    display: none; /* hide overlay */
+  }
 }
