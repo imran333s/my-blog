@@ -1,10 +1,10 @@
 require("dotenv").config(); // Load environment variables
-
+const jwt = require("jsonwebtoken");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-
+const bcrypt = require("bcrypt");
 const app = express();
 app.use(cors()); // Allow all origins
 app.use(bodyParser.json());
@@ -29,17 +29,27 @@ const Admin = mongoose.model("Admin", adminSchema);
 // Admin login route
 app.post("/api/admin/login", async (req, res) => {
   const { email, password } = req.body;
+  console.log("Login attempt:", email, password);
 
   try {
     const admin = await Admin.findOne({ email });
     if (!admin) return res.status(401).json({ message: "Invalid credentials" });
+  // TEMPORARY plain-text check
+    const isMatch = password === admin.password;
+    if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
-    // Simple password check (replace with bcrypt in production)
-    if (password !== admin.password) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
+      // ✅ Generate JWT token
+    const token = jwt.sign(
+      { id: admin._id, email: admin.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" } // Token valid for 1 hour
+    );
 
-    res.json({ success: true });
+    res.json({
+      success: true,
+      message: "Login successful",
+      token, // Send token to frontend
+    });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
@@ -61,14 +71,14 @@ const blogSchema = new mongoose.Schema({
 
 const Blog = mongoose.model("Blog", blogSchema);
 
-// Add blog route
-app.post("/api/blogs", async (req, res) => {
+const auth = require("./middleware/auth");
+
+// Add blog route (✅ protected)
+app.post("/api/blogs", auth, async (req, res) => {
   try {
     const { title, content, category, image, status } = req.body;
-    // ✅ Ensure status is valid
     const validStatus = ["Active", "Inactive"];
     const blogStatus = validStatus.includes(status) ? status : "Active";
-    console.log("Received status:", status, "Resolved blogStatus:", blogStatus);
 
     const newBlog = new Blog({
       title,
@@ -107,7 +117,7 @@ app.get("/api/blogs/:id", async (req, res) => {
 });
 
 // Update blog
-app.put("/api/blogs/:id", async (req, res) => {
+app.put("/api/blogs/:id", auth, async (req, res) => {
   try {
     const { title, content, image, category, status } = req.body;
     // ✅ Debug: check incoming status
@@ -129,8 +139,8 @@ app.put("/api/blogs/:id", async (req, res) => {
   }
 });
 
-// Delete blog
-app.delete("/api/blogs/:id", async (req, res) => {
+// Delete blog route (✅ protected)
+app.delete("/api/blogs/:id", auth, async (req, res) => {
   try {
     const blog = await Blog.findByIdAndDelete(req.params.id);
     if (!blog) return res.status(404).json({ message: "Blog not found" });
@@ -139,6 +149,7 @@ app.delete("/api/blogs/:id", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 // Start server
 const PORT = process.env.PORT || 5000;

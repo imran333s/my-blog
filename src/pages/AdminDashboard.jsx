@@ -8,8 +8,8 @@ const AdminDashboard = ({ onLogout }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Clear login/session data if stored
-    localStorage.removeItem("adminLoggedIn");
+   // Remove the JWT token from localStorage
+  localStorage.removeItem("token");
     if (onLogout) {
       onLogout();
     }

@@ -26,31 +26,23 @@ const EditBlog = () => {
   const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
-  const [status, setStatus] = useState({ value: "Active", label: "Active" });
+  const [status, setStatus] = useState(null);
 
   useEffect(() => {
     const fetchBlog = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/blogs/${id}`);
-        setTitle(res.data.title);
-        setImage(res.data.image);
-        setDescription(res.data.content);
+        setTitle(res.data.title || "");
+        setImage(res.data.image || "");
+        setDescription(res.data.content || "");
 
-        // Pre-fill categories
         if (res.data.category) {
-          const catArray = res.data.category.split(",").map((c) => ({
-            value: c.trim(),
-            label: c.trim(),
-          }));
+          const catArray = res.data.category.split(",").map((c) => ({ value: c.trim(), label: c.trim() }));
           setCategories(catArray);
         }
 
-        // Pre-fill status
         if (res.data.status) {
-          setStatus({
-            value: res.data.status,
-            label: res.data.status,
-          });
+          setStatus({ value: res.data.status, label: res.data.status });
         }
       } catch (err) {
         console.error("Failed to fetch blog:", err);
@@ -63,29 +55,34 @@ const EditBlog = () => {
     e.preventDefault();
 
     if (categories.length === 0) {
-      Swal.fire({
+      return Swal.fire({
         icon: "warning",
         title: "Select category",
         text: "Please select at least one category",
       });
-      return;
     }
-      // ✅ Add this console.log before sending
-  console.log("Submitting blog:", {
-    title,
-    image,
-    content: description,
-    category: categories.map((c) => c.value).join(", "),
-    status: status.value,
-  });
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return Swal.fire("Error", "You are not authorized", "error");
+    }
+    
     try {
-      await axios.put(`${API_URL}/api/blogs/${id}`, {
-        title,
-        image,
-        content: description,
-        category: categories.map((c) => c.value).join(", "),
-        status: status.value,
-      });
+      await axios.put(
+        `${API_URL}/api/blogs/${id}`,
+        {
+          title,
+          image,
+          content: description,
+          category: categories.map((c) => c.value).join(", "),
+          status: status ? status.value : "Active",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       Swal.fire({
         icon: "success",
@@ -107,47 +104,27 @@ const EditBlog = () => {
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: "900px", margin: "0 auto" }}>
       <h2 className="text-xl font-bold mb-4">Edit Blog</h2>
       <form
         onSubmit={handleSubmit}
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "10px",
-          flexWrap: "wrap",
-          maxWidth: "900px", // ✅ limit total width
-        }}
+        style={{ display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "flex-start" }}
       >
         <input
           type="text"
           placeholder="Title"
-          style={{
-            flex: "1",
-            padding: "8px",
-            borderRadius: "6px",
-            border: "1px solid #ccc",
-            minWidth: "200px",
-          }}
+          style={{ flex: "1", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-
         <input
           type="text"
           placeholder="Image URL"
-          style={{
-            flex: "1",
-            padding: "8px",
-            borderRadius: "6px",
-            border: "1px solid #ccc",
-            minWidth: "200px",
-          }}
+          style={{ flex: "1", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
           value={image}
           onChange={(e) => setImage(e.target.value)}
         />
-
         <Select
           options={categoryOptions}
           isMulti
@@ -155,50 +132,26 @@ const EditBlog = () => {
           onChange={setCategories}
           placeholder="Select categories..."
           styles={{
-            container: (base) => ({
-              ...base,
-              flex: "1",
-              minWidth: "200px",
-            }),
-            multiValue: (base) => ({
-              ...base,
-              backgroundColor: "#007bff",
-              color: "#fff",
-            }),
+            container: (base) => ({ ...base, flex: "1" }),
+            multiValue: (base) => ({ ...base, backgroundColor: "#007bff", color: "#fff" }),
             multiValueLabel: (base) => ({ ...base, color: "#fff" }),
           }}
         />
-
-        {/* ✅ Status - compact */}
         <Select
           options={statusOptions}
-          value={statusOptions.find((s) => s.value === status.value)} // ✅ fix
+          value={status ? statusOptions.find((s) => s.value === status.value) : null}
           onChange={setStatus}
           placeholder="Select status..."
-          styles={{
-            container: (base) => ({
-              ...base,
-              flex: "1",
-              minWidth: "160px",
-            }),
-          }}
+          styles={{ container: (base) => ({ ...base, flex: "1", minWidth: "160px" }) }}
         />
-
         <textarea
           placeholder="Description"
           rows="2"
-          style={{
-            flex: "1 1 100%",
-            padding: "8px",
-            borderRadius: "6px",
-            border: "1px solid #ccc",
-            minHeight: "80px",
-          }}
+          style={{ flex: "1 1 100%", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
         />
-
         <button
           type="submit"
           style={{
@@ -209,7 +162,6 @@ const EditBlog = () => {
             borderRadius: "6px",
             border: "none",
             cursor: "pointer",
-            minWidth: "150px",
           }}
         >
           Save Changes
@@ -218,4 +170,5 @@ const EditBlog = () => {
     </div>
   );
 };
+
 export default EditBlog;

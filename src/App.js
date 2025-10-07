@@ -6,7 +6,7 @@ import "./App.css";
 import Sidebar from "./components/Sidebar"; // <-- import Sidebar
 import Blogs from "./pages/Blogs";
 import BlogPost from "./pages/BlogPost";
-
+import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import LoginModal from "./components/LoginModal";
 import EditBlog from "./pages/EditBlog";
@@ -21,7 +21,7 @@ function App() {
     <div className="app">
       <Router>
         <Navbar onLoginClick={() => setShowLoginModal(true)} />
-        
+
         <Sidebar
           isOpen={isSidebarOpen}
           toggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
@@ -46,7 +46,9 @@ function App() {
             <Route
               path="/admin/dashboard"
               element={
-                <AdminDashboard onLogout={() => setShowLoginModal(true)} />
+                <ProtectedRoute>
+                  <AdminDashboard onLogout={() => setShowLoginModal(true)} />
+                </ProtectedRoute>
               }
             />
             <Route path="/edit-blog/:id" element={<EditBlog />} />

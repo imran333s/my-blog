@@ -35,22 +35,30 @@ const AddBlog = () => {
       });
       return;
     }
-    // ✅ Add this console.log before sending
-    console.log("Submitting blog:", {
-      title,
-      image,
-      content: description,
-      category: categories.map((c) => c.value).join(", "),
-      status: status.value,
-    });
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return Swal.fire("Error", "You are not authorized", "error");
+    }
+
+    console.log("JWT Token being sent:", token);
+
     try {
-      await axios.post(`${API_URL}/api/blogs`, {
-        title,
-        image,
-        content: description,
-        category: categories.map((c) => c.value).join(", "),
-         status: status ? status.value : "Active", // ✅ Use this instead of status.value
-      });
+      await axios.post(
+        `${API_URL}/api/blogs`,
+        {
+          title,
+          image,
+          content: description,
+          category: categories.map((c) => c.value).join(", "),
+          status: status ? status.value : "Active",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       Swal.fire({
         icon: "success",
@@ -60,10 +68,12 @@ const AddBlog = () => {
         showConfirmButton: false,
       });
 
+      // Reset form
       setTitle("");
       setImage("");
       setDescription("");
       setCategories([]);
+      setStatus(null);
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -75,15 +85,15 @@ const AddBlog = () => {
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: "900px", margin: "0 auto" }}>
       <h2 className="text-xl font-bold mb-4">Add New Blog</h2>
       <form
         onSubmit={handleSubmit}
         style={{
           display: "flex",
-          alignItems: "flex-start",
-          gap: "10px",
           flexWrap: "wrap",
+          gap: "10px",
+          alignItems: "flex-start",
         }}
       >
         <input
@@ -99,7 +109,6 @@ const AddBlog = () => {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-
         <input
           type="text"
           placeholder="Image URL"
@@ -112,7 +121,6 @@ const AddBlog = () => {
           value={image}
           onChange={(e) => setImage(e.target.value)}
         />
-
         <Select
           options={categoryOptions}
           isMulti
@@ -120,7 +128,7 @@ const AddBlog = () => {
           onChange={setCategories}
           placeholder="Select categories..."
           styles={{
-            container: (base) => ({ ...base, flex: 2 }), // increase width
+            container: (base) => ({ ...base, flex: 2 }),
             multiValue: (base) => ({
               ...base,
               backgroundColor: "#007bff",
@@ -129,23 +137,15 @@ const AddBlog = () => {
             multiValueLabel: (base) => ({ ...base, color: "#fff" }),
           }}
         />
-
-        {/* ✅ Status (larger width) */}
         <Select
-  options={statusOptions}
-  value={status} // directly use state
-  onChange={setStatus}
-  placeholder="Select status..."
-  styles={{
-    container: (base) => ({
-      ...base,
-      flex: "1",
-      minWidth: "180px",
-    }),
-  }}
-/>
-
-
+          options={statusOptions}
+          value={status}
+          onChange={setStatus}
+          placeholder="Select status..."
+          styles={{
+            container: (base) => ({ ...base, flex: 1, minWidth: "180px" }),
+          }}
+        />
         <textarea
           placeholder="Description"
           rows="2"
@@ -159,7 +159,6 @@ const AddBlog = () => {
           onChange={(e) => setDescription(e.target.value)}
           required
         />
-
         <button
           type="submit"
           style={{
