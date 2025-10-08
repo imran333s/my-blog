@@ -68,8 +68,17 @@ const blogSchema = new mongoose.Schema({
   },
   createdAt: { type: Date, default: Date.now },
 });
-
 const Blog = mongoose.model("Blog", blogSchema);
+
+// ----------------- Category schema -----------------
+const categorySchema = new mongoose.Schema({
+  name: { type: String, required: true, unique: true },
+  image: { type: String, required: true },
+  caption: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const Category = mongoose.model("Category", categorySchema);
 
 const auth = require("./middleware/auth");
 
@@ -94,6 +103,42 @@ app.post("/api/blogs", auth, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// POST /api/categories
+app.post("/api/categories", auth, async (req, res) => {
+  try {
+    const { name, image, caption } = req.body;
+    const newCategory = new Category({ name, image, caption });
+    await newCategory.save();
+    res.status(201).json({ message: "Category added successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Error saving category", error: err.message });
+  }
+});
+
+// ----------------- Get All Categories -----------------
+app.get("/api/categories", async (req, res) => {
+  try {
+    const categories = await Category.find();
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete category route (protected)
+app.delete("/api/categories/:id", auth, async (req, res) => {
+  try {
+    const category = await Category.findByIdAndDelete(req.params.id);
+    if (!category) return res.status(404).json({ message: "Category not found" });
+    res.status(200).json({ message: "Category deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 
 // Get all blogs
 app.get("/api/blogs", async (req, res) => {

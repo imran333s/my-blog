@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddBlog from "./AddBlog";
 import BlogList from "./BlogList";
-
+import AddCategory from "./AddCategory";
+import CategoryList from "./CategoryList";
 const AdminDashboard = ({ onLogout }) => {
   const [activePage, setActivePage] = useState("add-blog");
   const navigate = useNavigate();
 
   const handleLogout = () => {
-   // Remove the JWT token from localStorage
-  localStorage.removeItem("token");
+    // Remove the JWT token from localStorage
+    localStorage.removeItem("token");
     if (onLogout) {
       onLogout();
     }
@@ -24,6 +25,10 @@ const AdminDashboard = ({ onLogout }) => {
         return <AddBlog />;
       case "blog-list":
         return <BlogList />;
+      case "add-category":
+        return <AddCategory />;
+      case "category-list":
+        return <CategoryList />;
       default:
         return <AddBlog />;
     }
@@ -43,18 +48,36 @@ const AdminDashboard = ({ onLogout }) => {
         <h2 style={{ fontSize: "1.5rem", marginBottom: "30px" }}>
           Admin Panel
         </h2>
+
         <button
           style={sidebarBtnStyle(activePage === "add-blog")}
           onClick={() => setActivePage("add-blog")}
         >
-          Add Blog
+          Add News
         </button>
+
+        <button
+          style={sidebarBtnStyle(activePage === "add-category")}
+          onClick={() => setActivePage("add-category")}
+        >
+          Add Category
+        </button>
+
         <button
           style={sidebarBtnStyle(activePage === "blog-list")}
           onClick={() => setActivePage("blog-list")}
         >
-          Blog List
+          News List
         </button>
+        
+        <button
+          style={sidebarBtnStyle(activePage === "category-list")}
+          onClick={() => setActivePage("category-list")}
+        >
+          Category List
+        </button>
+
+        
 
         {/* Logout Button */}
         <button

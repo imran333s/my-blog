@@ -21,7 +21,7 @@
 /* 🖥️ Laptop/Desktop view - full screen */
 .slide img {
   width: 100%;
-  height: 100vh; /* full height */
+  height: 85vh;/* full height */
   object-fit: cover; /* fill the screen nicely */
   cursor: pointer;
   /* background-color: #000; */

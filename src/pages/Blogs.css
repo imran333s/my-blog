@@ -1,0 +1,29 @@
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 cards per row on desktop */
+  gap: 20px 55px;
+  justify-items: center; /* center cards */
+  padding: 0 80px; /* space from left/right */
+}
+
+/* Mobile: 1 card per row */
+@media (max-width: 767px) {
+  .blog-grid {
+    grid-template-columns: 1fr;
+    padding: 0 10px;
+  }
+}
+
+.blog-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  padding: 15px;
+  transition: transform 0.2s ease-in-out;
+  width: 100%;
+  max-width: 380px; /* prevent card from stretching too much */
+}
+
+.blog-card:hover {
+  transform: translateY(-5px);
+}

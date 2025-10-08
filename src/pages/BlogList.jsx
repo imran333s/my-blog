@@ -77,11 +77,11 @@ const AdminBlogList = () => {
     if (!confirm.isConfirmed) return;
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`${API_URL}/api/blogs/${id}`,{
+      await axios.delete(`${API_URL}/api/blogs/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`, // send JWT for authorization
         },
-    });
+      });
 
       // Update the blogs after deletion
       const updatedBlogs = blogs.filter((blog) => blog._id !== id);

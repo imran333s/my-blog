@@ -37,7 +37,9 @@ const EditBlog = () => {
         setDescription(res.data.content || "");
 
         if (res.data.category) {
-          const catArray = res.data.category.split(",").map((c) => ({ value: c.trim(), label: c.trim() }));
+          const catArray = res.data.category
+            .split(",")
+            .map((c) => ({ value: c.trim(), label: c.trim() }));
           setCategories(catArray);
         }
 
@@ -66,7 +68,7 @@ const EditBlog = () => {
     if (!token) {
       return Swal.fire("Error", "You are not authorized", "error");
     }
-    
+
     try {
       await axios.put(
         `${API_URL}/api/blogs/${id}`,
@@ -78,16 +80,14 @@ const EditBlog = () => {
           status: status ? status.value : "Active",
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       Swal.fire({
         icon: "success",
         title: "Edited!",
-        text: "Blog has been updated successfully.",
+        text: "News has been updated successfully.",
         timer: 2000,
         showConfirmButton: false,
       });
@@ -104,69 +104,132 @@ const EditBlog = () => {
   };
 
   return (
-    <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-      <h2 className="text-xl font-bold mb-4">Edit Blog</h2>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "flex-start" }}
-      >
+    <div className="editblog-container">
+      <h2 className="form-title">Edit News</h2>
+
+      <form onSubmit={handleSubmit} className="blog-form">
+        {/* Row 1: Title | Image | Category */}
         <input
           type="text"
           placeholder="Title"
-          style={{ flex: "1", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+          className="form-input"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
+
         <input
           type="text"
           placeholder="Image URL"
-          style={{ flex: "1", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+          className="form-input"
           value={image}
           onChange={(e) => setImage(e.target.value)}
         />
-        <Select
-          options={categoryOptions}
-          isMulti
-          value={categories}
-          onChange={setCategories}
-          placeholder="Select categories..."
-          styles={{
-            container: (base) => ({ ...base, flex: "1" }),
-            multiValue: (base) => ({ ...base, backgroundColor: "#007bff", color: "#fff" }),
-            multiValueLabel: (base) => ({ ...base, color: "#fff" }),
-          }}
-        />
-        <Select
-          options={statusOptions}
-          value={status ? statusOptions.find((s) => s.value === status.value) : null}
-          onChange={setStatus}
-          placeholder="Select status..."
-          styles={{ container: (base) => ({ ...base, flex: "1", minWidth: "160px" }) }}
-        />
+
+        <div className="select-container">
+          <Select
+            options={categoryOptions}
+            isMulti
+            value={categories}
+            onChange={setCategories}
+            placeholder="Select categories..."
+          />
+        </div>
+
+        {/* Row 2: Status */}
+        <div className="select-container half-width">
+          <Select
+            options={statusOptions}
+            value={status}
+            onChange={setStatus}
+            placeholder="Select status..."
+          />
+        </div>
+
+        {/* Row 3: Description */}
         <textarea
           placeholder="Description"
-          rows="2"
-          style={{ flex: "1 1 100%", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+          rows="6"
+          className="form-textarea"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
         />
-        <button
-          type="submit"
-          style={{
-            flex: "1",
-            backgroundColor: "#007bff",
-            color: "#fff",
-            padding: "8px",
-            borderRadius: "6px",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
+
+        {/* Row 4: Submit Button */}
+        <button type="submit" className="submit-btn">
           Save Changes
         </button>
       </form>
+
+      {/* ✅ Inline CSS for responsive layout */}
+      <style>{`
+        .editblog-container {
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+
+        .form-title {
+          font-size: 1.5rem;
+          font-weight: bold;
+          margin-bottom: 20px;
+        }
+
+        .blog-form {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+
+        .form-input, .select-container, .form-textarea {
+          flex: 1;
+          min-width: 260px;
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+        }
+
+        .form-textarea {
+          flex-basis: 100%;
+        }
+
+        .half-width {
+          flex: 0 0 45%;
+        }
+
+        .submit-btn {
+          background-color: #007bff;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: background 0.3s ease;
+        }
+
+        .submit-btn:hover {
+          background-color: #0056b3;
+        }
+
+        /* 📱 Mobile Responsive */
+        @media (max-width: 768px) {
+          .blog-form {
+            flex-direction: column;
+          }
+          .form-input,
+          .select-container,
+          .form-textarea,
+          .half-width {
+            flex: 1 1 100%;
+            min-width: 100%;
+          }
+          .submit-btn {
+            width: 100%;
+            text-align: center;
+          }
+        }
+      `}</style>
     </div>
   );
 };
