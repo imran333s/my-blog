@@ -4,7 +4,10 @@ import "./Sidebar.css";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 
-const Sidebar = ({ isOpen, toggleSidebar, onLoginClick }) => {
+const Sidebar = ({ isOpen, toggleSidebar, onLoginClick }) => {       
+
+
+
   return (
     <>
       {/* Hamburger button on extreme left */}

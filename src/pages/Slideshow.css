@@ -1,0 +1,128 @@
+.slideshow-container {
+  width: 100%;
+  height: 100vh; /* full screen height for laptops/desktops */
+  position: relative;
+  margin: auto;
+  overflow: hidden;
+}
+
+.slide {
+  display: none;
+  position: relative;
+  animation: fade 1.5s;
+}
+
+.active-slide {
+  display: block;
+  position: relative;
+  animation: fade 1.5s;
+}
+
+/* 🖥️ Laptop/Desktop view - full screen */
+.slide img {
+  width: 100%;
+  height: 100vh; /* full height */
+  object-fit: cover; /* fill the screen nicely */
+  cursor: pointer;
+  /* background-color: #000; */
+}
+
+.caption-text {
+  color: #fff;
+  font-size: 22px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 30px;
+  width: 100%;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.prev,
+.next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-weight: bold;
+  font-size: 22px;
+  transition: 0.6s ease;
+  border-radius: 3px;
+  user-select: none;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 8px 14px;
+}
+
+.next {
+  right: 0;
+}
+
+.dot {
+  cursor: pointer;
+  height: 12px;
+  width: 12px;
+  margin: 0 3px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active-dot {
+  background-color: #fff;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 📱 Responsive for tablets */
+@media (max-width: 768px) {
+  .slideshow-container {
+    height: 60vh;
+  }
+
+  .slide img {
+    height: 60vh;
+    object-fit: contain;
+  }
+
+  .caption-text {
+    font-size: 16px;
+    bottom: 15px;
+  }
+
+  .prev,
+  .next {
+    font-size: 18px;
+    padding: 6px 10px;
+  }
+}
+
+/* 📱 Responsive for mobile phones */
+@media (max-width: 480px) {
+  .slideshow-container {
+    height: 45vh;
+  }
+
+  .slide img {
+    height: 45vh;
+  }
+
+  .caption-text {
+    font-size: 14px;
+    bottom: 10px;
+  }
+
+  .prev,
+  .next {
+    font-size: 16px;
+  }
+}
