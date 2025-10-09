@@ -4,7 +4,9 @@ import "./Footer.css";
 const Footer = () => {
   return (
     <footer className="footer">
-      <p>This blog website is created by <strong>Imran</strong>.</p>
+      <p>
+        This News website is created by <strong>Imran</strong>.
+      </p>
     </footer>
   );
 };

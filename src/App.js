@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import "./App.css";
-import Sidebar from "./components/Sidebar"; // <-- import Sidebar
+import Sidebar from "./components/Sidebar";  
 import Blogs from "./pages/Blogs";
 import BlogPost from "./pages/BlogPost";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -12,9 +12,9 @@ import LoginModal from "./components/LoginModal";
 import EditBlog from "./pages/EditBlog";
 import News from "./pages/News";
 import Slideshow from "./pages/Slideshow";
+
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  // Add these lines to manage sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (

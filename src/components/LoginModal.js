@@ -83,7 +83,7 @@ const LoginModal = ({ isOpen, onClose }) => {
           <button type="submit">Login</button>
         </form>
         <button className="close-btn" onClick={onClose}>
-          ✖
+          ✖  
         </button>
       </div>
     </div>

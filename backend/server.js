@@ -29,7 +29,7 @@ const Admin = mongoose.model("Admin", adminSchema);
 // Admin login route
 app.post("/api/admin/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log("Login attempt:", email, password);
+  // console.log("Login attempt:", email, password);
 
   try {
     const admin = await Admin.findOne({ email });

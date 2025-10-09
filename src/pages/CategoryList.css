@@ -1,0 +1,107 @@
+/* ============================
+   Category List Responsive Layout
+============================ */
+
+.category-container {
+  padding: 20px;
+}
+
+.category-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Grid layout */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* ✅ 2 per row on desktop */
+  gap: 20px;
+}
+
+/* Card style */
+.category-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.category-card:hover {
+  transform: scale(1.02);
+}
+
+.category-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.category-content {
+  padding: 15px;
+}
+
+.category-content h3 {
+  font-size: 18px;
+  margin: 10px 0 5px;
+}
+
+.category-caption {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+.no-data {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  grid-column: 1 / -1;
+}
+
+/* ============================
+   Responsive Behavior
+============================ */
+
+/* 📱 Mobile: 1 card per row */
+@media (max-width: 768px) {
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-title {
+    font-size: 20px;
+  }
+
+  .category-content h3 {
+    font-size: 16px;
+  }
+}
+
+/* 💻 Large screen (optional 3 per row) */
+@media (min-width: 1400px) {
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
