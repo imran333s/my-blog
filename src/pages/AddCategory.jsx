@@ -1,11 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import Select from "react-select";
+
+const statusOptions = [
+  { value: "Active", label: "Active" },
+  { value: "Inactive", label: "Inactive" },
+];
 
 const AddCategory = () => {
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
   const [caption, setCaption] = useState("");
+  const [status, setStatus] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async (e) => {
@@ -19,7 +26,12 @@ const AddCategory = () => {
     try {
       await axios.post(
         `${API_URL}/api/categories`,
-        { name, image, caption },
+        { 
+          name, 
+          image, 
+          caption, 
+           status: status ? status.value : "Active", // ✅ Include status
+        },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -37,6 +49,7 @@ const AddCategory = () => {
       setName("");
       setImage("");
       setCaption("");
+      setStatus(null);
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Failed to add category", "error");
@@ -85,6 +98,16 @@ const AddCategory = () => {
           required
           style={inputStyle}
         />
+
+         {/* ✅ Status Dropdown */}
+        <div>
+          <Select
+            options={statusOptions}
+            value={status}
+            onChange={setStatus}
+            placeholder="Select status..."
+          />
+        </div>
 
         <button
           type="submit"

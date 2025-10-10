@@ -1,37 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Slideshow.css"; // ✅ Import the CSS file
 
 const Slideshow = () => {
   const navigate = useNavigate();
-
-  const slides = [
-    {
-      image:
-        "https://australiansportscamps.com.au/cdn/shop/articles/Choosing-the-Best-Sports-for-Your-Kids-Development.jpg?v=1715912712",
-      caption: "Sports",
-      category: "sports",
-    },
-    {
-      image:
-        "https://d35y6w71vgvcg1.cloudfront.net/media/2019/05/share-market-today-share-bazar-sensex-nifty-bse-nse-stock-market-equity-market-sgx-nifty9_730X365.jpg",
-      caption: "Business",
-      category: "business",
-    },
-    {
-      image: "https://static.toiimg.com/photo/124336561.cms",
-      caption: "Politics",
-      category: "politics",
-    },
-    {
-      image:
-        "https://img.freepik.com/free-photo/group-diverse-friends-holding-movie-emoticons_53876-65393.jpg?semt=ais_hybrid&w=740&q=80",
-      caption: "Entertainment",
-      category: "entertainment",
-    },
-  ];
-
+  const [slides, setSlides] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const API_URL = process.env.REACT_APP_API_URL;
+  // Fetch slides from your backend
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/categories`); // Replace with your API endpoint
+        if (!response.ok) throw new Error("Failed to fetch slides");
+        const data = await response.json();
+        setSlides(data);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchSlides();
+  }, []);
+
+  // const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextSlide = () =>
     setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
@@ -53,11 +47,11 @@ const Slideshow = () => {
             <img
               src={slide.image}
               alt={slide.caption}
-              onClick={() => handleImageClick(slide.category)}
+              onClick={() =>handleImageClick(slide.name.toLowerCase())}
             />
             <div
               className="caption-text"
-              onClick={() => handleImageClick(slide.category)}
+              onClick={() => handleImageClick(slide.name.toLowerCase())}
             >
               {slide.caption}
             </div>

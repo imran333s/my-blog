@@ -34,11 +34,12 @@ app.post("/api/admin/login", async (req, res) => {
   try {
     const admin = await Admin.findOne({ email });
     if (!admin) return res.status(401).json({ message: "Invalid credentials" });
-  // TEMPORARY plain-text check
+    // TEMPORARY plain-text check
     const isMatch = password === admin.password;
-    if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+    if (!isMatch)
+      return res.status(401).json({ message: "Invalid credentials" });
 
-      // ✅ Generate JWT token
+    // ✅ Generate JWT token
     const token = jwt.sign(
       { id: admin._id, email: admin.email },
       process.env.JWT_SECRET,
@@ -76,6 +77,11 @@ const categorySchema = new mongoose.Schema({
   image: { type: String, required: true },
   caption: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
+  status: {
+    type: String,
+    enum: ["Active", "Inactive"],
+    default: "Active", // ✅ default should be Active if not passed
+  },
 });
 
 const Category = mongoose.model("Category", categorySchema);
@@ -107,12 +113,26 @@ app.post("/api/blogs", auth, async (req, res) => {
 // POST /api/categories
 app.post("/api/categories", auth, async (req, res) => {
   try {
-    const { name, image, caption } = req.body;
-    const newCategory = new Category({ name, image, caption });
+    const { name, image, caption, status } = req.body;
+
+    const validStatus = ["Active", "Inactive"];
+    const categoryStatus = validStatus.includes(status) ? status : "Active";
+
+    const newCategory = new Category({
+      name,
+      image,
+      caption,
+      status: categoryStatus,
+    });
+
     await newCategory.save();
-    res.status(201).json({ message: "Category added successfully" });
+    res
+      .status(201)
+      .json({ message: "Category added successfully", newCategory });
   } catch (err) {
-    res.status(500).json({ message: "Error saving category", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error saving category", error: err.message });
   }
 });
 
@@ -126,19 +146,59 @@ app.get("/api/categories", async (req, res) => {
   }
 });
 
+// ✅ Get single category by ID
+app.get("/api/categories/:id", async (req, res) => {
+  try {
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    res.json(category);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error fetching category", error: err.message });
+  }
+});
+
+// ✅ Update category
+app.put("/api/categories/:id", auth, async (req, res) => {
+  try {
+    const { name, image, caption, status } = req.body;
+
+    const updatedCategory = await Category.findByIdAndUpdate(
+      req.params.id,
+      { name, image, caption, status },
+      { new: true } // return updated doc
+    );
+
+    if (!updatedCategory) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    res.json({
+      message: "Category updated successfully",
+      category: updatedCategory,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error updating category", error: err.message });
+  }
+});
+
 // Delete category route (protected)
 app.delete("/api/categories/:id", auth, async (req, res) => {
   try {
     const category = await Category.findByIdAndDelete(req.params.id);
-    if (!category) return res.status(404).json({ message: "Category not found" });
+    if (!category)
+      return res.status(404).json({ message: "Category not found" });
     res.status(200).json({ message: "Category deleted successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
-
-
 
 // Get all blogs
 app.get("/api/blogs", async (req, res) => {
@@ -194,7 +254,6 @@ app.delete("/api/blogs/:id", auth, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
 
 // Start server
 const PORT = process.env.PORT || 5000;

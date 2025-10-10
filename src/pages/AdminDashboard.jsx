@@ -57,6 +57,13 @@ const AdminDashboard = ({ onLogout }) => {
         </button>
 
         <button
+          style={sidebarBtnStyle(activePage === "blog-list")}
+          onClick={() => setActivePage("blog-list")}
+        >
+          News List
+        </button>
+
+        <button
           style={sidebarBtnStyle(activePage === "add-category")}
           onClick={() => setActivePage("add-category")}
         >
@@ -64,20 +71,11 @@ const AdminDashboard = ({ onLogout }) => {
         </button>
 
         <button
-          style={sidebarBtnStyle(activePage === "blog-list")}
-          onClick={() => setActivePage("blog-list")}
-        >
-          News List
-        </button>
-        
-        <button
           style={sidebarBtnStyle(activePage === "category-list")}
           onClick={() => setActivePage("category-list")}
         >
           Category List
         </button>
-
-        
 
         {/* Logout Button */}
         <button

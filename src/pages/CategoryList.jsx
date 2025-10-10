@@ -1,114 +1,20 @@
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// import Swal from "sweetalert2";
-
-// const CategoryList = () => {
-//   const [categories, setCategories] = useState([]);
-//   const API_URL = process.env.REACT_APP_API_URL;
-
-//   // Fetch categories
-//   const fetchCategories = async () => {
-//     try {
-//       const res = await axios.get(`${API_URL}/api/categories`);
-//       setCategories(res.data);
-//     } catch (err) {
-//       console.error(err);
-//       Swal.fire("Error", "Failed to fetch categories", "error");
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchCategories();
-//   }, []);
-
-//   // Delete category
-//   const handleDelete = async (id) => {
-//     const token = localStorage.getItem("token");
-//     if (!token) return Swal.fire("Error", "You are not authorized", "error");
-
-//     try {
-//       await axios.delete(`${API_URL}/api/categories/${id}`, {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-//       Swal.fire("Deleted!", "Category has been deleted.", "success");
-//       setCategories(categories.filter((cat) => cat._id !== id));
-//     } catch (err) {
-//       console.error(err);
-//       Swal.fire("Error", "Failed to delete category", "error");
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h2 style={{ marginBottom: "20px", fontWeight: "bold" }}>
-//         Category List
-//       </h2>
-//       <table style={{ width: "100%", borderCollapse: "collapse" }}>
-//         <thead>
-//           <tr style={{ background: "#f0f0f0" }}>
-//             <th style={thStyle}>Name</th>
-//             <th style={thStyle}>Image</th>
-//             <th style={thStyle}>Caption</th>
-//             <th style={thStyle}>Actions</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {categories.map((cat) => (
-//             <tr key={cat._id}>
-//               <td style={tdStyle}>{cat.name}</td>
-//               <td style={tdStyle}>
-//                 <img src={cat.image} alt={cat.name} width={60} />
-//               </td>
-//               <td style={tdStyle}>{cat.caption}</td>
-//               <td style={tdStyle}>
-//                 <button
-//                   onClick={() => handleDelete(cat._id)}
-//                   style={{
-//                     padding: "5px 10px",
-//                     borderRadius: "5px",
-//                     border: "none",
-//                     background: "#dc3545",
-//                     color: "#fff",
-//                     cursor: "pointer",
-//                   }}
-//                 >
-//                   Delete
-//                 </button>
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// };
-
-// // Table styles
-// const thStyle = { padding: "10px", border: "1px solid #ccc" };
-// const tdStyle = {
-//   padding: "10px",
-//   border: "1px solid #ccc",
-//   textAlign: "center",
-// };
-
-// export default CategoryList;
-
-
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import "./CategoryList.css"; // 👈 Create this file next
+import { useNavigate } from "react-router-dom";
+import "./CategoryList.css";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
   const API_URL = process.env.REACT_APP_API_URL;
+  const navigate = useNavigate();
 
   // Fetch categories
   const fetchCategories = async () => {
     try {
       const res = await axios.get(`${API_URL}/api/categories`);
-      setCategories(res.data);
+      const reversed = res.data.reverse();
+      setCategories(reversed);
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Failed to fetch categories", "error");
@@ -121,6 +27,18 @@ const CategoryList = () => {
 
   // Delete category
   const handleDelete = async (id) => {
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "This category will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!confirm.isConfirmed) return;
+
     const token = localStorage.getItem("token");
     if (!token) return Swal.fire("Error", "You are not authorized", "error");
 
@@ -136,32 +54,81 @@ const CategoryList = () => {
     }
   };
 
-  return (
-    <div className="category-container">
-      <h2 className="category-title">Category List</h2>
+  // Edit category
+  const handleEdit = (id) => {
+    navigate(`/edit-category/${id}`);
+  };
 
-      <div className="category-grid">
-        {categories.length > 0 ? (
-          categories.map((cat) => (
-            <div className="category-card" key={cat._id}>
-              <img src={cat.image} alt={cat.name} className="category-image" />
-              <div className="category-content">
-                <h3>{cat.name}</h3>
-                <p className="category-caption">{cat.caption}</p>
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDelete(cat._id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))
+  return (
+    <main className="main-content">
+      <div className="container">
+        <h2 className="section-title">Category List</h2>
+
+        {categories.length === 0 ? (
+          <p>No categories found.</p>
         ) : (
-          <p className="no-data">No categories found</p>
+          <table className="admin-category-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Caption</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categories.map((cat) => (
+                <tr key={cat._id}>
+                  <td>
+                    {cat.image ? (
+                      <img
+                        src={cat.image}
+                        alt={cat.name}
+                        className="category-img"
+                      />
+                    ) : (
+                      "No Image"
+                    )}
+                  </td>
+                  <td>{cat.name}</td>
+                  <td>
+                    {cat.caption?.length > 100
+                      ? cat.caption.substring(0, 100) + "..."
+                      : cat.caption}
+                  </td>
+                  <td>
+                    <span
+                      className={
+                        cat.status?.trim().toLowerCase() === "active"
+                          ? "status-active"
+                          : "status-inactive"
+                      }
+                    >
+                      {cat.status}
+                    </span>
+                  </td>
+                  <td className="action-buttons">
+                    <button
+                      onClick={() => handleEdit(cat._id)}
+                      className="edit-btn small-btn"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(cat._id)}
+                      className="delete-btn small-btn"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 

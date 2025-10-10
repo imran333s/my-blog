@@ -12,7 +12,7 @@ import LoginModal from "./components/LoginModal";
 import EditBlog from "./pages/EditBlog";
 import News from "./pages/News";
 import Slideshow from "./pages/Slideshow";
-
+import EditCategory from "./pages/EditCategory"
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -52,6 +52,7 @@ function App() {
               }
             />
             <Route path="/edit-blog/:id" element={<EditBlog />} />
+            <Route path="/edit-category/:id" element={<EditCategory />} />
           </Routes>
         </main>
 
