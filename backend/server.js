@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const app = express();
 app.use(cors()); // Allow all origins
 app.use(bodyParser.json());
+const auth = require("./middleware/auth");
 
 // Connect to MongoDB Atlas using environment variable
 mongoose
@@ -20,9 +21,12 @@ mongoose
 
 // ----------------- Admin schema -----------------
 const adminSchema = new mongoose.Schema({
+  name: { type: String, required: true },       // Admin name
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  role: { type: String, enum: ["Admin", "SuperAdmin", "Employer"], default: "Admin" },
 });
+
 
 const Admin = mongoose.model("Admin", adminSchema);
 
@@ -56,6 +60,31 @@ app.post("/api/admin/login", async (req, res) => {
   }
 });
 
+
+// GET /api/admin/me (public)
+app.get("/api/admin/me", async (req, res) => {
+  try {
+    // Fetch the first admin (or adjust if multiple admins)
+    const admin = await Admin.findOne().select("-password"); 
+    // console.log("Admin fetched:", admin); // <-- debug line
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    res.json({
+      name: admin.name,
+      email: admin.email,
+      role: admin.role,
+      websiteName: "News Website", // or from DB
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+
 // ----------------- Blog schema -----------------
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -86,7 +115,7 @@ const categorySchema = new mongoose.Schema({
 
 const Category = mongoose.model("Category", categorySchema);
 
-const auth = require("./middleware/auth");
+
 
 // Add blog route (✅ protected)
 app.post("/api/blogs", auth, async (req, res) => {

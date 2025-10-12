@@ -43,7 +43,10 @@ const BlogPost = () => {
         )}
 
         <div className="post-body">
-          <p>{blog.content}</p>
+          <div
+            dangerouslySetInnerHTML={{ __html: blog.content }}
+            style={{ lineHeight: "1.6", fontSize: "16px" }}
+          />
         </div>
 
         {/* Optional: Edit button if admin functionality is needed */}

@@ -1,16 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Select from "react-select";
-
-const categoryOptions = [
-  { value: "Home", label: "Home" },
-  { value: "Sports", label: "Sports" },
-  { value: "Business", label: "Business" },
-  { value: "Politics", label: "Politics" },
-  { value: "Entertainment", label: "Entertainment" },
-];
 
 const statusOptions = [
   { value: "Active", label: "Active" },
@@ -25,7 +17,35 @@ const AddBlog = () => {
   const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
+  const [categoryOptions, setCategoryOptions] = useState([]);
   const [status, setStatus] = useState(null);
+
+  // ✅ Fetch categories dynamically from DB
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/categories`);
+
+        // Filter only active categories if needed
+        const activeCategories = res.data.filter(
+          (cat) => cat.status?.toLowerCase() === "active"
+        );
+
+        // Convert to react-select format
+        const formatted = activeCategories.map((cat) => ({
+          value: cat.name,
+          label: cat.name,
+        }));
+
+        setCategoryOptions(formatted);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        Swal.fire("Error", "Could not load categories", "error");
+      }
+    };
+
+    fetchCategories();
+  }, [API_URL]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -109,6 +129,7 @@ const AddBlog = () => {
             value={categories}
             onChange={setCategories}
             placeholder="Select categories..."
+            isLoading={categoryOptions.length === 0}
           />
         </div>
 

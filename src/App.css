@@ -336,7 +336,7 @@
 }
 
 /* Blog card */
-.admin-blog-list {
+/* .admin-blog-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -373,18 +373,18 @@
 
  
 .small-btn {
-  display: inline-block; /* keeps them inline */
-  padding: 4px 8px;      /* smaller padding */
-  font-size: 12px;       /* smaller text */
-  margin-right: 5px;     /* spacing between buttons */
-  width:50px;           /* remove full width */
-  text-align: center;    /* center text */
+  display: inline-block;  
+  padding: 4px 8px;      
+  font-size: 12px;        
+  margin-right: 5px;      
+  width:50px;          
+  text-align: center;     
   cursor: pointer;
   border-radius: 4px;
   border: none;
 }
 
-/* Specific colors for buttons */
+ 
 .edit-btn {
   background-color: #007bff;
   color: #fff;
@@ -465,8 +465,8 @@
     font-size: 32px;
     font-weight: 700;
     color: #333;
-    margin-bottom: 20px; /* slightly more space */
-    text-align: center; /* center the title */
+    margin-bottom: 20px;  
+    text-align: center;  
 }
 .admin-blog-table {
   width: 100%;
@@ -490,12 +490,14 @@
 }
 .delete-btn {
   background-color: #dc3545;
-  margin-left: 10px;
+   
 }
+
  
- /* ===============================
-   Admin Blog Table - Responsive
-================================= */
+
+
+
+ 
 .admin-blog-table {
   width: 100%;
   border-collapse: collapse;
@@ -521,7 +523,7 @@
   border-radius: 4px;
 }
 
-/* Action buttons */
+ 
 .small-btn {
   padding: 6px 12px;
   font-size: 14px;
@@ -540,9 +542,9 @@
   color: white;
 }
 
-/* ===============================
-   Make table responsive
-================================= */
+
+
+ 
 @media (max-width: 768px) {
   .admin-blog-table {
     display: block;
@@ -550,7 +552,7 @@
     white-space: nowrap;
   }
 
-  /* Optional: slightly smaller buttons/images on small screens */
+ 
   .admin-blog-table img {
     width: 50px;
     height: 40px;
@@ -562,9 +564,7 @@
   }
 }
 
-/* ===============================
-   Optional: Card-style layout for mobile
-================================= */
+ 
 @media (max-width: 600px) {
   .admin-blog-table,
   .admin-blog-table thead,
@@ -576,7 +576,7 @@
   }
 
   .admin-blog-table thead {
-    display: none; /* Hide headers on mobile */
+    display: none;  
   }
 
   .admin-blog-table tr {
@@ -604,4 +604,20 @@
     justify-content: center;
     gap: 10px;
   }
+
+
+
+} */
+
+
+
+ 
+.admin-blog-table td:last-child {
+
+    border-bottom: none !important;
 }
+
+
+
+
+

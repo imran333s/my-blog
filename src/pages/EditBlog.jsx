@@ -1,61 +1,96 @@
+// src/components/EditBlogModal.jsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import axios from "axios";
 import Select from "react-select";
-
-const categoryOptions = [
-  { value: "Home", label: "Home" },
-  { value: "Sports", label: "Sports" },
-  { value: "Business", label: "Business" },
-  { value: "Politics", label: "Politics" },
-  { value: "Entertainment", label: "Entertainment" },
-];
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import Heading from "@tiptap/extension-heading";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
+import "./EditBlog.css";
 
 const statusOptions = [
   { value: "Active", label: "Active" },
   { value: "Inactive", label: "Inactive" },
 ];
 
-const EditBlog = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+const EditBlogModal = ({ blogId, onClose, onUpdate }) => {
   const API_URL = process.env.REACT_APP_API_URL;
-
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
-  const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
+  const [categoryOptions, setCategoryOptions] = useState([]); // ✅ Add this
   const [status, setStatus] = useState(null);
 
+  // initialize editor
+  const editor = useEditor({
+    extensions: [
+      StarterKit, // Bold, Italic, Strike, Paragraph, etc.
+      Underline,
+      Heading.configure({ levels: [1, 2] }),
+      BulletList,
+      OrderedList,
+    ],
+    content: "",
+  });
+
+  // ✅ Fetch categories dynamically from DB
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/categories`);
+
+        // Filter only active categories if needed
+        const activeCategories = res.data.filter(
+          (cat) => cat.status?.toLowerCase() === "active"
+        );
+
+        // Convert to react-select format
+        const formatted = activeCategories.map((cat) => ({
+          value: cat.name,
+          label: cat.name,
+        }));
+
+        setCategoryOptions(formatted);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        Swal.fire("Error", "Could not load categories", "error");
+      }
+    };
+
+    fetchCategories();
+  }, [API_URL]);
+
+  // fetch blog data
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/blogs/${id}`);
+        const res = await axios.get(`${API_URL}/api/blogs/${blogId}`);
         setTitle(res.data.title || "");
         setImage(res.data.image || "");
-        setDescription(res.data.content || "");
-
         if (res.data.category) {
-          const catArray = res.data.category
-            .split(",")
-            .map((c) => ({ value: c.trim(), label: c.trim() }));
-          setCategories(catArray);
+          setCategories(
+            res.data.category
+              .split(",")
+              .map((c) => ({ value: c.trim(), label: c.trim() }))
+          );
         }
-
         if (res.data.status) {
           setStatus({ value: res.data.status, label: res.data.status });
         }
+        if (editor) editor.commands.setContent(res.data.content || "");
       } catch (err) {
-        console.error("Failed to fetch blog:", err);
+        console.error(err);
       }
     };
-    fetchBlog();
-  }, [id, API_URL]);
+    if (blogId) fetchBlog();
+  }, [blogId, API_URL, editor]);
 
+  // submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (categories.length === 0) {
       return Swal.fire({
         icon: "warning",
@@ -63,70 +98,79 @@ const EditBlog = () => {
         text: "Please select at least one category",
       });
     }
-
     const token = localStorage.getItem("token");
-    if (!token) {
-      return Swal.fire("Error", "You are not authorized", "error");
-    }
+    if (!token) return Swal.fire("Error", "Not authorized", "error");
 
     try {
       await axios.put(
-        `${API_URL}/api/blogs/${id}`,
+        `${API_URL}/api/blogs/${blogId}`,
         {
           title,
           image,
-          content: description,
+          content: editor.getHTML(),
           category: categories.map((c) => c.value).join(", "),
           status: status ? status.value : "Active",
         },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       Swal.fire({
         icon: "success",
-        title: "Edited!",
-        text: "News has been updated successfully.",
+        title: "Updated!",
+        text: "Blog updated successfully.",
         timer: 2000,
         showConfirmButton: false,
       });
 
-      navigate("/admin/dashboard");
+      onUpdate();
+      onClose();
     } catch (err) {
       console.error(err);
-      Swal.fire({
-        icon: "error",
-        title: "Failed!",
-        text: "Could not update blog",
-      });
+      Swal.fire("Error", "Could not update blog", "error");
     }
   };
 
+  // toolbar button helper
+  const toolbarButton = (label, command, isActive) => (
+    <button
+      type="button"
+      onClick={command}
+      className={isActive ? "active" : ""}
+      title={label}
+    >
+      {label}
+    </button>
+  );
+
   return (
-    <div className="editblog-container">
-      <h2 className="form-title">Edit News</h2>
+    <div className="modal-overlay">
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Edit Blog</h2>
+          <button className="modal-close" onClick={onClose}>
+            ×
+          </button>
+        </div>
 
-      <form onSubmit={handleSubmit} className="blog-form">
-        {/* Row 1: Title | Image | Category */}
-        <input
-          type="text"
-          placeholder="Title"
-          className="form-input"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
+        <form onSubmit={handleSubmit} className="blog-form">
+          <label>Image URL</label>
+          <input
+            type="text"
+            placeholder="Image URL"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+          />
 
-        <input
-          type="text"
-          placeholder="Image URL"
-          className="form-input"
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
-        />
+          <label>Title</label>
+          <input
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
 
-        <div className="select-container">
+          <label>Category</label>
           <Select
             options={categoryOptions}
             isMulti
@@ -134,104 +178,93 @@ const EditBlog = () => {
             onChange={setCategories}
             placeholder="Select categories..."
           />
-        </div>
 
-        {/* Row 2: Status */}
-        <div className="select-container half-width">
+          <label>Status</label>
           <Select
             options={statusOptions}
             value={status}
             onChange={setStatus}
             placeholder="Select status..."
           />
-        </div>
 
-        {/* Row 3: Description */}
-        <textarea
-          placeholder="Description"
-          rows="6"
-          className="form-textarea"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        />
+          <label>Content</label>
+          {editor && (
+            <div className="editor-toolbar">
+              {toolbarButton(
+                "Normal",
+                () =>
+                  editor
+                    .chain()
+                    .focus()
+                    .unsetAllMarks()
+                    .clearNodes()
+                    .setParagraph()
+                    .run(),
+                editor.isActive("paragraph")
+              )}
 
-        {/* Row 4: Submit Button */}
-        <button type="submit" className="submit-btn">
-          Save Changes
-        </button>
-      </form>
+              {toolbarButton(
+                "B",
+                () => editor.chain().focus().toggleBold().run(),
+                editor.isActive("bold")
+              )}
+              {toolbarButton(
+                "I",
+                () => editor.chain().focus().toggleItalic().run(),
+                editor.isActive("italic")
+              )}
+              {toolbarButton(
+                "U",
+                () => editor.chain().focus().toggleUnderline().run(),
+                editor.isActive("underline")
+              )}
+              {toolbarButton(
+                "S",
+                () => editor.chain().focus().toggleStrike().run(),
+                editor.isActive("strike")
+              )}
 
-      {/* ✅ Inline CSS for responsive layout */}
-      <style>{`
-        .editblog-container {
-          max-width: 900px;
-          margin: 0 auto;
-          padding: 20px;
-        }
+              {toolbarButton(
+                "H1",
+                () => {
+                  if (!editor) return;
+                  editor.chain().focus().toggleHeading({ level: 1 }).run();
+                },
+                editor.isActive("heading", { level: 1 })
+              )}
 
-        .form-title {
-          font-size: 1.5rem;
-          font-weight: bold;
-          margin-bottom: 20px;
-        }
+              {toolbarButton(
+                "H2",
+                () => {
+                  if (!editor) return;
+                  editor.chain().focus().toggleHeading({ level: 2 }).run();
+                },
+                editor.isActive("heading", { level: 2 })
+              )}
 
-        .blog-form {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 12px;
-        }
+              {toolbarButton(
+                "• List",
+                () => editor.chain().focus().toggleBulletList().run(),
+                editor.isActive("bulletList")
+              )}
 
-        .form-input, .select-container, .form-textarea {
-          flex: 1;
-          min-width: 260px;
-          padding: 8px;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-        }
+              {toolbarButton(
+                "1. List",
+                () => editor.chain().focus().toggleOrderedList().run(),
+                editor.isActive("orderedList")
+              )}
+            </div>
+          )}
 
-        .form-textarea {
-          flex-basis: 100%;
-        }
+          <EditorContent editor={editor} className="editor" />
 
-        .half-width {
-          flex: 0 0 45%;
-        }
-
-        .submit-btn {
-          background-color: #007bff;
-          color: white;
-          border: none;
-          padding: 10px 20px;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: background 0.3s ease;
-        }
-
-        .submit-btn:hover {
-          background-color: #0056b3;
-        }
-
-        /* 📱 Mobile Responsive */
-        @media (max-width: 768px) {
-          .blog-form {
-            flex-direction: column;
-          }
-          .form-input,
-          .select-container,
-          .form-textarea,
-          .half-width {
-            flex: 1 1 100%;
-            min-width: 100%;
-          }
-          .submit-btn {
-            width: 100%;
-            text-align: center;
-          }
-        }
-      `}</style>
+          <div className="modal-buttons">
+            <button type="submit">Save Changes</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default EditBlog;
+export default EditBlogModal;

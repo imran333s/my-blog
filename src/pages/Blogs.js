@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Blogs.css";
@@ -14,7 +13,8 @@ const BlogList = () => {
     const fetchBlogs = async () => {
       try {
         const response = await fetch(`${API_URL}/api/blogs`);
-        if (!response.ok) throw new Error(`Failed to fetch blogs: ${response.status}`);
+        if (!response.ok)
+          throw new Error(`Failed to fetch blogs: ${response.status}`);
         const data = await response.json();
         setBlogs(data);
       } catch (err) {
@@ -27,7 +27,8 @@ const BlogList = () => {
   }, [API_URL]);
 
   if (loading) return <p style={{ textAlign: "center" }}>Loading...</p>;
-  if (error) return <p style={{ textAlign: "center", color: "red" }}>Error: {error}</p>;
+  if (error)
+    return <p style={{ textAlign: "center", color: "red" }}>Error: {error}</p>;
 
   const filteredBlogs = blogs.filter((blog) => blog.status === "Active");
 
@@ -43,7 +44,13 @@ const BlogList = () => {
                 <img
                   src={blog.image}
                   alt={blog.title}
-                  style={{ width: "100%", height: "auto", maxHeight: "250px", objectFit: "contain", borderRadius: "8px" }}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: "250px",
+                    objectFit: "contain",
+                    borderRadius: "8px",
+                  }}
                   onError={(e) => (e.target.src = "/fallback-image.png")}
                 />
               </div>
@@ -52,20 +59,54 @@ const BlogList = () => {
                 <img
                   src="/fallback-image.png"
                   alt="No image"
-                  style={{ width: "100%", height: "auto", maxHeight: "250px", objectFit: "contain", borderRadius: "8px" }}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: "250px",
+                    objectFit: "contain",
+                    borderRadius: "8px",
+                  }}
                 />
               </div>
             )}
 
-            <h3 style={{ fontSize: "1.2rem", fontWeight: "600", color: "#333", marginBottom: "10px" }}>
+            <h3
+              style={{
+                fontSize: "1.2rem",
+                fontWeight: "600",
+                color: "#333",
+                marginBottom: "10px",
+              }}
+            >
               {blog.title}
             </h3>
 
-            <p style={{ fontSize: "0.95rem", color: "#555", marginBottom: "12px", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-              {blog.content}
-            </p>
+            <div
+              style={{
+                fontSize: "0.95rem",
+                color: "#555",
+                marginBottom: "12px",
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+              dangerouslySetInnerHTML={{
+                __html:
+                  blog.content.length > 100
+                    ? blog.content.substring(0, 100) + "..."
+                    : blog.content,
+              }}
+            />
 
-            <Link to={`/blog/${blog._id}`} style={{ textDecoration: "none", color: "#007bff", fontWeight: "500" }}>
+            <Link
+              to={`/blog/${blog._id}`}
+              style={{
+                textDecoration: "none",
+                color: "#007bff",
+                fontWeight: "500",
+              }}
+            >
               Read More <i className="fas fa-arrow-right"></i>
             </Link>
           </div>
@@ -76,4 +117,3 @@ const BlogList = () => {
 };
 
 export default BlogList;
-

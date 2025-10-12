@@ -1,0 +1,192 @@
+/* ===============================
+   Admin Blog List Styles
+================================= */
+
+.main-content {
+  padding: 5px 0;
+  margin-bottom: 90px;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ===============================
+   Blog Table Styling
+================================= */
+.admin-blog-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.admin-blog-table th,
+.admin-blog-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.admin-blog-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.admin-blog-table img {
+  width: 70px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* ===============================
+   Action Buttons
+================================= */
+.small-btn {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* .edit-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+} */
+
+.view-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* ===============================
+   Responsive Table
+================================= */
+@media (max-width: 768px) {
+  .admin-blog-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .admin-blog-table img {
+    width: 50px;
+    height: 40px;
+  }
+
+  .small-btn {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+
+/* ===============================
+   Mobile Card Layout
+================================= */
+@media (max-width: 600px) {
+  .admin-blog-table,
+  .admin-blog-table thead,
+  .admin-blog-table tbody,
+  .admin-blog-table th,
+  .admin-blog-table td,
+  .admin-blog-table tr {
+    display: block;
+  }
+
+  .admin-blog-table thead {
+    display: none;
+  }
+
+  .admin-blog-table tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  .admin-blog-table td {
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 5px;
+  }
+
+  .admin-blog-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+
+  .admin-blog-table td:last-child {
+    justify-content: center;
+    gap: 10px;
+  }
+}
+
+/* ===============================
+   Remove horizontal lines from Action column
+================================= */
+.admin-blog-table td:last-child {
+  border-bottom: none !important;
+}
+/* ===============================
+   Action Buttons Layout Update
+================================= */
+.admin-blog-table td:last-child {
+  border-bottom: none !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px; /* space between top row and delete button */
+}
+
+/* Top row: view + edit side by side */
+.admin-blog-table td:last-child .top-row {
+  display: flex;
+  gap: 5px;
+}
+
+/* Buttons inside small boxes */
+.admin-blog-table td:last-child button {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 16px;
+  padding: 0;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin-blog-table td:last-child button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Delete button special styling */
+.admin-blog-table td:last-child .delete-btn {
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+  
+}
+
+.admin-blog-table td:last-child .delete-btn:hover {
+  background-color: #d32f2f;
+}

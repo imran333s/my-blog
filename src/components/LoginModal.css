@@ -1,14 +1,5 @@
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+/* .modal-overlay {
+
 }
 
 .modal-content {
@@ -21,15 +12,59 @@
 }
 
 .modal-content input {
-  display: block;
+ 
+}
+
+.modal-content button {
+  
+}
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+} */
+/* Unique classes to avoid conflict with EditBlogModal */
+.login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.login-modal-content {
+   background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 300px;
+  position: relative;
+  text-align: center;
+}
+
+.login-modal-content input {
+   display: block;
   width: 100%;
   margin: 10px 0;
   padding: 8px;
 }
 
-.modal-content button {
+.login-modal-content button {
   padding: 8px 15px;
   margin-top: 10px;
+}
+
+.login-modal-content button:hover {
+  background-color: #0056b3;
 }
 
 .close-btn {

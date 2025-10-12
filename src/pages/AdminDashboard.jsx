@@ -1,21 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import AddBlog from "./AddBlog";
 import BlogList from "./BlogList";
 import AddCategory from "./AddCategory";
 import CategoryList from "./CategoryList";
+import AdminHeader from "./AdminHeader";
+
 const AdminDashboard = ({ onLogout }) => {
-  const [activePage, setActivePage] = useState("add-blog");
+  const [activePage, setActivePage] = useState("blog-list");
+  const [adminInfo, setAdminInfo] = useState({ name: "", role: "" });
+  const [websiteName, setWebsiteName] = useState("The Daily Digest");
   const navigate = useNavigate();
-
+  const API_URL = process.env.REACT_APP_API_URL;
   const handleLogout = () => {
-    // Remove the JWT token from localStorage
     localStorage.removeItem("token");
-    if (onLogout) {
-      onLogout();
-    }
-
-    // Redirect to home page
+    if (onLogout) onLogout();
     navigate("/");
   };
 
@@ -34,65 +34,77 @@ const AdminDashboard = ({ onLogout }) => {
     }
   };
 
+  useEffect(() => {
+    const fetchAdminInfo = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/admin/me`); // no headers
+
+        const data = response.data;
+        setAdminInfo({ name: data.name, role: data.role });
+      } catch (error) {
+        console.error("Failed to fetch admin info:", error);
+      }
+    };
+
+    fetchAdminInfo();
+  }, []);
+
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar */}
-      <aside
-        style={{
-          width: "220px",
-          background: "#f8f9fa",
-          padding: "20px",
-          boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
-        }}
-      >
-        <h2 style={{ fontSize: "1.5rem", marginBottom: "30px" }}>
-          Admin Panel
-        </h2>
+    <div
+      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+    >
+      {/* Top Header */}
+      <AdminHeader
+        adminName={adminInfo.name}
+        role={adminInfo.role}
+        onLogout={handleLogout}
+        websiteName={websiteName} // pass website name dynamically
+      />
 
-        <button
-          style={sidebarBtnStyle(activePage === "add-blog")}
-          onClick={() => setActivePage("add-blog")}
-        >
-          Add News
-        </button>
-
-        <button
-          style={sidebarBtnStyle(activePage === "blog-list")}
-          onClick={() => setActivePage("blog-list")}
-        >
-          News List
-        </button>
-
-        <button
-          style={sidebarBtnStyle(activePage === "add-category")}
-          onClick={() => setActivePage("add-category")}
-        >
-          Add Category
-        </button>
-
-        <button
-          style={sidebarBtnStyle(activePage === "category-list")}
-          onClick={() => setActivePage("category-list")}
-        >
-          Category List
-        </button>
-
-        {/* Logout Button */}
-        <button
+      {/* Main content layout */}
+      <div style={{ display: "flex", flex: 1 }}>
+        {/* Sidebar */}
+        <aside
           style={{
-            ...sidebarBtnStyle(false),
-            background: "#dc3545",
-            color: "#fff",
-            marginTop: "30px",
+            width: "220px",
+            background: "#f8f9fa",
+            padding: "20px",
+            boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
           }}
-          onClick={handleLogout}
         >
-          Logout
-        </button>
-      </aside>
+          <h2 style={{ fontSize: "1.5rem", marginBottom: "30px" }}>
+            Admin Panel
+          </h2>
 
-      {/* Main Content */}
-      <main style={{ flex: 1, padding: "20px" }}>{renderContent()}</main>
+          <button
+            style={sidebarBtnStyle(activePage === "add-blog")}
+            onClick={() => setActivePage("add-blog")}
+          >
+            Add News
+          </button>
+          <button
+            style={sidebarBtnStyle(activePage === "blog-list")}
+            onClick={() => setActivePage("blog-list")}
+          >
+            News List
+          </button>
+          <button
+            style={sidebarBtnStyle(activePage === "add-category")}
+            onClick={() => setActivePage("add-category")}
+          >
+            Add Category
+          </button>
+          <button
+            style={sidebarBtnStyle(activePage === "category-list")}
+            onClick={() => setActivePage("category-list")}
+          >
+            Category List
+          </button>
+        </aside>
+
+        {/* Main Content */}
+        <main style={{ flex: 1, padding: "20px" }}>{renderContent()}</main>
+      </div>
     </div>
   );
 };
@@ -105,31 +117,16 @@ const sidebarBtnStyle = (active) => ({
   marginBottom: "15px",
   border: "none",
   borderRadius: "8px",
-  background: active
-    ? "linear-gradient(90deg, #79da84ff )" // gradient for active
-    : "#374151", // dark grey for inactive
+  background: active ? "linear-gradient(90deg, #79da84ff )" : "#374151",
   color: active ? "#1f2937" : "#e5e7eb",
   textAlign: "left",
   cursor: "pointer",
   fontWeight: 600,
   fontSize: "0.95rem",
   boxShadow: active
-    ? "0 4px 12px rgba(160, 206, 99, 0.5)" // subtle shadow for active
+    ? "0 4px 12px rgba(160, 206, 99, 0.5)"
     : "0 2px 5px rgba(0,0,0,0.15)",
   transition: "all 0.3s ease",
-  position: "relative",
-  overflow: "hidden",
 });
-
-// Add hover effect
-const hoverEffect = (e) => {
-  e.currentTarget.style.transform = "translateX(5px)";
-  e.currentTarget.style.boxShadow = "0 6px 15px rgba(0,0,0,0.2)";
-};
-
-const removeHoverEffect = (e) => {
-  e.currentTarget.style.transform = "translateX(0)";
-  e.currentTarget.style.boxShadow = sidebarBtnStyle(false).boxShadow;
-};
 
 export default AdminDashboard;

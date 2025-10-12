@@ -62,8 +62,8 @@ const LoginModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="login-modal-overlay">
+      <div className="login-modal-content">
         <h2>Admin Login</h2>
         <form onSubmit={handleLogin}>
           <input
@@ -82,8 +82,14 @@ const LoginModal = ({ isOpen, onClose }) => {
           />
           <button type="submit">Login</button>
         </form>
-        <button className="close-btn" onClick={onClose}>
-          ✖  
+        <button
+          className="close-btn"
+          onClick={() => {
+            onClose(); // close the modal
+            navigate("/"); // redirect to home
+          }}
+        >
+          ✖
         </button>
       </div>
     </div>

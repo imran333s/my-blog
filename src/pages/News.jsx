@@ -241,7 +241,7 @@ const News = () => {
                 {blog.title}
               </h3>
 
-              <p
+              <div
                 style={{
                   fontSize: "0.95rem",
                   color: "#555",
@@ -251,9 +251,13 @@ const News = () => {
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
                 }}
-              >
-                {blog.content}
-              </p>
+                dangerouslySetInnerHTML={{
+                  __html:
+                    blog.content.length > 100
+                      ? blog.content.substring(0, 100) + "..."
+                      : blog.content,
+                }}
+              />
 
               <Link
                 to={`/blog/${blog._id}`}

@@ -1,4 +1,4 @@
-.main-content {
+/* .main-content {
   padding: 20px;
 }
 
@@ -14,13 +14,13 @@
   width: 90%;
   margin: 0 auto;
   border-collapse: collapse;
-  border: 1px solid #ccc; /* Outer border */
+  border: 1px solid #ccc;  
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
 }
 
-/* Add vertical and horizontal borders */
+ 
 .admin-category-table th,
 .admin-category-table td {
   border: 1px solid #ccc;
@@ -39,8 +39,7 @@
 .admin-category-table tr:hover {
   background-color: #f9f9f9;
 }
-
-/* Image styling */
+ 
 .category-img {
   width: 80px;
   height: 60px;
@@ -48,7 +47,7 @@
   border-radius: 5px;
 }
 
-/* Status colors */
+ 
 .status-active {
   color: green;
   font-weight: bold;
@@ -59,7 +58,7 @@
   font-weight: bold;
 }
 
-/* Buttons */
+ 
 .edit-btn,
 .delete-btn {
   border: none;
@@ -94,4 +93,175 @@
   display: flex;
   gap: 10px;
   justify-content: center;
+}
+
+
+
+.admin-category-table td:last-child {
+
+    border-bottom: none !important;
+} */
+
+
+
+
+
+/* CategoryList.css - Scoped only to Category List */
+.category-list .main-content {
+  padding: 20px;
+}
+
+.category-list .section-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+}
+
+.category-list .admin-category-table {
+  width: 90%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  border: 1px solid #ccc; /* Outer border */
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Add vertical and horizontal borders */
+.category-list .admin-category-table th,
+.category-list .admin-category-table td {
+  border: 1px solid #ccc;
+  padding: 12px 15px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.category-list .admin-category-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #444;
+  text-transform: uppercase;
+}
+
+.category-list .admin-category-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Image styling */
+.category-list .category-img {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+/* Status colors */
+.category-list .status-active {
+  color: green;
+  font-weight: bold;
+}
+
+.category-list .status-inactive {
+  color: red;
+  font-weight: bold;
+}
+
+/* Buttons */
+.category-list .edit-btn,
+.category-list .delete-btn {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 14px;
+}
+
+.category-list .edit-btn {
+  background-color: #007bff;
+}
+
+.category-list .edit-btn:hover {
+  background-color: #0056b3;
+}
+
+.category-list .delete-btn {
+  background-color: #d9534f;
+}
+
+.category-list .delete-btn:hover {
+  background-color: #c9302c;
+}
+
+.category-list .small-btn {
+  padding: 6px 10px;
+}
+
+.category-list .action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Remove horizontal borders only for Action column */
+.category-list .admin-category-table td:last-child {
+  border-bottom: none !important;
+}
+/* Action Buttons Layout like Blog list */
+.category-list .admin-category-table td:last-child {
+  border-bottom: none !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px; /* space between top and bottom row */
+}
+
+/* Top row: edit emoji */
+.category-list .admin-category-table td:last-child .top-row {
+  display: flex;
+  gap: 5px;
+}
+
+/* Buttons inside small boxes */
+.category-list .admin-category-table td:last-child button {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 16px;
+  padding: 0;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.category-list .admin-category-table td:last-child button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Delete button special styling */
+.category-list .admin-category-table td:last-child .delete-btn {
+  background-color: #d9534f;
+  color: #fff;
+  border: none;
+}
+
+.category-list .admin-category-table td:last-child .delete-btn:hover {
+  background-color: #c9302c;
+}
+
+/* Edit button special styling */
+.category-list .admin-category-table td:last-child .edit-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+}
+
+.category-list .admin-category-table td:last-child .edit-btn:hover {
+  background-color: #0056b3;
 }
