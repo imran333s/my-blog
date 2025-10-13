@@ -23,6 +23,8 @@ const AdminBlogList = () => {
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [editingBlogId, setEditingBlogId] = useState(null);
   const [selectedSort, setSelectedSort] = useState(sortOptions[0]); // default newest
+  const [currentPage, setCurrentPage] = useState(1);
+  const blogsPerPage = 5; // You can adjust this number
 
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -65,7 +67,6 @@ const AdminBlogList = () => {
   // ✅ Apply filters dynamically
   useEffect(() => {
     let filtered = [...blogs];
-
     // Filter by selected categories
     if (selectedCategories.length > 0) {
       const selectedCatValues = selectedCategories.map((c) =>
@@ -75,7 +76,6 @@ const AdminBlogList = () => {
         selectedCatValues.includes(blog.category?.toLowerCase())
       );
     }
-
     // Filter by status (only if selected)
     if (selectedStatus && selectedStatus.value !== "All") {
       filtered = filtered.filter(
@@ -83,14 +83,14 @@ const AdminBlogList = () => {
           blog.status?.toLowerCase() === selectedStatus.value.toLowerCase()
       );
     }
-
     // Sort blogs
     if (selectedSort?.value === "newest") {
       filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (selectedSort?.value === "oldest") {
       filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     }
-
+    // ✅ Reset to first page whenever filters or sorting change
+    setCurrentPage(1);
     setFilteredBlogs(filtered);
   }, [selectedCategories, selectedStatus, blogs, selectedSort]);
 
@@ -147,9 +147,7 @@ const AdminBlogList = () => {
         {/* =========================
             Category & Status Filters
         ========================== */}
-        {/* =========================
-    Filters & Sort in Same Row
-========================== */}
+
         <div
           style={{
             display: "flex",
@@ -246,76 +244,128 @@ const AdminBlogList = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredBlogs.map((blog) => (
-                <tr key={blog._id}>
-                  <td>
-                    {blog.image ? (
-                      <img
-                        src={blog.image}
-                        alt={blog.title}
-                        style={{
-                          width: "80px",
-                          height: "60px",
-                          objectFit: "cover",
+              {filteredBlogs
+                .slice(
+                  (currentPage - 1) * blogsPerPage,
+                  currentPage * blogsPerPage
+                )
+                .map((blog) => (
+                  <tr key={blog._id}>
+                    <td>
+                      {blog.image ? (
+                        <img
+                          src={blog.image}
+                          alt={blog.title}
+                          style={{
+                            width: "80px",
+                            height: "60px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      ) : (
+                        "No Image"
+                      )}
+                    </td>
+                    <td>{blog.title}</td>
+                    <td>
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            blog.content.length > 100
+                              ? blog.content.substring(0, 100) + "..."
+                              : blog.content,
                         }}
+                        style={{ maxHeight: "60px", overflow: "hidden" }}
                       />
-                    ) : (
-                      "No Image"
-                    )}
-                  </td>
-                  <td>{blog.title}</td>
-                  <td>
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          blog.content.length > 100
-                            ? blog.content.substring(0, 100) + "..."
-                            : blog.content,
-                      }}
-                      style={{ maxHeight: "60px", overflow: "hidden" }}
-                    />
-                  </td>
-                  <td>{blog.category || "N/A"}</td>
-                  <td>
-                    <span
-                      style={{
-                        color:
-                          blog.status?.trim().toLowerCase() === "active"
-                            ? "green"
-                            : "red",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {blog.status}
-                    </span>
-                  </td>
-                  <td className="action-buttons">
-                    <button
-                      onClick={() =>
-                        (window.location.href = `/blog/${blog._id}`)
-                      }
-                      className="view-btn small-btn"
-                      title="View Details"
-                    >
-                      👁️
-                    </button>
-                    <button
-                      onClick={() => setEditingBlogId(blog._id)}
-                      className="edit-btn small-btn"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(blog._id)}
-                      className="delete-btn small-btn"
-                    >
-                      🗑️
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td>{blog.category || "N/A"}</td>
+                    <td>
+                      <span
+                        style={{
+                          color:
+                            blog.status?.trim().toLowerCase() === "active"
+                              ? "green"
+                              : "red",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {blog.status}
+                      </span>
+                    </td>
+                    <td className="action-buttons">
+                      <button
+                        onClick={() =>
+                          (window.location.href = `/blog/${blog._id}`)
+                        }
+                        className="view-btn small-btn"
+                        title="View Details"
+                      >
+                        👁️
+                      </button>
+                      <button
+                        onClick={() => setEditingBlogId(blog._id)}
+                        className="edit-btn small-btn"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(blog._id)}
+                        className="delete-btn small-btn"
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
+        )}
+
+        {/* =========================
+    Pagination Controls
+========================= */}
+        {filteredBlogs.length > 0 && (
+          <div className="pagination-container">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="pagination-btn"
+            >
+              ◀ Prev
+            </button>
+
+            {Array.from(
+              { length: Math.ceil(filteredBlogs.length / blogsPerPage) },
+              (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`pagination-btn ${
+                    currentPage === i + 1 ? "active-page" : ""
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              )
+            )}
+
+            <button
+              onClick={() =>
+                setCurrentPage((prev) =>
+                  Math.min(
+                    prev + 1,
+                    Math.ceil(filteredBlogs.length / blogsPerPage)
+                  )
+                )
+              }
+              disabled={
+                currentPage === Math.ceil(filteredBlogs.length / blogsPerPage)
+              }
+              className="pagination-btn"
+            >
+              Next ▶
+            </button>
+          </div>
         )}
 
         {/* ================= Edit Blog Modal ================= */}
