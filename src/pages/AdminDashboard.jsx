@@ -66,7 +66,7 @@ const AdminDashboard = ({ onLogout }) => {
         {/* Sidebar */}
         <aside
           style={{
-            width: "220px",
+            width: "160px",
             background: "#f8f9fa",
             padding: "20px",
             boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
@@ -112,7 +112,7 @@ const AdminDashboard = ({ onLogout }) => {
 // Sidebar button styles
 const sidebarBtnStyle = (active) => ({
   display: "block",
-  width: "100%",
+  width: "90%",
   padding: "12px 15px",
   marginBottom: "15px",
   border: "none",

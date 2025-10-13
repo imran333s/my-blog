@@ -213,9 +213,11 @@
 .category-list .admin-category-table td:last-child {
   border-bottom: none !important;
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* 🟢 align buttons in one row */
+  justify-content: center; /* center them horizontally */
   align-items: center;
-  gap: 5px; /* space between top and bottom row */
+  gap: 20px; /* space between buttons */
+  padding-top: 25px;
 }
 
 /* Top row: edit emoji */

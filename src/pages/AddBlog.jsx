@@ -18,7 +18,8 @@ const AddBlog = () => {
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState({ value: "Active", label: "Active" });
+
 
   // ✅ Fetch categories dynamically from DB
   useEffect(() => {

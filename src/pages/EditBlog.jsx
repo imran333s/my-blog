@@ -224,7 +224,7 @@ const EditBlogModal = ({ blogId, onClose, onUpdate }) => {
                 editor.isActive("strike")
               )}
 
-              {toolbarButton(
+              {/* {toolbarButton(
                 "H1",
                 () => {
                   if (!editor) return;
@@ -252,7 +252,7 @@ const EditBlogModal = ({ blogId, onClose, onUpdate }) => {
                 "1. List",
                 () => editor.chain().focus().toggleOrderedList().run(),
                 editor.isActive("orderedList")
-              )}
+              )} */}
             </div>
           )}
 

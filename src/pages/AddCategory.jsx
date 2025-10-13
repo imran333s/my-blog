@@ -12,7 +12,7 @@ const AddCategory = () => {
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
   const [caption, setCaption] = useState("");
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState({ value: "Active", label: "Active" });
   const API_URL = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async (e) => {
@@ -26,11 +26,11 @@ const AddCategory = () => {
     try {
       await axios.post(
         `${API_URL}/api/categories`,
-        { 
-          name, 
-          image, 
-          caption, 
-           status: status ? status.value : "Active", // ✅ Include status
+        {
+          name,
+          image,
+          caption,
+          status: status ? status.value : "Active", // ✅ Include status
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -99,7 +99,7 @@ const AddCategory = () => {
           style={inputStyle}
         />
 
-         {/* ✅ Status Dropdown */}
+        {/* ✅ Status Dropdown */}
         <div>
           <Select
             options={statusOptions}
