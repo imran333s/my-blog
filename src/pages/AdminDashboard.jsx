@@ -62,14 +62,15 @@ const AdminDashboard = ({ onLogout }) => {
       />
 
       {/* Main content layout */}
-      <div style={{ display: "flex", flex: 1 }}>
+      <div style={{ display: "flex", flex: 1, }}>
         {/* Sidebar */}
         <aside
           style={{
             width: "160px",
-            background: "#f8f9fa",
-            padding: "20px",
+            background: "#405e7cff",
+            padding: "90px 10px",
             boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
+            
           }}
         >
           <h2 style={{ fontSize: "1.5rem", marginBottom: "30px" }}>

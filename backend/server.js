@@ -97,6 +97,8 @@ const blogSchema = new mongoose.Schema({
     default: "Active", // ✅ default should be Active if not passed
   },
   createdAt: { type: Date, default: Date.now },
+  videoLink: { type: String },
+
 });
 const Blog = mongoose.model("Blog", blogSchema);
 
@@ -120,7 +122,7 @@ const Category = mongoose.model("Category", categorySchema);
 // Add blog route (✅ protected)
 app.post("/api/blogs", auth, async (req, res) => {
   try {
-    const { title, content, category, image, status } = req.body;
+    const { title, content, category, image, status, videoLink } = req.body;
     const validStatus = ["Active", "Inactive"];
     const blogStatus = validStatus.includes(status) ? status : "Active";
 
@@ -130,6 +132,7 @@ app.post("/api/blogs", auth, async (req, res) => {
       category,
       image,
       status: blogStatus,
+      videoLink,
     });
 
     await newBlog.save();
@@ -193,7 +196,7 @@ app.get("/api/categories/:id", async (req, res) => {
 // ✅ Update category
 app.put("/api/categories/:id", auth, async (req, res) => {
   try {
-    const { name, image, caption, status } = req.body;
+    const { name, image, caption, status,  } = req.body;
 
     const updatedCategory = await Category.findByIdAndUpdate(
       req.params.id,
@@ -285,7 +288,7 @@ app.get("/api/blogs/:id", async (req, res) => {
 // Update blog
 app.put("/api/blogs/:id", auth, async (req, res) => {
   try {
-    const { title, content, image, category, status } = req.body;
+    const { title, content, image, category, status, videoLink } = req.body;
     // ✅ Debug: check incoming status
     console.log("Updating blog with status:", status);
 
@@ -295,7 +298,7 @@ app.put("/api/blogs/:id", auth, async (req, res) => {
 
     const updatedBlog = await Blog.findByIdAndUpdate(
       req.params.id,
-      { title, content, image, category, status: blogStatus },
+      { title, content, image, category, status: blogStatus, videoLink },
       { new: true, runValidators: true } // ✅ enforce enum validation
     );
 

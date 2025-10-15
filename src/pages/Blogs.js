@@ -32,6 +32,24 @@ const BlogList = () => {
 
   const filteredBlogs = blogs.filter((blog) => blog.status === "Active");
 
+  const convertToEmbedURL = (url) => {
+    if (!url) return "";
+
+    // YouTube normal URL, short URL, or shorts
+    let youtubeMatch = url.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]+)/
+    );
+    if (youtubeMatch)
+      return `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1&mute=1`;
+
+    // Vimeo
+    let vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch)
+      return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1&muted=1`;
+
+    return url; // fallback
+  };
+
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0px" }}>
       <h2 style={{ textAlign: "center", marginBottom: "10px" }}>News</h2>
@@ -66,6 +84,33 @@ const BlogList = () => {
                     objectFit: "contain",
                     borderRadius: "8px",
                   }}
+                />
+              </div>
+            )}
+
+            {/* ✅ Video embed below image */}
+            {blog.videoLink && (
+              <div
+                style={{
+                  marginBottom: "10px",
+                  position: "relative",
+                  paddingTop: "56.25%",
+                }}
+              >
+                <iframe
+                  src={convertToEmbedURL(blog.videoLink)}
+                  title={blog.title + " video"}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    border: 0,
+                    borderRadius: "8px",
+                  }}
+                  allow="autoplay; encrypted-media; fullscreen"
+                  allowFullScreen
                 />
               </div>
             )}

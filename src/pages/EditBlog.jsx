@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -21,6 +20,7 @@ const EditBlogModal = ({ blogId, onClose, onUpdate }) => {
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [status, setStatus] = useState(null);
   const [content, setContent] = useState("");
+  const [videoLink, setVideoLink] = useState("");
 
   // Fetch categories
   useEffect(() => {
@@ -61,6 +61,11 @@ const EditBlogModal = ({ blogId, onClose, onUpdate }) => {
         if (res.data.status) {
           setStatus({ value: res.data.status, label: res.data.status });
         }
+
+        // ✅ Set video link
+        if (res.data.videoLink) {
+          setVideoLink(res.data.videoLink);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -92,6 +97,7 @@ const EditBlogModal = ({ blogId, onClose, onUpdate }) => {
           content,
           category: categories.map((c) => c.value).join(", "),
           status: status ? status.value : "Active",
+          videoLink,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -146,6 +152,15 @@ const EditBlogModal = ({ blogId, onClose, onUpdate }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="blog-form">
+          <label>Title</label>
+          <input
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+
           <label>Image URL</label>
           <input
             type="text"
@@ -154,13 +169,12 @@ const EditBlogModal = ({ blogId, onClose, onUpdate }) => {
             onChange={(e) => setImage(e.target.value)}
           />
 
-          <label>Title</label>
+          <label>Video Link (YouTube)</label>
           <input
             type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
+            placeholder="Video Link"
+            value={videoLink}
+            onChange={(e) => setVideoLink(e.target.value)}
           />
 
           <label>Category</label>

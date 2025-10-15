@@ -136,6 +136,28 @@ const AdminBlogList = () => {
     }
   };
 
+  const convertToEmbedURL = (url) => {
+  if (!url) return "";
+
+  let youtubeMatch = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]+)/
+  );
+  if (youtubeMatch) {
+    return `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1&mute=1`;
+
+  }
+
+  let vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeoMatch) {
+    return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1&muted=1`;
+
+  }
+
+  return url;
+};
+
+
+
   return (
     <main className="main-content">
       <div className="container">
@@ -238,6 +260,7 @@ const AdminBlogList = () => {
               <tr>
                 <th>S.No</th>
                 <th>Image</th>
+                <th>Video</th>
                 <th>Title</th>
                 <th>Content</th>
                 <th>Category</th>
@@ -270,6 +293,23 @@ const AdminBlogList = () => {
                         />
                       ) : (
                         "No Image"
+                      )}
+                    </td>
+
+                    {/* Video Column */}
+                    <td>
+                      {blog.videoLink ? (
+                        <iframe
+                          src={convertToEmbedURL(blog.videoLink)}
+                          width="120"
+                          height="60"
+                          frameBorder="0"
+                          allow="autoplay; encrypted-media"
+                          allowFullScreen
+                          title="Blog Video"
+                        ></iframe>
+                      ) : (
+                        "No Video"
                       )}
                     </td>
 

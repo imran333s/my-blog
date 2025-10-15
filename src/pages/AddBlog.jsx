@@ -19,7 +19,7 @@ const AddBlog = () => {
   const [categories, setCategories] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [status, setStatus] = useState({ value: "Active", label: "Active" });
-
+  const [videoLink, setVideoLink] = useState(""); // ✅ New field
 
   // ✅ Fetch categories dynamically from DB
   useEffect(() => {
@@ -73,6 +73,7 @@ const AddBlog = () => {
           content: description,
           category: categories.map((c) => c.value).join(", "),
           status: status ? status.value : "Active",
+          videoLink,
         },
         {
           headers: {
@@ -143,6 +144,15 @@ const AddBlog = () => {
             placeholder="Select status..."
           />
         </div>
+
+         {/* ✅ New Video Link Field */}
+        <input
+          type="text"
+          placeholder="Video Link (optional)"
+          className="form-input"
+          value={videoLink}
+          onChange={(e) => setVideoLink(e.target.value)}
+        />
 
         {/* Row 3: Description */}
         <textarea

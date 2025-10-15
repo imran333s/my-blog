@@ -4,22 +4,22 @@ import Swal from "sweetalert2";
 const AdminHeader = ({ websiteName, adminName, role, onLogout }) => {
   const handleLogout = () => {
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "You will be logged out!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#dc3545',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, logout!',
+      confirmButtonColor: "#dc3545",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, logout!",
     }).then((result) => {
       if (result.isConfirmed) {
         onLogout(); // call the actual logout function
         Swal.fire({
-          title: 'Logged out!',
-          text: 'You have been successfully logged out.',
-          icon: 'success',
+          title: "Logged out!",
+          text: "You have been successfully logged out.",
+          icon: "success",
           timer: 1500,
-          showConfirmButton: false
+          showConfirmButton: false,
         });
       }
     });
@@ -31,13 +31,18 @@ const AdminHeader = ({ websiteName, adminName, role, onLogout }) => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "10px 50px",
+        padding: "5px 50px",
         backgroundColor: "#1f2937",
         color: "#fff",
         boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+        position: "sticky", // make it stick
+        top: 0, // stick to the top
+        zIndex: 1000, // stay above other elements
       }}
     >
-      <div style={{ fontSize: "1rem", fontWeight: "bold", marginLeft: "180px" }}>
+      <div
+        style={{ fontSize: "1rem", fontWeight: "bold", marginLeft: "180px" }}
+      >
         {websiteName}
       </div>
 
