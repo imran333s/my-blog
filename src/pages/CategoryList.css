@@ -1,148 +1,41 @@
-/* .main-content {
-  padding: 20px;
-}
-
-.section-title {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 22px;
-  font-weight: bold;
-  color: #333;
-}
-
-.admin-category-table {
-  width: 90%;
-  margin: 0 auto;
-  border-collapse: collapse;
-  border: 1px solid #ccc;  
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
- 
-.admin-category-table th,
-.admin-category-table td {
-  border: 1px solid #ccc;
-  padding: 12px 15px;
-  text-align: left;
-  vertical-align: middle;
-}
-
-.admin-category-table th {
-  background-color: #f5f5f5;
-  font-weight: 600;
-  color: #444;
-  text-transform: uppercase;
-}
-
-.admin-category-table tr:hover {
-  background-color: #f9f9f9;
-}
- 
-.category-img {
-  width: 80px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
- 
-.status-active {
-  color: green;
-  font-weight: bold;
-}
-
-.status-inactive {
-  color: red;
-  font-weight: bold;
-}
-
- 
-.edit-btn,
-.delete-btn {
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  color: #fff;
-  font-size: 14px;
-}
-
-.edit-btn {
-  background-color: #007bff;
-}
-
-.edit-btn:hover {
-  background-color: #0056b3;
-}
-
-.delete-btn {
-  background-color: #d9534f;
-}
-
-.delete-btn:hover {
-  background-color: #c9302c;
-}
-
-.small-btn {
-  padding: 6px 10px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-
-
-.admin-category-table td:last-child {
-
-    border-bottom: none !important;
-} */
-
-
-
-
-
-/* CategoryList.css - Scoped only to Category List */
+/* ===============================
+   Category List Styles
+================================= */
 .category-list .main-content {
-  padding: 20px;
+  padding: 0 0;
+  margin-bottom: 90px;
+  margin-top: 0;
 }
 
 .category-list .section-title {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 22px;
-  font-weight: bold;
+  margin-top: 0;
+  font-size: 32px;
+  font-weight: 700;
   color: #333;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
+/* ===============================
+   Category Table Styling
+================================= */
 .category-list .admin-category-table {
-  width: 90%;
-  margin: 0 auto;
+  width: 100%;
   border-collapse: collapse;
-  border: 1px solid #ccc; /* Outer border */
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
+  margin-top: 20px;
 }
 
-/* Add vertical and horizontal borders */
 .category-list .admin-category-table th,
 .category-list .admin-category-table td {
-  border: 1px solid #ccc;
-  padding: 12px 15px;
+  border: 1px solid #ddd;
+  padding: 10px;
   text-align: left;
   vertical-align: middle;
 }
 
 .category-list .admin-category-table th {
-  background-color: #f5f5f5;
-  font-weight: 600;
-  color: #444;
-  text-transform: uppercase;
+  background-color: #f4f4f4;
+  font-weight: bold;
 }
 
 .category-list .admin-category-table tr:hover {
@@ -151,10 +44,10 @@
 
 /* Image styling */
 .category-list .category-img {
-  width: 80px;
-  height: 60px;
+  width: 70px;
+  height: 50px;
   object-fit: cover;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
 /* Status colors */
@@ -168,19 +61,34 @@
   font-weight: bold;
 }
 
-/* Buttons */
+/* ===============================
+   Action Buttons
+================================= */
+.category-list .action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
 .category-list .edit-btn,
 .category-list .delete-btn {
-  border: none;
-  padding: 6px 12px;
+  border: none; /* remove inner borders */
+  padding: 0;
+  width: 32px;
+  height: 32px;
   border-radius: 4px;
   cursor: pointer;
-  color: #fff;
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background-color: #f5f5f5;
+  transition: background 0.2s;
 }
 
 .category-list .edit-btn {
   background-color: #007bff;
+  color: #fff;
 }
 
 .category-list .edit-btn:hover {
@@ -189,81 +97,106 @@
 
 .category-list .delete-btn {
   background-color: #d9534f;
+  color: #fff;
 }
 
 .category-list .delete-btn:hover {
   background-color: #c9302c;
 }
 
-.category-list .small-btn {
-  padding: 6px 10px;
-}
-
-.category-list .action-buttons {
+/* ===============================
+   Remove inner horizontal lines in Action column
+================================= */
+.category-list .admin-category-table td:last-child {
+  border-top: 1px solid #ddd;      
+  border-left: 1px solid #ddd;    
+  border-right: 1px solid #ddd; 
+  border-bottom: none;
   display: flex;
-  gap: 10px;
   justify-content: center;
-}
-
-/* Remove horizontal borders only for Action column */
-.category-list .admin-category-table td:last-child {
-  border-bottom: none !important;
-}
-/* Action Buttons Layout like Blog list */
-.category-list .admin-category-table td:last-child {
-  border-bottom: none !important;
-  display: flex;
-  flex-direction: row; /* 🟢 align buttons in one row */
-  justify-content: center; /* center them horizontally */
   align-items: center;
-  gap: 20px; /* space between buttons */
+  gap: 8px;
   padding-top: 25px;
 }
 
-/* Top row: edit emoji */
+/* Add bottom border only for last row */
+.category-list .admin-category-table tr:last-child td:last-child {
+  /* border-bottom: 1px solid #ddd;  */
+}
+/* Buttons inside last column */
+/* .category-list .admin-category-table td:last-child button {
+  border: none;  
+} */
+
+/* Top row: buttons side by side */
 .category-list .admin-category-table td:last-child .top-row {
   display: flex;
   gap: 5px;
 }
 
-/* Buttons inside small boxes */
-.category-list .admin-category-table td:last-child button {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  font-size: 16px;
-  padding: 0;
-  border: 1px solid #ccc;
-  background-color: #f5f5f5;
-  cursor: pointer;
-  transition: background 0.2s;
+/* ===============================
+   Responsive Table
+================================= */
+@media (max-width: 768px) {
+  .category-list .admin-category-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .category-list .category-img {
+    width: 50px;
+    height: 40px;
+  }
+
+  .category-list .edit-btn,
+  .category-list .delete-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
 }
 
-.category-list .admin-category-table td:last-child button:hover {
-  background-color: #e0e0e0;
-}
+/* ===============================
+   Mobile Card Layout
+================================= */
+@media (max-width: 600px) {
+  .category-list .admin-category-table,
+  .category-list .admin-category-table thead,
+  .category-list .admin-category-table tbody,
+  .category-list .admin-category-table th,
+  .category-list .admin-category-table td,
+  .category-list .admin-category-table tr {
+    display: block;
+  }
 
-/* Delete button special styling */
-.category-list .admin-category-table td:last-child .delete-btn {
-  background-color: #d9534f;
-  color: #fff;
-  border: none;
-}
+  .category-list .admin-category-table thead {
+    display: none;
+  }
 
-.category-list .admin-category-table td:last-child .delete-btn:hover {
-  background-color: #c9302c;
-}
+  .category-list .admin-category-table tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+  }
 
-/* Edit button special styling */
-.category-list .admin-category-table td:last-child .edit-btn {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-}
+  .category-list .admin-category-table td {
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 5px;
+  }
 
-.category-list .admin-category-table td:last-child .edit-btn:hover {
-  background-color: #0056b3;
+  .category-list .admin-category-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+
+  .category-list .admin-category-table td:last-child {
+    justify-content: center;
+    gap: 10px;
+  }
 }

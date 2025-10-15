@@ -239,6 +239,38 @@ app.get("/api/blogs", async (req, res) => {
   }
 });
 
+// ----------------- Admin Panel: Filtered Blogs -----------------
+app.get("/api/admin/blogs", auth ,async (req, res) => {
+  try {
+    let { categories, status, sort } = req.query;
+
+    const filter = {};
+
+    // Filter by categories (comma-separated)
+    if (categories) {
+      const categoryArray = categories.split(",");
+      filter.category = { $in: categoryArray };
+    }
+
+    // Filter by status
+    if (status && status.toLowerCase() !== "all") {
+      filter.status = status;
+    }
+
+    // Sorting
+    let sortOption = { createdAt: -1 }; // newest first
+    if (sort === "oldest") sortOption = { createdAt: 1 };
+
+    const blogs = await Blog.find(filter).sort(sortOption);
+
+    res.json(blogs);
+  } catch (err) {
+    console.error("Error fetching filtered blogs:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 // Get single blog by ID
 app.get("/api/blogs/:id", async (req, res) => {
   try {

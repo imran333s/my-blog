@@ -1,10 +1,10 @@
-// src/pages/EditBlogModal.jsx
+
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 import Select from "react-select";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 import "./EditBlog.css";
 
 const statusOptions = [
@@ -112,6 +112,29 @@ const EditBlogModal = ({ blogId, onClose, onUpdate }) => {
     }
   };
 
+  // Quill toolbar setup
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "list",
+    "bullet",
+    "link",
+    "image",
+  ];
+
   return (
     <div className="modal-overlay">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -158,69 +181,13 @@ const EditBlogModal = ({ blogId, onClose, onUpdate }) => {
           />
 
           <label>Content</label>
-          <CKEditor
-            editor={ClassicEditor}
-            data={content}
-            onChange={(event, editor) => setContent(editor.getData())}
-            config={{
-              toolbar: [
-                "heading", // restores H1/H2/H3 dropdown
-                "|",
-                "bold",
-                "italic",
-                "underline",
-                "strikethrough",
-                "link",
-                "bulletedList",
-                "numberedList",
-                "blockQuote",
-                "insertTable",
-                "undo",
-                "redo",
-              ],
-              heading: {
-                options: [
-                  {
-                    model: "paragraph",
-                    title: "Normal",
-                    class: "ck-heading_paragraph",
-                  },
-                  {
-                    model: "heading1",
-                    view: "h1",
-                    title: "Heading 1",
-                    class: "ck-heading_heading1",
-                  },
-                  {
-                    model: "heading2",
-                    view: "h2",
-                    title: "Heading 2",
-                    class: "ck-heading_heading2",
-                  },
-                  {
-                    model: "heading3",
-                    view: "h3",
-                    title: "Heading 3",
-                    class: "ck-heading_heading3",
-                  },
-                ],
-              },
-              table: {
-                contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
-              },
-              link: {
-                decorators: {
-                  openInNewTab: {
-                    mode: "manual",
-                    label: "Open in a new tab",
-                    attributes: {
-                      target: "_blank",
-                      rel: "noopener noreferrer",
-                    },
-                  },
-                },
-              },
-            }}
+          <ReactQuill
+            theme="snow"
+            value={content}
+            onChange={setContent}
+            modules={modules}
+            formats={formats}
+            placeholder="Write or edit your content here..."
           />
 
           <div className="modal-buttons">

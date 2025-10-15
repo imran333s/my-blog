@@ -16,7 +16,7 @@ const sortOptions = [
 ];
 
 const AdminBlogList = () => {
-  const [blogs, setBlogs] = useState([]);
+  // const [blogs, setBlogs] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -25,6 +25,8 @@ const AdminBlogList = () => {
   const [selectedSort, setSelectedSort] = useState(sortOptions[0]); // default newest
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 5; // You can adjust this number
+  const [showCategory, setShowCategory] = useState(false);
+  const [showStatus, setShowStatus] = useState(false);
 
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -46,53 +48,48 @@ const AdminBlogList = () => {
     }
   };
 
-  // ✅ Fetch blogs
-  const fetchBlogs = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/api/blogs`);
-      const reversed = res.data.reverse();
-      setBlogs(reversed);
-      setFilteredBlogs(reversed);
-    } catch (err) {
-      console.error("Error fetching blogs:", err);
-    }
-  };
+  // // ✅ Fetch blogs
+  // const fetchBlogs = async () => {
+  //   try {
+  //     const res = await axios.get(`${API_URL}/api/blogs`);
+  //     const reversed = res.data.reverse();
+  //     setBlogs(reversed);
+  //     setFilteredBlogs(reversed);
+  //   } catch (err) {
+  //     console.error("Error fetching blogs:", err);
+  //   }
+  // };
 
   // ✅ Initial load
   useEffect(() => {
-    fetchBlogs();
     fetchCategories();
+    fetchFilteredBlogs();
   }, [API_URL]);
 
-  // ✅ Apply filters dynamically
+  const fetchFilteredBlogs = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const categories = selectedCategories.map((c) => c.value).join(",");
+      const status = selectedStatus?.value || "";
+      const sort = selectedSort?.value || "newest";
+
+      const res = await axios.get(`${API_URL}/api/admin/blogs`, {
+        params: { categories, status, sort },
+        headers: { Authorization: `Bearer ${token}` }, // <-- add token
+      });
+
+      setFilteredBlogs(res.data);
+      setCurrentPage(1);
+    } catch (err) {
+      console.error("Error fetching filtered blogs:", err);
+      Swal.fire("Error", "Could not load blogs", "error");
+    }
+  };
+
+  // Fetch filtered blogs whenever category, status, or sort changes
   useEffect(() => {
-    let filtered = [...blogs];
-    // Filter by selected categories
-    if (selectedCategories.length > 0) {
-      const selectedCatValues = selectedCategories.map((c) =>
-        c.value.toLowerCase()
-      );
-      filtered = filtered.filter((blog) =>
-        selectedCatValues.includes(blog.category?.toLowerCase())
-      );
-    }
-    // Filter by status (only if selected)
-    if (selectedStatus && selectedStatus.value !== "All") {
-      filtered = filtered.filter(
-        (blog) =>
-          blog.status?.toLowerCase() === selectedStatus.value.toLowerCase()
-      );
-    }
-    // Sort blogs
-    if (selectedSort?.value === "newest") {
-      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (selectedSort?.value === "oldest") {
-      filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    }
-    // ✅ Reset to first page whenever filters or sorting change
-    setCurrentPage(1);
-    setFilteredBlogs(filtered);
-  }, [selectedCategories, selectedStatus, blogs, selectedSort]);
+    fetchFilteredBlogs();
+  }, [selectedCategories, selectedStatus, selectedSort]);
 
   // ✅ Prevent background scroll when modal open
   useEffect(() => {
@@ -128,7 +125,7 @@ const AdminBlogList = () => {
         showConfirmButton: false,
       });
 
-      fetchBlogs();
+      await fetchFilteredBlogs();
     } catch (err) {
       Swal.fire({
         icon: "error",
@@ -144,70 +141,73 @@ const AdminBlogList = () => {
       <div className="container">
         <h2 className="section-title">News List</h2>
 
-        {/* =========================
-            Category & Status Filters
-        ========================== */}
-
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between", // pushes filters left and sort right
-            alignItems: "center",
-            marginBottom: "25px",
-            flexWrap: "wrap", // optional for smaller screens
-            gap: "20px", // spacing between items
-          }}
-        >
-          {/* Left: Filters */}
-          <div style={{ display: "flex", gap: "15px", flexWrap: "wrap" }}>
-            {/* Category Filter */}
-            <div style={{ minWidth: "220px", width: "220px" }}>
-              <label
-                style={{
-                  fontWeight: "bold",
-                  marginBottom: "5px",
-                  display: "block",
-                }}
-              >
-                Filter :
-              </label>
-              <Select
-                options={categoryOptions}
-                isMulti
-                value={selectedCategories}
-                onChange={(selected) => {
-                  setSelectedCategories(selected);
-                  setSelectedStatus(null); // Reset status on new category selection
-                }}
-                placeholder="Select categories..."
-                isLoading={categoryOptions.length === 0}
-              />
+        <div className="filters-wrapper">
+          {/* Left: Category + Status */}
+          <div className="filters-left">
+            {/* Category Box */}
+            <div className="filter-box">
+              <div onClick={() => setShowCategory(!showCategory)}>
+                CATEGORIES ▾
+              </div>
+              {showCategory && (
+                <div className="filter-options">
+                  {categoryOptions.map((cat) => (
+                    <div key={cat.value}>
+                      <input
+                        type="checkbox"
+                        id={`cat-${cat.value}`}
+                        value={cat.value}
+                        checked={selectedCategories.some(
+                          (c) => c.value === cat.value
+                        )}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedCategories([...selectedCategories, cat]);
+                          } else {
+                            setSelectedCategories(
+                              selectedCategories.filter(
+                                (c) => c.value !== cat.value
+                              )
+                            );
+                          }
+                        }}
+                      />
+                      <label htmlFor={`cat-${cat.value}`}>{cat.label}</label>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Status Filter — shows only after categories selected */}
-            {selectedCategories.length > 0 && (
-              <div style={{ minWidth: "220px", width: "220px" }}>
-                <label
-                  style={{
-                    fontWeight: "bold",
-                    marginBottom: "5px",
-                    display: "block",
-                  }}
-                >
-                  Status :
-                </label>
-                <Select
-                  options={statusOptions}
-                  value={selectedStatus}
-                  onChange={setSelectedStatus}
-                  placeholder="Select status..."
-                />
-              </div>
-            )}
+            {/* Status Box */}
+            <div className="filter-box">
+              <div onClick={() => setShowStatus(!showStatus)}>STATUS ▾</div>
+              {showStatus && (
+                <div className="filter-options">
+                  {statusOptions
+                    .filter((s) => s.value !== "All")
+                    .map((status) => (
+                      <div key={status.value}>
+                        <input
+                          type="checkbox"
+                          id={`status-${status.value}`}
+                          value={status.value}
+                          checked={selectedStatus?.value === status.value}
+                          onChange={(e) => {
+                            setSelectedStatus(e.target.checked ? status : null);
+                          }}
+                        />
+                        <label htmlFor={`status-${status.value}`}>
+                          {status.label}
+                        </label>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
           </div>
-
-          {/* Right: Sort Dropdown */}
-          <div style={{ minWidth: "220px", width: "220px" }}>
+          {/* Sort Box */}
+          <div className="sort-box">
             <label
               style={{
                 fontWeight: "bold",
@@ -221,7 +221,8 @@ const AdminBlogList = () => {
               options={sortOptions}
               value={selectedSort}
               onChange={setSelectedSort}
-              placeholder="Select sort..."
+              placeholder="Sort by: newest/oldest"
+              isSearchable={false} // optional: remove search bar
             />
           </div>
         </div>
@@ -235,6 +236,7 @@ const AdminBlogList = () => {
           <table className="admin-blog-table">
             <thead>
               <tr>
+                <th>S.No</th>
                 <th>Image</th>
                 <th>Title</th>
                 <th>Content</th>
@@ -249,8 +251,12 @@ const AdminBlogList = () => {
                   (currentPage - 1) * blogsPerPage,
                   currentPage * blogsPerPage
                 )
-                .map((blog) => (
+                .map((blog, index) => (
                   <tr key={blog._id}>
+                    {/* S.No */}
+                    <td>{(currentPage - 1) * blogsPerPage + index + 1}</td>
+
+                    {/* Image */}
                     <td>
                       {blog.image ? (
                         <img
@@ -266,6 +272,8 @@ const AdminBlogList = () => {
                         "No Image"
                       )}
                     </td>
+
+                    {/* Remaining columns */}
                     <td>{blog.title}</td>
                     <td>
                       <div
@@ -373,7 +381,7 @@ const AdminBlogList = () => {
           <EditBlogModal
             blogId={editingBlogId}
             onClose={() => setEditingBlogId(null)}
-            onUpdate={fetchBlogs}
+            onUpdate={fetchFilteredBlogs}
           />
         )}
       </div>

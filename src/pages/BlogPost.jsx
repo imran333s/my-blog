@@ -35,24 +35,30 @@ const BlogPost = () => {
 
   return (
     <main className="main-content">
-      <div className="container blog-post">
-        <h1 className="post-title">{blog.title}</h1>
+  <div className="container blog-post">
+    {blog.image && (
+      <img src={blog.image} alt={blog.title} className="post-image" />
+    )}
+    <h1 className="post-title">{blog.title}</h1>
 
-        {blog.image && (
-          <img src={blog.image} alt={blog.title} className="post-image" />
-        )}
+    <div className="post-meta">
+      <span className="post-category">{blog.category || "General"}</span>
+      <span className="post-status">{blog.status}</span>
+      <span className="post-date">
+        {new Date(blog.createdAt).toLocaleDateString()}
+      </span>
+    </div>
 
-        <div className="post-body">
-          <div
-            dangerouslySetInnerHTML={{ __html: blog.content }}
-            style={{ lineHeight: "1.6", fontSize: "16px" }}
-          />
-        </div>
+    <div
+      className="post-body"
+      dangerouslySetInnerHTML={{ __html: blog.content }}
+    />
 
-        {/* Optional: Edit button if admin functionality is needed */}
-        {/* <button onClick={handleEdit} className="edit-btn">Edit</button> */}
-      </div>
-    </main>
+    {/* Optional: Edit button if admin functionality is needed */}
+    {/* <button onClick={handleEdit} className="edit-btn">Edit</button> */}
+  </div>
+</main>
+
   );
 };
 

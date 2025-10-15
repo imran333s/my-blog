@@ -61,11 +61,13 @@
 .login-modal-content button {
   padding: 8px 15px;
   margin-top: 10px;
+   background-color: #3085d6;
+  /* color: white; */
 }
 
-.login-modal-content button:hover {
+/* .login-modal-content button:hover {
   background-color: #0056b3;
-}
+} */
 
 .close-btn {
   position: absolute;

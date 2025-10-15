@@ -11,9 +11,9 @@
 .section-title {
   margin-top: 0;
   font-size: 32px;
-  font-weight: 700;
+  font-weight: 400;
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   text-align: center;
 }
 
@@ -23,7 +23,7 @@
 .admin-blog-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 1px;
 }
 
 .admin-blog-table th,
@@ -55,16 +55,7 @@
   border-radius: 4px;
   cursor: pointer;
 }
-
-/* .edit-btn {
-  background-color: #4caf50;
-  color: white;
-}
-
-.delete-btn {
-  background-color: #f44336;
-  color: white;
-} */
+ 
 
 .view-btn {
   background-color: transparent;
@@ -229,4 +220,55 @@
 .active-page {
   background-color: #007bff;
   color: white;
+}
+
+
+
+/* Main wrapper: left + right */
+.filters-wrapper {
+  display: flex;
+  justify-content: space-between; /* left & right */
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 10px;
+  flex-wrap: wrap; /* responsive */
+  margin-top: 0px;
+}
+
+/* Left side: Category + Status stacked */
+.filters-left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Right side: Sort */
+.sort-box {
+  padding-top: 50px;
+  min-width: 150px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: bold;
+   gap: 5px;
+}
+
+/* Category / Status box */
+.filter-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.filter-box div:first-child {
+  font-weight: bold;
+}
+
+.filter-options {
+  margin-top: 10px;
+}
+
+.filter-options div {
+  margin-bottom: 5px;
 }
