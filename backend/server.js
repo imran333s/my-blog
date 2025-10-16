@@ -9,12 +9,14 @@ const app = express();
 app.use(cors()); // Allow all origins
 app.use(bodyParser.json());
 const auth = require("./middleware/auth");
-
+// Debug: check if Render is reading the env variable
+console.log("Mongo URL from env:", process.env.MONGO_URL);
 // Connect to MongoDB Atlas using environment variable
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 30000,
   })
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("MongoDB connection error:", err));
