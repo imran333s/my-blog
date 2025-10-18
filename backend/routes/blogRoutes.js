@@ -3,12 +3,14 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const {
   getAllBlogs,
+  getBlogById,
   addBlog,
   updateBlog,
   deleteBlog,
 } = require("../controllers/blogController");
 
 router.get("/", getAllBlogs);
+router.get("/:id", getBlogById);
 router.post("/", auth, addBlog);
 router.put("/:id", auth, updateBlog);
 router.delete("/:id", auth, deleteBlog);

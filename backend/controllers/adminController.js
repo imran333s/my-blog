@@ -1,5 +1,38 @@
   const jwt = require("jsonwebtoken");
   const Admin = require("../models/Admin");
+  const Blog = require("../models/Blog");
+
+  // GET /api/admin/blogs?categories=Sports,Politics&status=Active&sort=newest
+exports.getFilteredBlogs = async (req, res) => {
+  try {
+    const { categories, status, sort } = req.query;
+    const filter = {};
+
+    // ✅ Category filter
+    if (categories) {
+      const categoryArray = categories.split(",").map((c) => c.trim());
+      filter.category = { $in: categoryArray };
+    }
+
+    // ✅ Status filter
+    if (status && status !== "All") {
+      filter.status = status;
+    }
+
+    // ✅ Sorting
+    let sortOption = { createdAt: -1 }; // default newest
+    if (sort === "oldest") sortOption = { createdAt: 1 };
+
+    // ✅ Fetch blogs from MongoDB
+    const blogs = await Blog.find(filter).sort(sortOption);
+
+    res.status(200).json(blogs);
+  } catch (err) {
+    console.error("Error fetching blogs:", err);
+    res.status(500).json({ message: "Failed to fetch blogs" });
+  }
+};
+
 
   exports.loginAdmin = async (req, res) => {
     const { email, password } = req.body;
