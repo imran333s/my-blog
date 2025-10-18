@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import AddBlog from "./AddBlog";
-import BlogList from "./BlogList";
-import AddCategory from "./AddCategory";
-import CategoryList from "./CategoryList";
+import AddBlog from "../News/AddBlog";
+import BlogList from "../News/BlogList";
+import AddCategory from "../Category/AddCategory";
+import CategoryList from "../Category/CategoryList";
 import AdminHeader from "./AdminHeader";
 
 const AdminDashboard = ({ onLogout }) => {

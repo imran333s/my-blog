@@ -9,15 +9,15 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import "./App.css";
 import Sidebar from "./components/Sidebar";
-import Blogs from "./pages/Blogs";
-import BlogPost from "./pages/BlogPost";
+import Blogs from "./pages/News/Blogs";
+import BlogPost from "./pages/News/BlogPost";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 import LoginModal from "./components/LoginModal";
-import EditBlog from "./pages/EditBlog";
-import News from "./pages/News";
-import Slideshow from "./pages/Slideshow";
-import EditCategory from "./pages/EditCategory";
+import EditBlog from "./pages/News/EditBlog";
+import News from "./pages/News/News";
+import Slideshow from "./pages/News/Slideshow";
+import EditCategory from "./pages/Category/EditCategory";
 
 // This wrapper component is inside Router so we can safely use useLocation()
 function AppContent() {
