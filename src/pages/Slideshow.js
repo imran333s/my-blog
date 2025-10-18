@@ -1,40 +1,53 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Slideshow.css"; // ✅ Import the CSS file
+import "./Slideshow.css";
 
 const Slideshow = () => {
   const navigate = useNavigate();
   const [slides, setSlides] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const API_URL = process.env.REACT_APP_API_URL;
-  // Fetch slides from your backend
+  const [error, setError] = useState(null);
+
+  // Automatically pick backend URL: localhost for dev, Render URL for production
+  const API_URL =
+    process.env.REACT_APP_API_URL ||
+    (window.location.hostname === "localhost"
+      ? "http://localhost:5000"
+      : "https://my-blog-5hs2.onrender.com");
+
   useEffect(() => {
+    console.log("API URL being used:", API_URL);
+
     const fetchSlides = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/categories`); // Replace with your API endpoint
-        if (!response.ok) throw new Error("Failed to fetch slides");
-        const data = await response.json();
+        const res = await fetch(`${API_URL}/api/categories`);
+        if (!res.ok) throw new Error("Failed to fetch slides");
+        const data = await res.json();
         setSlides(data);
+      } catch (err) {
+        console.error(err);
+        setError("Unable to load slides");
+      } finally {
         setLoading(false);
-      } catch (error) {
-        console.error(error);
       }
     };
 
     fetchSlides();
-  }, []);
-
-  // const [currentIndex, setCurrentIndex] = useState(0);
+  }, [API_URL]);
 
   const nextSlide = () =>
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+    setCurrentIndex((prev) => (slides.length ? (prev + 1) % slides.length : 0));
   const prevSlide = () =>
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + slides.length) % slides.length
+    setCurrentIndex((prev) =>
+      slides.length ? (prev - 1 + slides.length) % slides.length : 0
     );
   const goToSlide = (index) => setCurrentIndex(index);
   const handleImageClick = (category) => navigate(`/news/${category}`);
+
+  if (loading) return <div>Loading slides...</div>;
+  if (error) return <div>{error}</div>;
+  if (!slides.length) return <div>No slides available</div>;
 
   return (
     <div>
@@ -47,7 +60,7 @@ const Slideshow = () => {
             <img
               src={slide.image}
               alt={slide.caption}
-              onClick={() =>handleImageClick(slide.name.toLowerCase())}
+              onClick={() => handleImageClick(slide.name.toLowerCase())}
             />
             <div
               className="caption-text"

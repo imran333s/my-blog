@@ -48,17 +48,7 @@ const AdminBlogList = () => {
     }
   };
 
-  // // ✅ Fetch blogs
-  // const fetchBlogs = async () => {
-  //   try {
-  //     const res = await axios.get(`${API_URL}/api/blogs`);
-  //     const reversed = res.data.reverse();
-  //     setBlogs(reversed);
-  //     setFilteredBlogs(reversed);
-  //   } catch (err) {
-  //     console.error("Error fetching blogs:", err);
-  //   }
-  // };
+ 
 
   // ✅ Initial load
   useEffect(() => {
@@ -102,10 +92,10 @@ const AdminBlogList = () => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: "warning",
+      icon: "warning", 
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
       confirmButtonText: "Yes, delete it!",
     });
 

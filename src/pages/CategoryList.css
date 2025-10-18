@@ -9,10 +9,10 @@
 
 .category-list .section-title {
   margin-top: 0;
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   text-align: center;
 }
 
@@ -23,6 +23,7 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  border-bottom: 1px solid #ccc;
 }
 
 .category-list .admin-category-table th,
@@ -67,12 +68,12 @@
 .category-list .action-buttons {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 30px;
 }
 
 .category-list .edit-btn,
 .category-list .delete-btn {
-  border: none; /* remove inner borders */
+  border: none;
   padding: 0;
   width: 32px;
   height: 32px;
@@ -84,15 +85,16 @@
   font-size: 16px;
   background-color: #f5f5f5;
   transition: background 0.2s;
+  border: 1px solid #ccc;
 }
 
 .category-list .edit-btn {
-  background-color: #007bff;
+  /* background-color: #f5f5f5; */
   color: #fff;
 }
 
 .category-list .edit-btn:hover {
-  background-color: #0056b3;
+  background-color: #a7dca2;
 }
 
 .category-list .delete-btn {
@@ -101,7 +103,7 @@
 }
 
 .category-list .delete-btn:hover {
-  background-color: #c9302c;
+  background-color: #d8110a;
 }
 
 /* ===============================
@@ -115,18 +117,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 20px;
   padding-top: 25px;
 }
 
-/* Add bottom border only for last row */
-.category-list .admin-category-table tr:last-child td:last-child {
-  /* border-bottom: 1px solid #ddd;  */
-}
-/* Buttons inside last column */
-/* .category-list .admin-category-table td:last-child button {
-  border: none;  
-} */
+ 
+ 
 
 /* Top row: buttons side by side */
 .category-list .admin-category-table td:last-child .top-row {

@@ -1,11 +1,11 @@
+// models/Admin.js
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
 
-const AdminSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
+  name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  role: { type: String, enum: ["Admin", "SuperAdmin", "Employer"], default: "Admin" },
 });
 
-
-
-module.exports = mongoose.model("Admin", AdminSchema);
+module.exports = mongoose.model("Admin", adminSchema);

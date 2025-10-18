@@ -17,16 +17,16 @@
    z-index: 1000;
   background-color: #ffffff;
   padding: 15px 0;
-  
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .navbar-container {
+  width: 100%;
   display: flex;
   /* justify-content: space-between; */
   align-items: center;
     padding: 0 20px; /* Add horizontal padding */
-
+   
 
 }
 .nav-menu{
@@ -97,11 +97,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* .navbar-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-} */
+ 
 
 .logo-img {
   height: 40px;

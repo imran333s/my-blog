@@ -24,6 +24,7 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 1px;
+  border-bottom: 1px solid #ccc;
 }
 
 .admin-blog-table th,
