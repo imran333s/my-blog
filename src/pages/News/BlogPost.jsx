@@ -7,6 +7,7 @@ const BlogPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
+  const [similarBlogs, setSimilarBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const API_URL = process.env.REACT_APP_API_URL; // Use environment variable
 
@@ -15,6 +16,12 @@ const BlogPost = () => {
       try {
         const res = await axios.get(`${API_URL}/api/blogs/${id}`);
         setBlog(res.data);
+
+        // ✅ Fetch similar blogs after main blog loads
+        const similarRes = await axios.get(
+          `${API_URL}/api/blogs/${id}/similar`
+        );
+        setSimilarBlogs(similarRes.data);
       } catch (err) {
         console.error("Error fetching blog:", err);
       } finally {
@@ -86,6 +93,34 @@ const BlogPost = () => {
           className="post-body"
           dangerouslySetInnerHTML={{ __html: blog.content }}
         />
+        {/* ✅ Similar Blogs Section */}
+        {/* ================= Similar Blogs Section ================= */}
+        {similarBlogs.length > 0 && (
+          <div className="similar-blogs-container">
+            <h2>Similar News</h2>
+            {/* <p className="similar-hint">
+              Showing more from <strong>{blog.category}</strong> related to this
+              article.
+            </p> */}
+
+            <div className="similar-grid">
+              {similarBlogs.map((item) => (
+                <div
+                  key={item._id}
+                  className="similar-card"
+                  onClick={() => {
+                    navigate(`/blog/${item._id}`);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                >
+                  {item.image && <img src={item.image} alt={item.title} />}
+                  <h3>{item.title}</h3>
+                  <p>{item.category}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Optional: Edit button if admin functionality is needed */}
         {/* <button onClick={handleEdit} className="edit-btn">Edit</button> */}

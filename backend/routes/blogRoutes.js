@@ -8,16 +8,14 @@ const {
   updateBlog,
   deleteBlog,
   getFilteredBlogs,
+  getSimilarBlogs,
 } = require("../controllers/blogController");
 
-// ✅ Log every request for debugging
-router.use((req, res, next) => {
-  console.log("Blog route:", req.originalUrl);
-  next();
-});
+ 
 
 router.get("/public", getAllBlogs);
 router.get("/", auth, getFilteredBlogs);
+router.get("/:id/similar", getSimilarBlogs);
 router.get("/:id", getBlogById);
 router.post("/", auth, addBlog);
 router.put("/:id", auth, updateBlog);
