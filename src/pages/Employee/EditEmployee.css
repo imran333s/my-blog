@@ -1,0 +1,92 @@
+/* ===============================
+   Edit Employee Styles
+================================= */
+.edit-employee-container {
+  width: 90%;
+  max-width: 650px;
+  margin: 30px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.edit-employee-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.edit-employee-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.edit-employee-form label {
+  font-weight: 600;
+  color: #333;
+}
+
+.edit-employee-form input,
+.edit-employee-form select,
+.edit-employee-form textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  width: 100%;
+  outline: none;
+}
+
+.edit-employee-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.update-employee-btn {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.update-employee-btn:hover {
+  background-color: #0056b3;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  width: 500px;
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 1.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+}

@@ -4,11 +4,12 @@ const auth = require("../middleware/auth");
 const {
   loginAdmin,
   getAdminProfile,
+   getDashboardStats,
 } = require("../controllers/adminController");
-const { getFilteredBlogs } = require("../controllers/adminController");
+ 
 
 router.post("/login", loginAdmin);
 router.get("/me", getAdminProfile);
-router.get("/blogs", auth, getFilteredBlogs);
+router.get("/dashboard-stats", auth, getDashboardStats);
 
 module.exports = router;

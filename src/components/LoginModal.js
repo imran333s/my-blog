@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import axios from "axios"; // ✅ import axios
+import axios from "axios";
 import "./LoginModal.css";
 
-const LoginModal = ({ isOpen, onClose }) => {
+const LoginModal = ({ isOpen, onClose, role = "admin" }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -15,32 +15,30 @@ const LoginModal = ({ isOpen, onClose }) => {
     e.preventDefault();
 
     try {
-      // ✅ POST request to backend
-      const { data } = await axios.post(
-        "http://localhost:5000/api/admin/login",
-        {
-          email,
-          password,
-        }
-      );
+      // Select endpoint based on role
+      const endpoint =
+        role === "admin"
+          ? "http://localhost:5000/api/admin/login"
+          : "http://localhost:5000/api/employees/login";
+
+      const { data } = await axios.post(endpoint, { email, password });
 
       if (data.success) {
-        // ✅ store JWT token in localStorage
+        // Store JWT token
         localStorage.setItem("token", data.token);
-        console.log("Logged in! Token:", data.token);
 
-        // ✅ Show SweetAlert for success
+        // SweetAlert success
         await Swal.fire({
           title: "Login Successful!",
-          text: "Welcome back, Admin 👋",
+          text: `Welcome back, ${role === "admin" ? "Admin" : "Employee"} 👋`,
           icon: "success",
           confirmButtonColor: "#3085d6",
           confirmButtonText: "Continue",
         });
 
-        // Close modal and navigate to admin dashboard
+        // Close modal and redirect
         onClose();
-        navigate("/admin/dashboard");
+        navigate(role === "admin" ? "/admin/dashboard" : "/admin/dashboard");
       } else {
         Swal.fire({
           title: "Login Failed",
@@ -64,7 +62,7 @@ const LoginModal = ({ isOpen, onClose }) => {
   return (
     <div className="login-modal-overlay">
       <div className="login-modal-content">
-        <h2>Admin Login</h2>
+        <h2>{role === "admin" ? "Admin Login" : "Employee Login"}</h2>
         <form onSubmit={handleLogin}>
           <input
             type="email"
@@ -85,8 +83,8 @@ const LoginModal = ({ isOpen, onClose }) => {
         <button
           className="close-btn"
           onClick={() => {
-            onClose(); // close the modal
-            navigate("/"); // redirect to home
+            onClose();
+            navigate("/");
           }}
         >
           ✖

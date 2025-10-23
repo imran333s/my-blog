@@ -8,7 +8,7 @@ const connectDB = require("./config/db");
 const adminRoutes = require("./routes/adminRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
-
+const employeeRoutes = require("./routes/employeeRoutes"); 
 const app = express();
 
 // Middleware
@@ -22,7 +22,7 @@ connectDB();
 app.use("/api/admin", adminRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/categories", categoryRoutes);
-
+app.use("/api/employees", employeeRoutes);
 // Global error handler (optional)
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -17,14 +17,20 @@ const Slideshow = () => {
       : "https://my-blog-5hs2.onrender.com");
 
   useEffect(() => {
-    console.log("API URL being used:", API_URL);
+ 
 
     const fetchSlides = async () => {
       try {
         const res = await fetch(`${API_URL}/api/categories`);
         if (!res.ok) throw new Error("Failed to fetch slides");
         const data = await res.json();
-        setSlides(data);
+
+          // 🔹 Only keep categories with status 'Active'
+       const activeSlides = data.filter(
+        (category) => category.status?.trim().toLowerCase() === "active"
+      );
+
+        setSlides(activeSlides);
       } catch (err) {
         console.error(err);
         setError("Unable to load slides");

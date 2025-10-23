@@ -1,26 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import AddBlog from "../News/AddBlog";
-import BlogList from "../News/BlogList";
+import AddBlog from "./AddBlog";
+import BlogList from "./BlogList";
 import AddCategory from "../Category/AddCategory";
 import CategoryList from "../Category/CategoryList";
 import AdminHeader from "./AdminHeader";
+import AddEmployee from "../Employee/AddEmployee";
+import EmployeeList from "../Employee/EmployeeList";
+import EditEmployee from "../Employee/EditEmployee";
+import NewsDashboard from "./NewsDashboard";
 
 const AdminDashboard = ({ onLogout }) => {
-  const [activePage, setActivePage] = useState("blog-list");
+  const [activePage, setActivePage] = useState(
+    localStorage.getItem("activePage") || "dashboard"
+  );
   const [adminInfo, setAdminInfo] = useState({ name: "", role: "" });
   const [websiteName, setWebsiteName] = useState("The Daily Digest");
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
+
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("activePage");
     if (onLogout) onLogout();
     navigate("/");
   };
 
+  // ✅ Save active page to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("activePage", activePage);
+  }, [activePage]);
+
   const renderContent = () => {
     switch (activePage) {
+      case "dashboard":
+        return <NewsDashboard />;
       case "add-blog":
         return <AddBlog />;
       case "blog-list":
@@ -29,8 +44,27 @@ const AdminDashboard = ({ onLogout }) => {
         return <AddCategory />;
       case "category-list":
         return <CategoryList />;
+      case "add-employee":
+        return (
+          <AddEmployee
+            onEmployeeUpdated={() => setActivePage("employee-list")}
+          />
+        );
+      case "employee-list":
+        return (
+          <EmployeeList onEdit={(id) => setActivePage(`edit-employee-${id}`)} />
+        );
       default:
-        return <AddBlog />;
+        if (activePage.startsWith("edit-employee-")) {
+          const id = activePage.replace("edit-employee-", "");
+          return (
+            <EditEmployee
+              employeeId={id}
+              onUpdate={() => setActivePage("employee-list")}
+            />
+          );
+        }
+        return <NewsDashboard />;
     }
   };
 
@@ -62,20 +96,25 @@ const AdminDashboard = ({ onLogout }) => {
       />
 
       {/* Main content layout */}
-      <div style={{ display: "flex", flex: 1, }}>
+      <div style={{ display: "flex", flex: 1 }}>
         {/* Sidebar */}
         <aside
           style={{
             width: "160px",
             background: "#405e7cff",
-            padding: "90px 10px",
+            padding: "20px 10px",
             boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
-            
           }}
         >
           <h2 style={{ fontSize: "1.5rem", marginBottom: "30px" }}>
             Admin Panel
           </h2>
+          <button
+            style={sidebarBtnStyle(activePage === "dashboard")}
+            onClick={() => setActivePage("dashboard")}
+          >
+            Dashboard
+          </button>
 
           <button
             style={sidebarBtnStyle(activePage === "add-blog")}
@@ -100,6 +139,18 @@ const AdminDashboard = ({ onLogout }) => {
             onClick={() => setActivePage("category-list")}
           >
             Category List
+          </button>
+          <button
+            style={sidebarBtnStyle(activePage === "add-employee")}
+            onClick={() => setActivePage("add-employee")}
+          >
+            Add Employee
+          </button>
+          <button
+            style={sidebarBtnStyle(activePage === "employee-list")}
+            onClick={() => setActivePage("employee-list")}
+          >
+            Employee List
           </button>
         </aside>
 

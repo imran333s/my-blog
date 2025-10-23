@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./Blogs.css"; // ✅ same styling as BlogList
@@ -15,7 +13,7 @@ const News = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/blogs`);
+        const response = await fetch(`${API_URL}/api/blogs/public`);
         if (!response.ok)
           throw new Error(`Failed to fetch blogs: ${response.status}`);
         const data = await response.json();

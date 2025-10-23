@@ -1,7 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { jwtDecode as jwt_decode } from "jwt-decode";
 
-const AdminHeader = ({ websiteName, adminName, role, onLogout }) => {
+const AdminHeader = ({ websiteName, onLogout }) => {
+  const [user, setUser] = useState({ name: "", role: "" });
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwt_decode(token);
+        setUser({
+          name: decoded.name || "User",
+          role: decoded.role || "Employee",
+        });
+      } catch (err) {
+        console.error("Invalid token", err);
+      }
+    }
+  }, []);
+
   const handleLogout = () => {
     Swal.fire({
       title: "Are you sure?",
@@ -13,7 +31,8 @@ const AdminHeader = ({ websiteName, adminName, role, onLogout }) => {
       confirmButtonText: "Yes, logout!",
     }).then((result) => {
       if (result.isConfirmed) {
-        onLogout(); // call the actual logout function
+        localStorage.removeItem("token"); // remove JWT
+        onLogout(); // call parent logout logic
         Swal.fire({
           title: "Logged out!",
           text: "You have been successfully logged out.",
@@ -35,9 +54,9 @@ const AdminHeader = ({ websiteName, adminName, role, onLogout }) => {
         backgroundColor: "#1f2937",
         color: "#fff",
         boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-        position: "sticky", // make it stick
-        top: 0, // stick to the top
-        zIndex: 1000, // stay above other elements
+        position: "sticky",
+        top: 0,
+        zIndex: 1000,
       }}
     >
       <div
@@ -48,7 +67,7 @@ const AdminHeader = ({ websiteName, adminName, role, onLogout }) => {
 
       <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
         <div>
-          Signed in as: {adminName} ({role})
+          Signed in as: {user.name} ({user.role})
         </div>
         <button
           onClick={handleLogout}

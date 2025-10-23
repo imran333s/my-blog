@@ -238,14 +238,17 @@
 
 /* Left side: Category + Status stacked */
 .filters-left {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+ display: flex;
+  flex-direction: row; /* side by side */
+  gap: 10px;           /* space between category & status */
+  align-items: flex-start; /* align top edges */
+  margin-top: 0;       /* remove extra spacing */
+
 }
 
 /* Right side: Sort */
 .sort-box {
-  padding-top: 50px;
+  padding-top: 5px;
   min-width: 150px;
   border-radius: 8px;
   display: inline-flex;
@@ -272,4 +275,21 @@
 
 .filter-options div {
   margin-bottom: 5px;
+}
+
+.status-label {
+  padding: 2px 4px;
+  border-radius: 1px;
+  /* font-weight: bold; */
+  text-transform: capitalize;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.status-active {
+  background-color: #28a745; /* Green */
+}
+
+.status-inactive {
+  background-color: #dc3545; /* Red */
 }

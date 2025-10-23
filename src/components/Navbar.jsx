@@ -2,9 +2,16 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import "./Navbar.css";
-import logo from "../logo192.png"; // ✅ import your logo from src
+import logo from "../logo192.png";
+
 const Navbar = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [loginRole, setLoginRole] = useState("admin"); // track which role is logging in
+
+  const openLoginModal = (role) => {
+    setLoginRole(role);
+    setIsLoginOpen(true);
+  };
 
   return (
     <header className="navbar">
@@ -35,21 +42,21 @@ const Navbar = () => {
 
             <li>
               <button
-                onClick={() => setIsLoginOpen(true)}
+                onClick={() => openLoginModal("admin")}
                 className="admin-btn"
               >
                 Admin Login
               </button>
             </li>
 
-            {/* <li>
+            <li>
               <button
-                onClick={() => setIsLoginOpen(true)}
-                className="register-btn"
+                onClick={() => openLoginModal("employee")}
+                className="employee-btn"
               >
-                Register
+                Employee Login
               </button>
-            </li> */}
+            </li>
           </ul>
         </nav>
       </div>
@@ -58,6 +65,7 @@ const Navbar = () => {
         <LoginModal
           isOpen={isLoginOpen}
           onClose={() => setIsLoginOpen(false)}
+          role={loginRole} // Pass the dynamic role
         />
       )}
     </header>

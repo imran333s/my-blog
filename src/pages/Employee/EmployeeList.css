@@ -1,0 +1,234 @@
+/* ===============================
+   Employee List Styles
+================================= */
+
+.employee-main-content {
+  padding: 0;
+  margin-bottom: 90px;
+  margin-top: 0;
+}
+
+.employee-section-title {
+  font-size: 32px;
+  font-weight: 400;
+  color: #333;
+  text-align: center;
+  margin: 0 0 15px 0;
+}
+
+/* ===============================
+   Employee Table Styling
+================================= */
+.employee-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-bottom: 1px solid #ccc;
+}
+
+.employee-list-table th,
+.employee-list-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.employee-list-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+/* ===============================
+   Action Buttons
+================================= */
+.emp-small-btn {
+
+  padding: 6px 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.emp-view-btn {
+ background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.emp-edit-btn {
+  background-color: #fff3cd;
+}
+
+.emp-delete-btn {
+  background-color: #d32f2f;
+}
+
+.emp-view-btn:hover {
+ /* background-color: #d32f2f; */
+}
+
+.emp-edit-btn:hover {
+  
+}
+
+.emp-delete-btn:hover {
+  background-color: #d21111;
+}
+
+
+
+/* Action buttons container in table */
+.employee-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px; /* space between buttons */
+}
+
+/* Apply spacing for desktop table */
+.employee-list-table td.actions-cell {
+  display: flex;
+  justify-content: center;
+  gap: 12px; /* space between View, Edit, Delete */
+}
+
+/* ===============================
+   Responsive Table
+================================= */
+@media (max-width: 768px) {
+  .employee-list-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .emp-small-btn {
+    font-size: 14px;
+    padding: 4px 8px;
+  }
+}
+
+/* ===============================
+   Mobile Card Layout
+================================= */
+@media (max-width: 600px) {
+  .employee-list-table,
+  .employee-list-table thead,
+  .employee-list-table tbody,
+  .employee-list-table th,
+  .employee-list-table td,
+  .employee-list-table tr {
+    display: block;
+  }
+
+  .employee-list-table thead {
+    display: none;
+  }
+
+  .employee-list-table tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  .employee-list-table td {
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 5px;
+  }
+
+  .employee-list-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+
+  .employee-list-table td:last-child {
+    justify-content: center;
+    gap: 10px;
+  }
+}
+
+/* ===============================
+   Role Styling
+================================= */
+.emp-status-label {
+  padding: 3px 6px;
+  border-radius: 4px;
+  color: white;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+
+.emp-status-active {
+  background-color: #28a745;
+}
+
+.emp-status-inactive {
+  background-color: #ffc107;
+}
+/* Drawer Overlay */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.drawer-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Drawer Container */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -450px;
+  width: 400px;
+  height: 100%;
+  background: #fff;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.15);
+  border-radius: 8px 0 0 8px;
+  padding: 20px;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+.drawer.slide-in {
+  right: 0;
+}
+
+/* Header */
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* Content */
+.drawer-content {
+  margin-top: 20px;
+}
+
+.employee-card p {
+  margin: 10px 0;
+  font-size: 15px;
+  line-height: 1.4;
+}

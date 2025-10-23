@@ -18,11 +18,13 @@ const EditCategory = () => {
   });
 
   const [loading, setLoading] = useState(true);
+ 
 
   // Fetch existing category data
   useEffect(() => {
     const fetchCategory = async () => {
       try {
+     
         const res = await axios.get(`${API_URL}/api/categories/${id}`);
         setFormData({
           name: res.data.name,

@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Select from "react-select";
+import { useFetchCategories } from "../../hooks/useFetchCategories";
 
 const statusOptions = [
   { value: "Active", label: "Active" },
@@ -17,36 +18,11 @@ const AddBlog = () => {
   const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
-  const [categoryOptions, setCategoryOptions] = useState([]);
   const [status, setStatus] = useState({ value: "Active", label: "Active" });
   const [videoLink, setVideoLink] = useState(""); // ✅ New field
 
-  // ✅ Fetch categories dynamically from DB
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/categories`);
-
-        // Filter only active categories if needed
-        const activeCategories = res.data.filter(
-          (cat) => cat.status?.toLowerCase() === "active"
-        );
-
-        // Convert to react-select format
-        const formatted = activeCategories.map((cat) => ({
-          value: cat.name,
-          label: cat.name,
-        }));
-
-        setCategoryOptions(formatted);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-        Swal.fire("Error", "Could not load categories", "error");
-      }
-    };
-
-    fetchCategories();
-  }, [API_URL]);
+  // ✅ Fetch categories using custom hook
+ const categoryOptions = useFetchCategories();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -1,5 +1,3 @@
- 
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -31,7 +29,7 @@ const CategoryList = () => {
       text: "This category will be permanently deleted!",
       icon: "warning",
       showCancelButton: true,
-        confirmButtonColor: "#d33",
+      confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Yes, delete it!",
     });
@@ -69,7 +67,7 @@ const CategoryList = () => {
             <table className="admin-category-table">
               <thead>
                 <tr>
-                  <th>S.No</th> 
+                  <th>S.No</th>
                   <th>Image</th>
                   <th>Name</th>
                   <th>Caption</th>
@@ -80,7 +78,7 @@ const CategoryList = () => {
               <tbody>
                 {categories.map((cat, index) => (
                   <tr key={cat._id}>
-                    <td>{index + 1}</td> 
+                    <td>{index + 1}</td>
                     <td>
                       {cat.image ? (
                         <img
