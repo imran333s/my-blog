@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./BlogPost.css";
-
+import { Link } from "react-router-dom";
+import "./Blogs.css";
 const BlogPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -93,38 +94,55 @@ const BlogPost = () => {
           className="post-body"
           dangerouslySetInnerHTML={{ __html: blog.content }}
         />
-        {/* ✅ Similar Blogs Section */}
-        {/* ================= Similar Blogs Section ================= */}
-        {similarBlogs.length > 0 && (
-          <div className="similar-blogs-container">
-            <h2>Similar News</h2>
-            {/* <p className="similar-hint">
-              Showing more from <strong>{blog.category}</strong> related to this
-              article.
-            </p> */}
-
-            <div className="similar-grid">
-              {similarBlogs.map((item) => (
-                <div
-                  key={item._id}
-                  className="similar-card"
-                  onClick={() => {
-                    navigate(`/blog/${item._id}`);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                >
-                  {item.image && <img src={item.image} alt={item.title} />}
-                  <h3>{item.title}</h3>
-                  <p>{item.category}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Optional: Edit button if admin functionality is needed */}
         {/* <button onClick={handleEdit} className="edit-btn">Edit</button> */}
       </div>
+      {/* ================= Similar News Section ================= */}
+
+      {similarBlogs.length > 0 && (
+        <div className="similar-blogs-container">
+          <h2>Similar News</h2>
+          <div className="blog-grid">
+            {similarBlogs.map((blog) => (
+              <div
+                className="blog-card"
+                key={blog._id}
+                onClick={() => {
+                  navigate(`/blog/${blog._id}`);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                {blog.image ? (
+                  <img
+                    src={blog.image}
+                    alt={blog.title}
+                    onError={(e) => (e.target.src = "/fallback-image.png")}
+                  />
+                ) : (
+                  <img src="/fallback-image.png" alt="No image" />
+                )}
+
+                <h3>{blog.title}</h3>
+
+                <div
+                  className="content-snippet"
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      blog.content.length > 100
+                        ? blog.content.substring(0, 100) + "..."
+                        : blog.content,
+                  }}
+                />
+
+                <Link to={`/blog/${blog._id}`} className="read-more">
+                  Read More <i className="fas fa-arrow-right"></i>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </main>
   );
 };

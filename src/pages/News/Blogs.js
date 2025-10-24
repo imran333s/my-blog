@@ -55,108 +55,33 @@ const BlogList = () => {
       <h2 style={{ textAlign: "center", marginBottom: "10px" }}>News</h2>
 
       <div className="blog-grid">
-        {filteredBlogs.map((blog) => (
-          <div className="blog-card" key={blog._id}>
-            {blog.image ? (
-              <div style={{ marginBottom: "7px" }}>
-                <img
-                  src={blog.image}
-                  alt={blog.title}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    maxHeight: "250px",
-                    objectFit: "contain",
-                    borderRadius: "8px",
-                  }}
-                  onError={(e) => (e.target.src = "/fallback-image.png")}
-                />
-              </div>
-            ) : (
-              <div style={{ marginBottom: "10px" }}>
-                <img
-                  src="/fallback-image.png"
-                  alt="No image"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    maxHeight: "250px",
-                    objectFit: "contain",
-                    borderRadius: "8px",
-                  }}
-                />
-              </div>
-            )}
+  {filteredBlogs.map((blog) => (
+    <div className="blog-card" key={blog._id}>
+      {blog.image ? (
+        <img src={blog.image} alt={blog.title} onError={(e) => (e.target.src = "/fallback-image.png")} />
+      ) : (
+        <img src="/fallback-image.png" alt="No image" />
+      )}
 
-            {/* ✅ Video embed below image */}
-            {blog.videoLink && (
-              <div
-                style={{
-                  marginBottom: "10px",
-                  position: "relative",
-                  paddingTop: "56.25%",
-                }}
-              >
-                <iframe
-                  src={convertToEmbedURL(blog.videoLink)}
-                  title={blog.title + " video"}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    border: 0,
-                    borderRadius: "8px",
-                  }}
-                  allow="autoplay; encrypted-media; fullscreen"
-                  allowFullScreen
-                />
-              </div>
-            )}
+      <h3>{blog.title}</h3>
 
-            <h3
-              style={{
-                fontSize: "1.2rem",
-                fontWeight: "600",
-                color: "#333",
-                marginBottom: "10px",
-              }}
-            >
-              {blog.title}
-            </h3>
+      <div
+        className="content-snippet"
+        dangerouslySetInnerHTML={{
+          __html:
+            blog.content.length > 100
+              ? blog.content.substring(0, 100) + "..."
+              : blog.content,
+        }}
+      />
 
-            <div
-              style={{
-                fontSize: "0.95rem",
-                color: "#555",
-                marginBottom: "12px",
-                display: "-webkit-box",
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-              }}
-              dangerouslySetInnerHTML={{
-                __html:
-                  blog.content.length > 100
-                    ? blog.content.substring(0, 100) + "..."
-                    : blog.content,
-              }}
-            />
+      <Link to={`/blog/${blog._id}`} className="read-more">
+        Read More <i className="fas fa-arrow-right"></i>
+      </Link>
+    </div>
+  ))}
+</div>
 
-            <Link
-              to={`/blog/${blog._id}`}
-              style={{
-                textDecoration: "none",
-                color: "#007bff",
-                fontWeight: "500",
-              }}
-            >
-              Read More <i className="fas fa-arrow-right"></i>
-            </Link>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
