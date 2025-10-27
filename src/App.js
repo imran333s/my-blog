@@ -21,6 +21,7 @@ import EditCategory from "./pages/Category/EditCategory";
 import EmployeeList from "./pages/Employee/EmployeeList";
 import EmployeeDetails from "./pages/Employee/EmployeeDetails";
 import EditEmployee from "./pages/Employee/EditEmployee";
+import Trending from "./pages/News/Trending";
 // This wrapper component is inside Router so we can safely use useLocation()
 function AppContent() {
   const location = useLocation(); // ✅ now safe
@@ -48,10 +49,12 @@ function AppContent() {
             element={
               <>
                 <Slideshow />
+                <Trending />
                 <Blogs />
               </>
             }
           />
+          {/* <Route path="/trending" element={<Trending />} /> */}
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/news/:category" element={<News />} />

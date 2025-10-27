@@ -107,6 +107,31 @@ exports.getSimilarBlogs = async (req, res) => {
   }
 };
 
+ 
+// ✅ Get blogs added in the last 24 hours (Trending)
+exports.getTrendingBlogs = async (req, res) => {
+  try {
+    // Calculate the timestamp for 24 hours ago
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    // Fetch blogs created in the last 24 hours and are Active
+    const trending = await Blog.find({
+      status: "Active",
+      createdAt: { $gte: twentyFourHoursAgo }, // only last 24 hours
+    })
+      .sort({ createdAt: -1 }) // newest first
+      .limit(4); // limit to 4 trending blogs
+  
+
+    res.status(200).json(trending);
+  } catch (err) {
+    console.error("Error fetching trending blogs:", err);
+    res.status(500).json({ message: "Failed to fetch trending blogs" });
+  }
+};
+
+
+
 exports.addBlog = async (req, res) => {
   try {
     const { title, content, category, image, status, videoLink } = req.body;

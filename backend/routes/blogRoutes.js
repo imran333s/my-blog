@@ -9,10 +9,11 @@ const {
   deleteBlog,
   getFilteredBlogs,
   getSimilarBlogs,
+  getTrendingBlogs,
 } = require("../controllers/blogController");
 
  
-
+router.get("/trending/public", getTrendingBlogs);
 router.get("/public", getAllBlogs);
 router.get("/", auth, getFilteredBlogs);
 router.get("/:id/similar", getSimilarBlogs);

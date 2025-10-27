@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import "./Navbar.css";
@@ -6,7 +6,17 @@ import logo from "../logo192.png";
 
 const Navbar = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [loginRole, setLoginRole] = useState("admin"); // track which role is logging in
+  const [loginRole, setLoginRole] = useState("admin");
+  const [scrolled, setScrolled] = useState(false);
+
+  // Detect scroll to apply background blur
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50); // active after 50px scroll
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const openLoginModal = (role) => {
     setLoginRole(role);
@@ -14,7 +24,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="navbar">
+    <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
       <div className="container navbar-container">
         <div className="logo">
           <Link to="/">
@@ -65,7 +75,7 @@ const Navbar = () => {
         <LoginModal
           isOpen={isLoginOpen}
           onClose={() => setIsLoginOpen(false)}
-          role={loginRole} // Pass the dynamic role
+          role={loginRole}
         />
       )}
     </header>
