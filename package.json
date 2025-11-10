@@ -29,6 +29,7 @@
     "@tiptap/starter-kit": "^3.6.6",
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
+    "bootstrap": "^5.3.8",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -37,6 +38,7 @@
     "quill": "^2.0.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-icons": "^5.5.0",
     "react-quill-new": "^3.6.0",
     "react-responsive": "^10.0.1",
     "react-router-dom": "^7.9.2",
@@ -70,9 +72,12 @@
     ]
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.21",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-hooks": "^7.0.0",
-    "prettier": "^3.6.2"
+    "postcss": "^8.5.6",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^4.1.16"
   }
 }

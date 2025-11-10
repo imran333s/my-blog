@@ -1,128 +1,112 @@
 .slideshow-container {
   width: 100%;
-  height: 90vh; /* full screen height for laptops/desktops */
+  height: 90vh;
   position: relative;
-  margin: auto;
   overflow: hidden;
 }
 
+/* Smooth fade transition */
 .slide {
-  display: none;
-  position: relative;
-  animation: fade 1.5s;
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1.4s ease-in-out;
 }
 
 .active-slide {
-  display: block;
-  position: relative;
-  animation: fade 1.5s;
+  opacity: 1;
 }
 
-/* 🖥️ Laptop/Desktop view - full screen */
+/* Ken Burns Zoom Effect */
 .slide img {
   width: 100%;
-  height: 85vh;/* full height */
-  object-fit: cover; /* fill the screen nicely */
-  cursor: pointer;
-  /* background-color: #000; */
+  height: 85vh;
+  object-fit: cover;
+  transform: scale(1.08);
+  transition: transform 5s ease-in-out;
 }
 
+.active-slide img {
+  transform: scale(1);
+}
+
+/* Caption */
 .caption-text {
   color: #fff;
   font-size: 22px;
-  padding:2px 12px;
+  padding: 8px 14px;
   position: absolute;
   bottom: 30px;
-  width: 100%;
-  text-align: center;
-  background-color: rgba(0, 0, 0, 0.4);
+  left: 50%;
+  transform: translateX(-50%);
+  backdrop-filter: blur(7px);
+  background: rgba(0, 0, 0, 0.40);
+  border-radius: 6px;
   cursor: pointer;
 }
 
-.prev,
-.next {
-  cursor: pointer;
+/* ✅ Animated Arrows */
+.arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  color: white;
-  font-weight: bold;
-  font-size: 22px;
-  transition: 0.6s ease;
-  border-radius: 3px;
-  user-select: none;
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 8px 14px;
-}
-
-.next {
-  right: 0;
-}
-
-.dot {
+  font-size: 42px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  border: none;
+  padding: 6px 16px;
   cursor: pointer;
-  height: 12px;
-  width: 12px;  
-  margin: 0 3px;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
-  transition: background-color 0.6s ease;
+  opacity: 0; /* Hidden until hover */
+  transition: 0.35s ease-in-out;
+  border-radius: 4px;
 }
 
-.active-dot {
-  background-color: #fff;
+.left-arrow { left: 22px; }
+.right-arrow { right: 22px; }
+
+/* ✅ When hovering container → show arrows */
+.slideshow-container:hover .arrow {
+  opacity: 1;
 }
 
-@keyframes fade {
-  from {
-    opacity: 0.4;
-  }
-  to {
-    opacity: 1;
-  }
+/* Hover effect on arrow */
+.arrow:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: translateY(-50%) scale(1.10);
 }
 
-/* 📱 Responsive for tablets */
+/* Responsive Tweaks */
 @media (max-width: 768px) {
   .slideshow-container {
     height: 60vh;
   }
-
   .slide img {
     height: 60vh;
-    object-fit: contain;
   }
-
   .caption-text {
     font-size: 16px;
-    bottom: 15px;
+    bottom: 18px;
   }
-
-  .prev,
-  .next {
-    font-size: 18px;
-    padding: 6px 10px;
+  .arrow {
+    font-size: 32px;
+    padding: 5px 12px;
   }
 }
 
-/* 📱 Responsive for mobile phones */
 @media (max-width: 480px) {
   .slideshow-container {
     height: 45vh;
   }
-
   .slide img {
     height: 45vh;
   }
-
   .caption-text {
     font-size: 14px;
-    bottom: 10px;
+    bottom: 12px;
   }
-
-  .prev,
-  .next {
-    font-size: 16px;
+  .arrow {
+    font-size: 28px;
+    padding: 4px 10px;
   }
 }

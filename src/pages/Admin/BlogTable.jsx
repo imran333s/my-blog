@@ -7,6 +7,7 @@ export const BlogTable = ({
   blogsPerPage,
   onEdit,
   onDelete,
+  onView,
   convertToEmbedURL,
 }) => {
   if (blogs.length === 0) return <p>No blogs found.</p>;
@@ -73,11 +74,12 @@ export const BlogTable = ({
             </td>
             <td className="action-buttons">
               <button
-                onClick={() => (window.location.href = `/blog/${blog._id}`)}
+                onClick={() => onView(blog)}
                 className="view-btn small-btn"
               >
                 👁️
               </button>
+
               <button
                 onClick={() => onEdit(blog._id)}
                 className="edit-btn small-btn"

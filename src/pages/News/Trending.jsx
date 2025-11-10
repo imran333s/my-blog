@@ -6,6 +6,7 @@ import "./Trending.css";
 const Trending = () => {
   const [trending, setTrending] = useState([]);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTrending = async () => {
@@ -16,16 +17,30 @@ const Trending = () => {
         setTrending(res.data);
       } catch (err) {
         console.error("❌ Error fetching trending blogs:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchTrending();
   }, []);
 
   return (
-    <>
-      {trending.length > 0 && (
-        <section className="trending-section">
-          <h2 className="trending-title">🔥 Trending News</h2>
+    <div className="page-wrapper">
+      <section className="trending-section">
+        <h2 className="trending-title">🔥 Trending News</h2>
+
+        {loading ? (
+          <div className="trending-grid">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="trending-card skeleton" />
+            ))}
+          </div>
+        ) : trending.length === 0 ? (
+          <div className="no-trending">
+            <p>No trending news in the last 24 hours.</p>
+            <p>Check back later ✨</p>
+          </div>
+        ) : (
           <div className="trending-grid">
             {trending.map((blog) => (
               <div
@@ -36,41 +51,24 @@ const Trending = () => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
               >
-                {/* ✅ Blog Image */}
-                {blog.image ? (
-                  <img
-                    src={blog.image}
-                    alt={blog.title}
-                    className="trending-image"
-                    onError={(e) => (e.target.src = "/fallback-image.png")}
-                  />
-                ) : (
-                  <img
-                    src="/fallback-image.png"
-                    alt="No image"
-                    className="trending-image"
-                  />
-                )}
+                <img
+                  src={blog.image || "/fallback-image.png"}
+                  alt={blog.title}
+                  className="trending-image"
+                  onError={(e) => (e.target.src = "/fallback-image.png")}
+                />
 
-                {/* ✅ Blog Info */}
                 <div className="trending-info">
                   <div className="trending-category">
                     {blog.category || "General"}
                   </div>
+
                   <div className="trending-heading">{blog.title}</div>
 
-                  {/* ✅ Optional short snippet */}
-                  <div
-                    className="content-snippet"
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        blog.content.length > 100
-                          ? blog.content.substring(0, 100) + "..."
-                          : blog.content,
-                    }}
-                  />
+                  <div className="content-snippet">
+                    {blog.content.replace(/<[^>]+>/g, "").slice(0, 120)}...
+                  </div>
 
-                  {/* ✅ Read More */}
                   <Link
                     to={`/blog/${blog._id}`}
                     className="read-more"
@@ -82,9 +80,9 @@ const Trending = () => {
               </div>
             ))}
           </div>
-        </section>
-      )}
-    </>
+        )}
+      </section>
+    </div>
   );
 };
 

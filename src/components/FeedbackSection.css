@@ -1,0 +1,101 @@
+/* Full-Screen Split Layout */
+.feedback-section-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  padding: 40px 60px;
+  gap:50px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+/* Left Side: Slider takes more width */
+.feedback-slider-area {
+  flex: 2; /* increased */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom:100px;
+}
+
+/* Right Side: Form */
+.feedback-form-area {
+  flex: 1; /* smaller form */
+  display: flex;
+  justify-content: flex-start; /* align form near right */
+  align-items: center;
+  
+}
+
+
+/* Slider Container */
+.feedback-slider-container {
+  width: 100%;
+  max-width: 700px;
+  position: relative;
+}
+
+/* Feedback Slide */
+.feedback-slide {
+  background: #fafafa;
+  padding: 28px 32px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  min-height: 250px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+}
+
+/* Name + Text */
+.feedback-name {
+  font-weight: 600;
+  font-size: 17px;
+  margin-bottom: 6px;
+  color: #111;
+}
+
+.feedback-message {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* Dots */
+.feedback-dots {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: #bbb;
+  border-radius: 50%;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.dot.active {
+  background: #007bff;
+}
+
+/* Form Section */
+.public-feedback-container {
+  width: 100%;
+  max-width: 450px;
+}
+
+.public-feedback-container h2 {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+/* Responsive Stack */
+@media (max-width: 900px) {
+  .feedback-section-wrapper {
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+    padding: 30px;
+  }
+}

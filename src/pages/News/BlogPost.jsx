@@ -84,7 +84,7 @@ const BlogPost = () => {
 
         <div className="post-meta">
           <span className="post-category">{blog.category || "General"}</span>
-          <span className="post-status">{blog.status}</span>
+          
           <span className="post-date">
             {new Date(blog.createdAt).toLocaleDateString()}
           </span>

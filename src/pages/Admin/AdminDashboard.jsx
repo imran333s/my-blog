@@ -10,13 +10,14 @@ import AddEmployee from "../Employee/AddEmployee";
 import EmployeeList from "../Employee/EmployeeList";
 import EditEmployee from "../Employee/EditEmployee";
 import NewsDashboard from "./NewsDashboard";
+import AdminEditContactSettings from "./AdminEditContactSettings";
 
 const AdminDashboard = ({ onLogout }) => {
   const [activePage, setActivePage] = useState(
     localStorage.getItem("activePage") || "dashboard"
   );
   const [adminInfo, setAdminInfo] = useState({ name: "", role: "" });
-  const [websiteName, setWebsiteName] = useState("The Daily Digest");
+  const [websiteName, setWebsiteName] = useState("News Pulse");
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -54,6 +55,9 @@ const AdminDashboard = ({ onLogout }) => {
         return (
           <EmployeeList onEdit={(id) => setActivePage(`edit-employee-${id}`)} />
         );
+      case "contact-settings":
+        return <AdminEditContactSettings />;
+
       default:
         if (activePage.startsWith("edit-employee-")) {
           const id = activePage.replace("edit-employee-", "");
@@ -152,6 +156,13 @@ const AdminDashboard = ({ onLogout }) => {
           >
             Employee List
           </button>
+
+          <button
+            style={sidebarBtnStyle(activePage === "contact-settings")}
+            onClick={() => setActivePage("contact-settings")}
+          >
+            Edit Contact Page
+          </button>
         </aside>
 
         {/* Main Content */}
@@ -165,7 +176,7 @@ const AdminDashboard = ({ onLogout }) => {
 const sidebarBtnStyle = (active) => ({
   display: "block",
   width: "90%",
-  padding: "12px 15px",
+  padding: "7px 15px",
   marginBottom: "15px",
   border: "none",
   borderRadius: "8px",

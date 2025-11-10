@@ -9,6 +9,9 @@ const adminRoutes = require("./routes/adminRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const employeeRoutes = require("./routes/employeeRoutes"); 
+const feedbackRoutes = require("./routes/message");
+const publicFeedbackRoute = require("./routes/publicFeedback");
+const contactSettingsRoutes = require("./routes/contactSettingsRoutes");
 const app = express();
 
 // Middleware
@@ -23,6 +26,10 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/employees", employeeRoutes);
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/public-feedback", publicFeedbackRoute);
+app.use("/api/contact-settings", contactSettingsRoutes);
+
 // Global error handler (optional)
 app.use((err, req, res, next) => {
   console.error(err.stack);

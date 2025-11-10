@@ -6,10 +6,17 @@ const Slideshow = () => {
   const navigate = useNavigate();
   const [slides, setSlides] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isPaused, setIsPaused] = useState(false); // ✅ NEW: Pause state
 
-  // Automatically pick backend URL: localhost for dev, Render URL for production
+  const goNext = () => {
+  setCurrentIndex((prev) => (prev + 1) % slides.length);
+};
+
+const goPrev = () => {
+  setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+};
+
+
   const API_URL =
     process.env.REACT_APP_API_URL ||
     (window.location.hostname === "localhost"
@@ -17,83 +24,60 @@ const Slideshow = () => {
       : "https://my-blog-5hs2.onrender.com");
 
   useEffect(() => {
- 
-
     const fetchSlides = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/categories`);
-        if (!res.ok) throw new Error("Failed to fetch slides");
-        const data = await res.json();
-
-          // 🔹 Only keep categories with status 'Active'
-       const activeSlides = data.filter(
-        (category) => category.status?.trim().toLowerCase() === "active"
+      const res = await fetch(`${API_URL}/api/categories`);
+      const data = await res.json();
+      const activeSlides = data.filter(
+        (c) => c.status?.trim().toLowerCase() === "active"
       );
-
-        setSlides(activeSlides);
-      } catch (err) {
-        console.error(err);
-        setError("Unable to load slides");
-      } finally {
-        setLoading(false);
-      }
+      setSlides(activeSlides);
     };
-
     fetchSlides();
   }, [API_URL]);
 
-  const nextSlide = () =>
-    setCurrentIndex((prev) => (slides.length ? (prev + 1) % slides.length : 0));
-  const prevSlide = () =>
-    setCurrentIndex((prev) =>
-      slides.length ? (prev - 1 + slides.length) % slides.length : 0
-    );
-  const goToSlide = (index) => setCurrentIndex(index);
+  // ✅ Auto Slide with Pause Support
+  useEffect(() => {
+    if (slides.length === 0 || isPaused) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
+    }, 2500); // change every 2.5s
+
+    return () => clearInterval(interval);
+  }, [slides, isPaused]);
+
   const handleImageClick = (category) => navigate(`/news/${category}`);
 
-  if (loading) return <div>Loading slides...</div>;
-  if (error) return <div>{error}</div>;
-  if (!slides.length) return <div>No slides available</div>;
+  if (!slides.length) return null;
 
   return (
-    <div>
-      <div className="slideshow-container">
-        {slides.map((slide, index) => (
+    <div
+      className="slideshow-container"
+      onMouseEnter={() => setIsPaused(true)} // ✅ Pause on hover
+      onMouseLeave={() => setIsPaused(false)} // ✅ Resume on leave
+    >
+      {slides.map((slide, index) => (
+        <div
+          key={index}
+          className={`slide ${index === currentIndex ? "active-slide" : ""}`}
+        >
+          <img
+            src={slide.image}
+            alt={slide.caption}
+            onClick={() => handleImageClick(slide.name.toLowerCase())}
+          />
           <div
-            key={index}
-            className={`slide ${index === currentIndex ? "active-slide" : ""}`}
+            className="caption-text"
+            onClick={() => handleImageClick(slide.name.toLowerCase())}
           >
-            <img
-              src={slide.image}
-              alt={slide.caption}
-              onClick={() => handleImageClick(slide.name.toLowerCase())}
-            />
-            <div
-              className="caption-text"
-              onClick={() => handleImageClick(slide.name.toLowerCase())}
-            >
-              {slide.caption}
-            </div>
+            {slide.caption}
           </div>
-        ))}
+        </div>
+      ))}
+       {/* ✅ Arrow Buttons */}
+  <button className="arrow left-arrow" onClick={goPrev}>❮</button>
+<button className="arrow right-arrow" onClick={goNext}>❯</button>
 
-        <span className="prev" onClick={prevSlide}>
-          ❮
-        </span>
-        <span className="next" onClick={nextSlide}>
-          ❯
-        </span>
-      </div>
-
-      <div style={{ textAlign: "center" }}>
-        {slides.map((_, index) => (
-          <span
-            key={index}
-            className={`dot ${index === currentIndex ? "active-dot" : ""}`}
-            onClick={() => goToSlide(index)}
-          ></span>
-        ))}
-      </div>
     </div>
   );
 };

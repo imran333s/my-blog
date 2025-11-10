@@ -1,73 +1,112 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import BlogCard from  "../../components/BlogCard";
- 
+import BlogCard from "../../components/BlogCard";
 
 const News = () => {
   const { category } = useParams();
+  const resolvedCategory = (category || "all").toLowerCase();
+
   const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const API_URL = process.env.REACT_APP_API_URL;
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const response = await fetch(`${API_URL}/api/blogs/public`);
-        if (!response.ok)
-          throw new Error(`Failed to fetch blogs: ${response.status}`);
-        const data = await response.json();
+  const fetchBlogs = async () => {
+    if (loading) return;
+    setLoading(true);
 
-        // ✅ Filter by category and active status
-        const filtered = data.filter(
-          (blog) =>
-            blog.status &&
-            blog.status.toLowerCase() === "active" &&
-            blog.category &&
-            blog.category.toLowerCase() === category.toLowerCase()
-        );
+    try {
+      const response = await fetch(
+        `${API_URL}/api/blogs/public/paginated?page=${page}&limit=6&category=${resolvedCategory}`
+      );
+      const data = await response.json();
 
-        setBlogs(filtered);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+      if (data.length < 6) setHasMore(false);
 
-    fetchBlogs();
-  }, [category, API_URL]);
-
-  if (loading) return <p style={{ textAlign: "center" }}>Loading...</p>;
-  if (error)
-    return <p style={{ textAlign: "center", color: "red" }}>Error: {error}</p>;
-
-  const headingStyle = {
-    textAlign: "center",
-    marginBottom: "15px",
-    textTransform: "capitalize",
+      setBlogs((prev) => {
+        const ids = new Set(prev.map((b) => b._id));
+        const newBlogs = data.filter((b) => !ids.has(b._id));
+        return [...prev, ...newBlogs];
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0px" }}>
-      <h2 style={headingStyle}>{category} News</h2>
+  useEffect(() => {
+    // Reset states on category change
+    setBlogs([]);
+    setPage(1);
+    setHasMore(true);
+    setLoading(false);
 
-      {blogs.length === 0 ? (
-        <p style={{ textAlign: "center" }}>No news found in this category.</p>
-      ) : (
-        <div className="blog-grid">
-          {blogs.map((blog) => (
-            <BlogCard
-              key={blog._id}
-              image={blog.image}
-              title={blog.title}
-              description={blog.content}
-              category={blog.category}
-              createdAt={blog.createdAt}
-              link={`/blog/${blog._id}`}
-            />
-          ))}
+    // ✅ Scroll to top *after render*
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 0);
+
+    // Fetch initial data
+    fetchBlogs();
+  }, [resolvedCategory]);
+
+  useEffect(() => {
+    if (page > 1) fetchBlogs(); // load more only when page increases
+  }, [page]);
+
+  return (
+    <div
+      style={{
+        maxWidth: "1200px",
+        margin: "0 auto",
+        padding: "80px 20px 20px 20px",
+      }}
+    >
+      <h2
+        style={{
+          textAlign: "center",
+          marginBottom: "15px",
+          textTransform: "capitalize",
+        }}
+      >
+        {resolvedCategory} News
+      </h2>
+
+      <div className="blog-grid">
+        {blogs.map((blog) => (
+          <BlogCard
+            key={blog._id}
+            image={blog.image}
+            title={blog.title}
+            description={blog.content}
+            category={blog.category}
+            createdAt={blog.createdAt}
+            link={`/blog/${blog._id}`}
+          />
+        ))}
+      </div>
+
+      {loading && <p style={{ textAlign: "center" }}>Loading...</p>}
+
+      {hasMore && !loading && (
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <button
+            onClick={() => setPage((prev) => prev + 1)}
+            style={{
+              padding: "10px 20px",
+              fontSize: "16px",
+              cursor: "pointer",
+              borderRadius: "5px",
+              background: "#007bff",
+              color: "white",
+              border: "none",
+            }}
+          >
+            Load More
+          </button>
         </div>
       )}
     </div>

@@ -293,3 +293,18 @@
 .status-inactive {
   background-color: #dc3545; /* Red */
 }
+.blog-thumb {
+  width: 80px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.admin-blog-table td {
+  vertical-align: middle;
+  padding: 8px;
+}
+.admin-blog-table iframe {
+  width: 120px !important;
+  height: 60px !important;
+  border-radius: 6px;
+}

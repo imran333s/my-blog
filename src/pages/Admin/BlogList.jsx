@@ -21,6 +21,7 @@ const AdminBlogList = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [editingBlogId, setEditingBlogId] = useState(null);
+  const [viewBlog, setViewBlog] = useState(null); // ✅ View State
 
   const filters = {
     categories: selectedCategories.length
@@ -35,10 +36,8 @@ const AdminBlogList = () => {
 
   const { blogs, loading, error, reload } = useBlogs(filters);
 
-  // === FRONTEND PAGINATION ===
   const totalPages = Math.ceil(blogs.length / blogsPerPage) || 1;
 
-  // Clamp currentPage if blogs change
   useEffect(() => {
     if (currentPage > totalPages) setCurrentPage(totalPages);
   }, [blogs, totalPages, currentPage]);
@@ -47,10 +46,7 @@ const AdminBlogList = () => {
     (currentPage - 1) * blogsPerPage,
     currentPage * blogsPerPage
   );
-// 🔹 Debug logs
-console.log("Current page:", currentPage);
-console.log("Current blogs slice:", currentBlogs.length, currentBlogs);
-  // === DELETE BLOG ===
+  console.log("Blogs in table:", currentBlogs);
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -85,11 +81,11 @@ console.log("Current blogs slice:", currentBlogs.length, currentBlogs);
     return url;
   };
 
-  // Prevent background scroll when modal open
   useEffect(() => {
-    document.body.style.overflow = editingBlogId ? "hidden" : "auto";
+    document.body.style.overflow =
+      editingBlogId || viewBlog ? "hidden" : "auto";
     return () => (document.body.style.overflow = "auto");
-  }, [editingBlogId]);
+  }, [editingBlogId, viewBlog]);
 
   return (
     <main className="main-content">
@@ -101,17 +97,17 @@ console.log("Current blogs slice:", currentBlogs.length, currentBlogs);
           selectedCategories={selectedCategories}
           setSelectedCategories={(cats) => {
             setSelectedCategories(cats);
-            setCurrentPage(1); // reset page
+            setCurrentPage(1);
           }}
           selectedStatus={selectedStatus}
           setSelectedStatus={(status) => {
             setSelectedStatus(status);
-            setCurrentPage(1); // reset page
+            setCurrentPage(1);
           }}
           selectedSort={selectedSort}
           setSelectedSort={(sort) => {
             setSelectedSort(sort);
-            setCurrentPage(1); // reset page
+            setCurrentPage(1);
           }}
         />
 
@@ -129,11 +125,12 @@ console.log("Current blogs slice:", currentBlogs.length, currentBlogs);
               blogsPerPage={blogsPerPage}
               onEdit={setEditingBlogId}
               onDelete={handleDelete}
+              onView={(blog) => setViewBlog(blog)} // ✅ View Button
               convertToEmbedURL={convertToEmbedURL}
             />
 
             <BlogPagination
-              blogs={blogs} // pass full blogs array
+              blogs={blogs}
               currentPage={currentPage}
               perPage={blogsPerPage}
               setPage={setCurrentPage}
@@ -147,6 +144,75 @@ console.log("Current blogs slice:", currentBlogs.length, currentBlogs);
             onClose={() => setEditingBlogId(null)}
             onUpdate={reload}
           />
+        )}
+
+        {/* ✅ Inline Blog Preview Modal */}
+        {viewBlog && (
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.6)",
+              backdropFilter: "blur(3px)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 2000,
+            }}
+            onClick={() => setViewBlog(null)}
+          >
+            <div
+              style={{
+                width: "90%",
+                maxWidth: "700px",
+                background: "#fff",
+                borderRadius: "10px",
+                padding: "20px",
+                position: "relative",
+                maxHeight: "90vh",
+                overflowY: "auto",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setViewBlog(null)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "10px",
+                  fontSize: "22px",
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                }}
+              >
+                ×
+              </button>
+
+              <h2 style={{ marginBottom: "10px" }}>{viewBlog.title}</h2>
+
+              {viewBlog.image && (
+                <img
+                  src={viewBlog.image}
+                  alt=""
+                  style={{
+                    width: "100%",
+                    maxHeight: "250px",
+                    objectFit: "contain", // ← CHANGE THIS
+                    borderRadius: "8px",
+                    marginBottom: "15px",
+                    background: "#000", // optional (makes black border look clean)
+                    padding: "5px", // optional
+                  }}
+                />
+              )}
+
+              <div
+                dangerouslySetInnerHTML={{ __html: viewBlog.content }}
+                style={{ lineHeight: "1.6" }}
+              />
+            </div>
+          </div>
         )}
       </div>
     </main>

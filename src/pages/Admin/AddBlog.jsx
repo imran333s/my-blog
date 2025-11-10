@@ -22,7 +22,7 @@ const AddBlog = () => {
   const [videoLink, setVideoLink] = useState(""); // ✅ New field
 
   // ✅ Fetch categories using custom hook
- const categoryOptions = useFetchCategories();
+  const categoryOptions = useFetchCategories();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -65,7 +65,13 @@ const AddBlog = () => {
         timer: 2000,
         showConfirmButton: false,
       });
-
+      // ✅ Reset form state
+      setTitle("");
+      setImage("");
+      setDescription("");
+      setCategories([]);
+      setStatus({ value: "Active", label: "Active" });
+      setVideoLink("");
       navigate("/admin/dashboard");
     } catch (err) {
       console.error(err);
@@ -121,7 +127,7 @@ const AddBlog = () => {
           />
         </div>
 
-         {/* ✅ New Video Link Field */}
+        {/* ✅ New Video Link Field */}
         <input
           type="text"
           placeholder="Video Link (optional)"

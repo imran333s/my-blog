@@ -9,6 +9,15 @@ const BlogList = () => {
   const API_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
+  const descriptions = {
+    Sports: "Welcome! You're viewing Sports news 🏆",
+    Business: "Welcome! Business news & market updates 💼",
+    Technology: "Welcome! Latest updates from the tech world 💻",
+    Entertainment: "Welcome! Trending movies, music & celebs 🎬",
+    Politics: "Welcome! Latest political updates and headlines 🏛️",
+    Health: "Welcome! Health tips, wellness & medical news ❤️",
+  };
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -30,25 +39,30 @@ const BlogList = () => {
     return <p style={{ textAlign: "center", color: "red" }}>Error: {error}</p>;
 
   return (
-    <div className="category-container">
-      <h2 className="category-title">📰 Explore News by Category</h2>
-      <div className="category-grid">
-        {categories.map((cat) => (
-          <div
-            key={cat._id}
-            className="category-card"
-            onClick={() => navigate(`/news/${cat.name}`)}
-            style={{ cursor: "pointer" }}
-          >
-            <img
-              src={cat.image || "/category-placeholder.jpg"}
-              alt={cat.name}
-              className="category-image"
-              onError={(e) => (e.target.src = "/category-placeholder.jpg")}
-            />
-            <h3 className="category-name">{cat.name}</h3>
-          </div>
-        ))}
+    <div className="page-wrapper">
+      <div className="category-container">
+        <h2 className="category-title">📰 Explore News by Category</h2>
+        <div className="category-grid">
+          {categories.map((cat) => (
+            <div
+              key={cat._id}
+              className="category-card"
+              onClick={() => navigate(`/news/${cat.name}`)}
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src={cat.image || "/category-placeholder.jpg"}
+                alt={cat.name}
+                className="category-image"
+                onError={(e) => (e.target.src = "/category-placeholder.jpg")}
+              />
+              <h3 className="category-name">{cat.name}</h3>
+              <p className="category-desc">
+                {descriptions[cat.name] || "Explore latest news ✨"}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

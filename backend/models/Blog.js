@@ -11,4 +11,5 @@ const blogSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+blogSchema.index({ title: "text", content: "text" });
 module.exports = mongoose.model("Blog", blogSchema);

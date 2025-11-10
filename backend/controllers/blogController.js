@@ -22,6 +22,32 @@ exports.getBlogById = async (req, res) => {
   }
 };
 
+//for frontend news
+exports.getPaginatedBlogs = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 6;
+    const skip = (page - 1) * limit;
+
+    const category = req.query.category || "all";
+
+    let query = { status: { $regex: /^active$/i } };
+
+    if (category !== "all") {
+      query.category = { $regex: new RegExp(`^${category}$`, "i") }; // ✅ exact match, no duplicates
+    }
+
+    const blogs = await Blog.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.json(blogs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // GET /api/admin/blogs?categories=Sports,Politics&status=Active&sort=newest
 exports.getFilteredBlogs = async (req, res) => {
   try {
@@ -67,7 +93,7 @@ exports.getSimilarBlogs = async (req, res) => {
 
     // Extract key terms from title + content
     const text = `${title} ${content}`;
-    
+
     const keywords =
       text
         .toLowerCase()
@@ -87,11 +113,6 @@ exports.getSimilarBlogs = async (req, res) => {
         $or: [{ title: keywordRegex }, { content: keywordRegex }],
       }),
     };
-    // ✅ Debug logs (to see what’s happening)
-    // console.log("🧠 TEXT USED:", text.slice(0, 200) + "...");
-    // console.log("🗝️  KEYWORDS:", keywords);
-    // console.log("🔍 REGEX:", keywordRegex);
-    // console.log("📄 FINAL QUERY:", JSON.stringify(query, null, 2));
 
     let similarBlogs = await Blog.find(query).sort({ createdAt: -1 }).limit(4); // ✅ max 4 blogs
 
@@ -107,30 +128,39 @@ exports.getSimilarBlogs = async (req, res) => {
   }
 };
 
- 
-// ✅ Get blogs added in the last 24 hours (Trending)
+// ✅ Get last 5 recently added active blogs (Trending)
 exports.getTrendingBlogs = async (req, res) => {
   try {
-    // Calculate the timestamp for 24 hours ago
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-    // Fetch blogs created in the last 24 hours and are Active
-    const trending = await Blog.find({
-      status: "Active",
-      createdAt: { $gte: twentyFourHoursAgo }, // only last 24 hours
-    })
+    const trending = await Blog.find({ status: "Active" })
       .sort({ createdAt: -1 }) // newest first
-      .limit(4); // limit to 4 trending blogs
-  
+      .limit(4); // show last 5 added
 
     res.status(200).json(trending);
   } catch (err) {
-    console.error("Error fetching trending blogs:", err);
+    console.error("❌ Error fetching trending blogs:", err);
     res.status(500).json({ message: "Failed to fetch trending blogs" });
   }
 };
 
+exports.searchBlogs = async (req, res) => {
+  try {
+    const query = req.query.q;
 
+    const blogs = await Blog.find(
+      {
+        status: "Active",
+        $text: { $search: query },
+      },
+      {
+        score: { $meta: "textScore" },
+      }
+    ).sort({ score: { $meta: "textScore" } });
+
+    res.json(blogs);
+  } catch (err) {
+    res.status(500).json({ message: "Search failed" });
+  }
+};
 
 exports.addBlog = async (req, res) => {
   try {
