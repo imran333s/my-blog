@@ -1,70 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./About.css";
 
 const About = () => {
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/about-settings`)
+      .then((res) => res.json())
+      .then((data) => setSettings(data))
+      .catch((err) => console.error("Fetch Error:", err));
+  }, []);
+
+  if (!settings) return <p>Loading About Page...</p>;
+
   return (
     <div className="about-page">
-
-      {/* Hero Section */}
+      {/* Hero Image */}
       <section className="about-hero">
-        <div className="hero-overlay"></div>
-        <div className="hero-content">
-          <h1>About NewsPulse</h1>
-          <p>Reliable. Unbiased. Real-Time News Coverage.</p>
-        </div>
+        {settings?.heroBackgroundImage && (
+          <img
+            src={settings.heroBackgroundImage}
+            alt={settings.heroTitle || "Hero Image"}
+            className="hero-img"
+          />
+        )}
       </section>
 
-      {/* Main Content */}
-      <div className="about-container">
-
-        <section className="about-section">
-          <h2>Who We Are</h2>
-          <p>
-            NewsPulse is an independent digital news platform delivering trusted
-            and timely news updates from around the world. We aim to cut through 
-            the noise, misinformation, and bias that dominate today’s media environment.
-          </p>
-        </section>
-
-        <section className="about-section">
-          <h2>Our Mission</h2>
-          <p>
-            Our mission is to <strong>empower people with accurate information</strong>.
-            We are committed to transparency, integrity, and clarity — because
-            informed people make stronger societies.
-          </p>
-        </section>
-
-        <section className="about-section">
-          <h2>What Makes Us Different</h2>
-          <div className="features-grid">
-            <div className="feature-card">No clickbait or sensationalism</div>
-            <div className="feature-card">Verified news from official sources</div>
-            <div className="feature-card">Human-written, authentic reporting</div>
-            <div className="feature-card">Independent & unbiased coverage</div>
-          </div>
-        </section>
-
-        <section className="about-section">
-          <h2>Our Vision</h2>
-          <p>
-            In a world overwhelmed with misleading narratives, we stand for truth.
-            Our vision is to build a smarter, more aware media culture where facts
-            always take the lead.
-          </p>
-        </section>
-
-        <section className="about-section">
-          <h2>Thank You for Being Here</h2>
-          <p>
-            We are constantly improving, expanding our network and storytelling approach.
-            Thank you for choosing NewsPulse as your trusted source of news.
-          </p>
-          <p className="signature">— Team NewsPulse</p>
-        </section>
-
+      {/* Title & Subtitle below image */}
+      <div className="hero-content-below">
+        <h1>{settings?.heroTitle || "About Us"}</h1>
+        <p>
+          {settings?.heroSubtitle || "Learn more about our mission and vision."}
+        </p>
       </div>
 
+      {/* Main Content */}
+      <section className="about-content">
+        {settings?.section1Title && <h2>{settings.section1Title}</h2>}
+        {settings?.section1Text && <p>{settings.section1Text}</p>}
+
+        {settings?.section2Title && <h2>{settings.section2Title}</h2>}
+        {settings?.section2Text && <p>{settings.section2Text}</p>}
+
+        {settings?.section3Title && <h2>{settings.section3Title}</h2>}
+        {settings?.section3Text && <p>{settings.section3Text}</p>}
+      </section>
     </div>
   );
 };

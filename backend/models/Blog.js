@@ -1,10 +1,14 @@
-// models/Blog.js
 const mongoose = require("mongoose");
 
 const blogSchema = new mongoose.Schema({
-  title: String,
+  title: { type: String, required: true },
   content: String,
-  category: String,
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: true,
+  },
+  subcategory: { type: mongoose.Schema.Types.ObjectId, ref: "Subcategory" }, // single subcategory
   image: String,
   status: { type: String, enum: ["Active", "Inactive"], default: "Active" },
   videoLink: String,
@@ -12,4 +16,5 @@ const blogSchema = new mongoose.Schema({
 });
 
 blogSchema.index({ title: "text", content: "text" });
+
 module.exports = mongoose.model("Blog", blogSchema);

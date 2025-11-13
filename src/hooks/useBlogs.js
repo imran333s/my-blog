@@ -19,7 +19,7 @@ export const useBlogs = (filters = {}) => {
       if (filters.sort) activeFilters.sort = filters.sort;
 
       const data = await fetchBlogs(activeFilters);
-         // 👇 ADD THIS LINE HERE
+      // 👇 ADD THIS LINE HERE
       console.log("Fetched blogs:", data.length || data.blogs?.length);
       setBlogs(Array.isArray(data) ? data : data.blogs || []);
     } catch (err) {

@@ -1,8 +1,13 @@
 const Blog = require("../models/Blog");
 const mongoose = require("mongoose");
+const Category = require("../models/Category");
+const Subcategory = require("../models/Subcategory");
+
 exports.getAllBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find();
+    const blogs = await Blog.find()
+      .populate("category", "name")
+      .populate("subcategory", "name");
     res.json(blogs);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -22,28 +27,54 @@ exports.getBlogById = async (req, res) => {
   }
 };
 
-//for frontend news
+// ✅ Get paginated blogs (with optional category or subcategory filter)
 exports.getPaginatedBlogs = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 6;
     const skip = (page - 1) * limit;
 
-    const category = req.query.category || "all";
+    const categoryName = req.query.category?.toLowerCase() || "all";
+    const subcategoryName = req.query.subcategory?.toLowerCase() || null;
 
     let query = { status: { $regex: /^active$/i } };
 
-    if (category !== "all") {
-      query.category = { $regex: new RegExp(`^${category}$`, "i") }; // ✅ exact match, no duplicates
+    // ✅ If a category name is provided, resolve it to ObjectId
+    if (categoryName !== "all") {
+      const categoryDoc = await Category.findOne({
+        name: { $regex: new RegExp(`^${categoryName}$`, "i") },
+      });
+
+      if (categoryDoc) {
+        query.category = categoryDoc._id;
+      } else {
+        return res.json([]); // No matching category found
+      }
+    }
+
+    // ✅ Optional: If a subcategory name is provided
+    if (subcategoryName) {
+      const subcategoryDoc = await Subcategory.findOne({
+        name: { $regex: new RegExp(`^${subcategoryName}$`, "i") },
+      });
+
+      if (subcategoryDoc) {
+        query.subcategory = subcategoryDoc._id;
+      } else {
+        return res.json([]); // No matching subcategory found
+      }
     }
 
     const blogs = await Blog.find(query)
+      .populate("category", "name")
+      .populate("subcategory", "name") // ✅ include subcategory name too
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
     res.json(blogs);
   } catch (err) {
+    console.error("Error fetching blogs:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -70,7 +101,10 @@ exports.getFilteredBlogs = async (req, res) => {
     if (sort === "oldest") sortOption = { createdAt: 1 };
 
     // ✅ Fetch blogs from MongoDB
-    const blogs = await Blog.find(filter).sort(sortOption);
+    const blogs = await Blog.find(filter)
+      .populate("category", "name")
+      .populate("subcategory", "name")
+      .sort(sortOption);
 
     res.status(200).json(blogs);
   } catch (err) {
@@ -131,9 +165,11 @@ exports.getSimilarBlogs = async (req, res) => {
 // ✅ Get last 5 recently added active blogs (Trending)
 exports.getTrendingBlogs = async (req, res) => {
   try {
-    const trending = await Blog.find({ status: "Active" })
+    const trending = await Blog.find({ status: { $regex: /^active$/i } })
       .sort({ createdAt: -1 }) // newest first
-      .limit(4); // show last 5 added
+      .limit(4) // show last 5 added
+      .populate("category", "name") // ✅ include category name
+      .populate("subcategory", "name"); // optional
 
     res.status(200).json(trending);
   } catch (err) {
@@ -164,14 +200,16 @@ exports.searchBlogs = async (req, res) => {
 
 exports.addBlog = async (req, res) => {
   try {
-    const { title, content, category, image, status, videoLink } = req.body;
+    const { title, content, category, subcategory, image, status, videoLink } =
+      req.body;
     const validStatus = ["Active", "Inactive"];
     const blogStatus = validStatus.includes(status) ? status : "Active";
 
     const newBlog = await Blog.create({
       title,
       content,
-      category,
+      category, // category ObjectId
+      subcategory, // subcategory ObjectId
       image,
       status: blogStatus,
       videoLink,
@@ -185,22 +223,29 @@ exports.addBlog = async (req, res) => {
 
 exports.updateBlog = async (req, res) => {
   try {
-    const validStatus = ["Active", "Inactive"];
-    const blogStatus = validStatus.includes(req.body.status)
-      ? req.body.status
-      : "Active";
+    const { title, content, image, videoLink, status, category, subcategory } =
+      req.body;
 
     const updatedBlog = await Blog.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, status: blogStatus },
+      {
+        title,
+        content,
+        image,
+        videoLink,
+        status: ["Active", "Inactive"].includes(status) ? status : "Active",
+        category, // category ObjectId
+        subcategory, // subcategory ObjectId
+      },
       { new: true }
-    );
+    ).populate("category subcategory"); // populate both
 
     if (!updatedBlog)
       return res.status(404).json({ message: "Blog not found" });
 
     res.json(updatedBlog);
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Failed to update blog" });
   }
 };

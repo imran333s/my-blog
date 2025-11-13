@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
 import "./CategoryList.css";
+import EditCategoryModal from "./EditCategoryModal";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
-  const navigate = useNavigate();
 
   const fetchCategories = async () => {
     try {
@@ -43,6 +43,7 @@ const CategoryList = () => {
       await axios.delete(`${API_URL}/api/categories/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       Swal.fire("Deleted!", "Category has been deleted.", "success");
       setCategories(categories.filter((cat) => cat._id !== id));
     } catch (err) {
@@ -51,8 +52,9 @@ const CategoryList = () => {
     }
   };
 
+  // ✅ Updated — now opens modal instead of navigating
   const handleEdit = (id) => {
-    navigate(`/edit-category/${id}`);
+    setSelectedCategory(id);
   };
 
   return (
@@ -108,24 +110,21 @@ const CategoryList = () => {
                       </span>
                     </td>
                     <td className="action-buttons">
-                      <div className="top-row">
-                        <button
-                          onClick={() => handleEdit(cat._id)}
-                          className="edit-btn small-btn"
-                          title="Edit"
-                        >
-                          ✏️
-                        </button>
-                      </div>
-                      <div className="bottom-row">
-                        <button
-                          onClick={() => handleDelete(cat._id)}
-                          className="delete-btn small-btn"
-                          title="Delete"
-                        >
-                          🗑️
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => handleEdit(cat._id)}
+                        className="edit-btn small-btn"
+                        title="Edit"
+                      >
+                        ✏️
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(cat._id)}
+                        className="delete-btn small-btn"
+                        title="Delete"
+                      >
+                        🗑️
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -134,6 +133,16 @@ const CategoryList = () => {
           )}
         </div>
       </main>
+
+      {/* ✅ Modal appears when selectedCategory is set */}
+      {selectedCategory && (
+        <EditCategoryModal
+          isOpen={true}
+          categoryId={selectedCategory}
+          onClose={() => setSelectedCategory(null)}
+          onUpdated={fetchCategories}
+        />
+      )}
     </div>
   );
 };

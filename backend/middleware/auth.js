@@ -11,9 +11,15 @@ module.exports = function (req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.admin = decoded; // store admin data in req
+
+    // Ensure it's actually an admin
+    if (decoded.role !== "Admin") {
+      return res.status(403).json({ message: "Access denied. Admin only." });
+    }
+
+    req.user = decoded; // store decoded user/admin details
     next();
   } catch (err) {
-    res.status(401).json({ message: "Invalid or expired token" });
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };

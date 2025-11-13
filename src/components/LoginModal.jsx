@@ -9,8 +9,6 @@ const LoginModal = ({ isOpen, onClose, role = "admin" }) => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  
-
   if (!isOpen) return null;
 
   const handleLogin = async (e) => {

@@ -64,7 +64,11 @@ export const BlogTable = ({
                 style={{ maxHeight: "60px", overflow: "hidden" }}
               />
             </td>
-            <td>{blog.category || "N/A"}</td>
+            <td>
+              {blog.category?.name || "N/A"}
+              {blog.subcategory?.name ? ` → ${blog.subcategory.name}` : ""}
+            </td>
+
             <td>
               <span
                 className={`status-label ${blog.status?.trim().toLowerCase() === "active" ? "status-active" : "status-inactive"}`}

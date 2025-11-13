@@ -46,7 +46,7 @@ const AdminBlogList = () => {
     (currentPage - 1) * blogsPerPage,
     currentPage * blogsPerPage
   );
-  console.log("Blogs in table:", currentBlogs);
+  // console.log("Blogs in table:", currentBlogs);
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Are you sure?",

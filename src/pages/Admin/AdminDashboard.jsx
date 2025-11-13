@@ -11,6 +11,7 @@ import EmployeeList from "../Employee/EmployeeList";
 import EditEmployee from "../Employee/EditEmployee";
 import NewsDashboard from "./NewsDashboard";
 import AdminEditContactSettings from "./AdminEditContactSettings";
+import AdminEditAboutSettings from "./AdminEditAboutSettings";
 
 const AdminDashboard = ({ onLogout }) => {
   const [activePage, setActivePage] = useState(
@@ -57,6 +58,8 @@ const AdminDashboard = ({ onLogout }) => {
         );
       case "contact-settings":
         return <AdminEditContactSettings />;
+      case "about-settings":
+        return <AdminEditAboutSettings />;
 
       default:
         if (activePage.startsWith("edit-employee-")) {
@@ -106,11 +109,11 @@ const AdminDashboard = ({ onLogout }) => {
           style={{
             width: "160px",
             background: "#405e7cff",
-            padding: "20px 10px",
+            padding: "5px 10px",
             boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
           }}
         >
-          <h2 style={{ fontSize: "1.5rem", marginBottom: "30px" }}>
+          <h2 style={{ fontSize: "1.5rem", marginBottom: "10px" }}>
             Admin Panel
           </h2>
           <button
@@ -162,6 +165,12 @@ const AdminDashboard = ({ onLogout }) => {
             onClick={() => setActivePage("contact-settings")}
           >
             Edit Contact Page
+          </button>
+          <button
+            style={sidebarBtnStyle(activePage === "about-settings")}
+            onClick={() => setActivePage("about-settings")}
+          >
+            Edit About Page
           </button>
         </aside>
 

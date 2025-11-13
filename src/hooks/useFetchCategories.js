@@ -11,7 +11,7 @@ export const useFetchCategories = () => {
       try {
         const activeCategories = await fetchCategories();
         const formatted = activeCategories.map((cat) => ({
-          value: cat.name,
+          value: cat._id,
           label: cat.name,
         }));
         setCategoryOptions(formatted);

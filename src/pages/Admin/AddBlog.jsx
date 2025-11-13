@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -14,47 +14,66 @@ const AddBlog = () => {
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
 
+  // Form states
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
-  const [categories, setCategories] = useState([]);
+  const [videoLink, setVideoLink] = useState("");
   const [status, setStatus] = useState({ value: "Active", label: "Active" });
-  const [videoLink, setVideoLink] = useState(""); // ✅ New field
 
-  // ✅ Fetch categories using custom hook
+  // Category/Subcategory states
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [subcategoryOptions, setSubcategoryOptions] = useState([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+
+  // Fetch categories (custom hook)
   const categoryOptions = useFetchCategories();
 
+  // 🟢 Handle Category Change → Fetch Subcategories
+  const handleCategoryChange = async (cat) => {
+    setSelectedCategory(cat);
+    setSelectedSubcategory(null);
+    setSubcategoryOptions([]);
+
+    if (!cat) return;
+
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/subcategories?category=${cat.value}`
+      );
+      const subs = res.data.filter((s) => s.status === "Active");
+      setSubcategoryOptions(subs.map((s) => ({ value: s._id, label: s.name })));
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Failed to load subcategories", "error");
+    }
+  };
+
+  // 🟢 Handle Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (categories.length === 0) {
-      return Swal.fire({
-        icon: "warning",
-        title: "Select category",
-        text: "Please select at least one category",
-      });
+    if (!selectedCategory) {
+      return Swal.fire("Select Category", "Please pick a category", "warning");
     }
 
     const token = localStorage.getItem("token");
-    if (!token) {
-      return Swal.fire("Error", "You are not authorized", "error");
-    }
+    if (!token) return Swal.fire("Error", "Not authorized", "error");
 
     try {
       await axios.post(
         `${API_URL}/api/blogs`,
         {
           title,
-          image,
           content: description,
-          category: categories.map((c) => c.value).join(", "),
-          status: status ? status.value : "Active",
+          image,
+          category: selectedCategory.value, // ObjectId
+          subcategory: selectedSubcategory ? selectedSubcategory.value : "", // ObjectId
+          status: status.value,
           videoLink,
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -62,24 +81,24 @@ const AddBlog = () => {
         icon: "success",
         title: "Added!",
         text: "News added successfully.",
-        timer: 2000,
+        timer: 1500,
         showConfirmButton: false,
       });
-      // ✅ Reset form state
+
+      // Reset form
       setTitle("");
       setImage("");
       setDescription("");
-      setCategories([]);
+      setSelectedCategory(null);
+      setSelectedSubcategory(null);
       setStatus({ value: "Active", label: "Active" });
       setVideoLink("");
+      setSubcategoryOptions([]);
+
       navigate("/admin/dashboard");
     } catch (err) {
       console.error(err);
-      Swal.fire({
-        icon: "error",
-        title: "Failed!",
-        text: "Could not add blog",
-      });
+      Swal.fire("Failed", "Could not add news", "error");
     }
   };
 
@@ -88,138 +107,73 @@ const AddBlog = () => {
       <h2 className="form-title">Add News</h2>
 
       <form onSubmit={handleSubmit} className="blog-form">
-        {/* Row 1: Title | Image | Category */}
+        {/* Title */}
         <input
           type="text"
-          placeholder="Title"
           className="form-input"
+          placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
 
+        {/* Image */}
         <input
           type="text"
-          placeholder="Image URL"
           className="form-input"
+          placeholder="Image URL"
           value={image}
           onChange={(e) => setImage(e.target.value)}
         />
 
-        <div className="select-container">
-          <Select
-            options={categoryOptions}
-            isMulti
-            value={categories}
-            onChange={setCategories}
-            placeholder="Select categories..."
-            isLoading={categoryOptions.length === 0}
-          />
-        </div>
+        {/* Category */}
+        <Select
+          options={categoryOptions}
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+          placeholder="Select Category"
+        />
 
-        {/* Row 2: Status */}
-        <div className="select-container half-width">
-          <Select
-            options={statusOptions}
-            value={status}
-            onChange={setStatus}
-            placeholder="Select status..."
-          />
-        </div>
+        {/* Subcategory */}
+        <Select
+          options={subcategoryOptions}
+          value={selectedSubcategory}
+          onChange={setSelectedSubcategory}
+          placeholder="Select Subcategory"
+          isDisabled={subcategoryOptions.length === 0}
+        />
 
-        {/* ✅ New Video Link Field */}
+        {/* Status */}
+        <Select
+          options={statusOptions}
+          value={status}
+          onChange={setStatus}
+          placeholder="Select Status"
+        />
+
+        {/* Video link */}
         <input
           type="text"
-          placeholder="Video Link (optional)"
           className="form-input"
+          placeholder="Video Link (optional)"
           value={videoLink}
           onChange={(e) => setVideoLink(e.target.value)}
         />
 
-        {/* Row 3: Description */}
+        {/* Content */}
         <textarea
+          className="form-textarea"
           placeholder="Description"
           rows="6"
-          className="form-textarea"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
         />
 
-        {/* Row 4: Submit Button */}
         <button type="submit" className="submit-btn">
           Add News
         </button>
       </form>
-
-      {/* Inline CSS for Responsiveness */}
-      <style>{`
-        .addblog-container {
-          max-width: 900px;
-          margin: 0 auto;
-          padding: 20px;
-        }
-
-        .form-title {
-          font-size: 1.5rem;
-          font-weight: bold;
-          margin-bottom: 20px;
-        }
-
-        .blog-form {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 12px;
-        }
-
-        .form-input, .select-container, .form-textarea {
-          flex: 1;
-          min-width: 260px;
-          padding: 8px;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-        }
-
-        .form-textarea {
-          flex-basis: 100%;
-        }
-
-        .half-width {
-          flex: 0 0 45%;
-        }
-
-        .submit-btn {
-          background-color: #007bff;
-          color: white;
-          border: none;
-          padding: 10px 20px;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: background 0.3s ease;
-        }
-
-        .submit-btn:hover {
-          background-color: #0056b3;
-        }
-
-        /* 📱 Mobile Responsive */
-        @media (max-width: 768px) {
-          .blog-form {
-            flex-direction: column;
-          }
-          .form-input,
-          .select-container,
-          .form-textarea,
-          .half-width {
-            flex: 1 1 100%;
-            min-width: 100%;
-          }
-          .submit-btn {
-            width: 100%;
-            text-align: center;
-          }
-        }
-      `}</style>
     </div>
   );
 };

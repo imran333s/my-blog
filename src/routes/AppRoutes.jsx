@@ -9,7 +9,7 @@ import Search from "../components/Search";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
 import EditBlog from "../pages/Admin/EditBlog";
-import EditCategory from "../pages/Category/EditCategory";
+import EditCategory from "../pages/Category/EditCategoryModal.jsx";
 import EmployeeList from "../pages/Employee/EmployeeList";
 import EmployeeDetails from "../pages/Employee/EmployeeDetails";
 import EditEmployee from "../pages/Employee/EditEmployee";

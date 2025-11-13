@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./FeedbackSlider.css";
 
 const PublicFeedbackSlider = () => {
   const [feedbackList, setFeedbackList] = useState([]);
   const [current, setCurrent] = useState(0);
+  const intervalRef = useRef(null); // ✅ holds the interval ID
 
-  // ✅ Add this here
   const categoryLabels = {
     website: "Website Experience",
     accuracy: "News Accuracy",
@@ -21,39 +21,61 @@ const PublicFeedbackSlider = () => {
       .catch((err) => console.error(err));
   }, []);
 
-  useEffect(() => {
+  // Start auto slide
+  const startAutoSlide = () => {
     if (feedbackList.length > 1) {
-      const interval = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         setCurrent((prev) => (prev + 1) % feedbackList.length);
       }, 3000);
-      return () => clearInterval(interval);
     }
+  };
+
+  // Stop auto slide
+  const stopAutoSlide = () => {
+    clearInterval(intervalRef.current);
+  };
+
+  useEffect(() => {
+    startAutoSlide();
+    return stopAutoSlide;
   }, [feedbackList]);
+
+  const nextSlide = () => {
+    setCurrent((prev) => (prev + 1) % feedbackList.length);
+  };
+
+  const prevSlide = () => {
+    setCurrent((prev) => (prev === 0 ? feedbackList.length - 1 : prev - 1));
+  };
 
   if (feedbackList.length === 0) return <p>No feedback yet.</p>;
 
   const feedback = feedbackList[current];
 
   return (
-    <div className="feedback-slider-container">
+    <div
+      className="feedback-slider-container"
+      onMouseEnter={stopAutoSlide} // ✅ Pause on hover
+      onMouseLeave={startAutoSlide} // ✅ Resume on leave
+    >
+      <button className="slider-arrow left" onClick={prevSlide}>
+        &lt;
+      </button>
+
       <div className="feedback-slide">
         <div className="feedback-top-row">
-          <strong className="feedback-name">
-            {feedback.name || "Anonymous"}
-          </strong>
+          <strong>{feedback.name || "Anonymous"}</strong>
           {feedback.email && (
             <span className="feedback-email">{feedback.email}</span>
           )}
         </div>
 
-        {/* ✅ Updated Category Display */}
         {feedback.category && (
           <span className="feedback-category">
             {categoryLabels[feedback.category] || feedback.category}
           </span>
         )}
 
-        {/* ⭐ Rating */}
         {feedback.rating > 0 && (
           <div className="feedback-rating">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -69,6 +91,10 @@ const PublicFeedbackSlider = () => {
 
         <p className="feedback-message">{feedback.message}</p>
       </div>
+
+      <button className="slider-arrow right" onClick={nextSlide}>
+        &gt;
+      </button>
 
       {feedbackList.length > 1 && (
         <div className="feedback-dots">

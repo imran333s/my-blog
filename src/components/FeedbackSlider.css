@@ -2,6 +2,7 @@
   width: 100%;
   max-width: 500px;
   position: relative;
+  cursor: pointer;
 }
 
 /* Card */
@@ -100,4 +101,31 @@
 
 .feedback-rating .star.active {
   color: #ffb400;
+}
+.slider-arrow {
+  position: absolute;
+  top: 60%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.25);
+  border: none;
+  padding: 10px 14px;
+  font-size: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  backdrop-filter: blur(6px);
+  transition: 0.3s ease;
+  z-index: 999;
+}
+
+.slider-arrow:hover {
+  background: rgba(255,255,255,0.45);
+}
+
+.slider-arrow.left {
+  left: 15px;
+}
+
+.slider-arrow.right {
+  right: 15px;
 }

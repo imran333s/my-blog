@@ -60,7 +60,7 @@ const Trending = () => {
 
                 <div className="trending-info">
                   <div className="trending-category">
-                    {blog.category || "General"}
+                    {blog.category?.name || "General"}
                   </div>
 
                   <div className="trending-heading">{blog.title}</div>

@@ -13,6 +13,8 @@ const AddCategory = () => {
   const [image, setImage] = useState("");
   const [caption, setCaption] = useState("");
   const [status, setStatus] = useState({ value: "Active", label: "Active" });
+  const [subcategories, setSubcategories] = useState([]);
+
   const API_URL = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async (e) => {
@@ -30,7 +32,8 @@ const AddCategory = () => {
           name,
           image,
           caption,
-          status: status ? status.value : "Active", // ✅ Include status
+          status: status.value,
+          subcategories,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -45,15 +48,20 @@ const AddCategory = () => {
         showConfirmButton: false,
       });
 
-      // Reset form
+      // ✅ Reset form safely
       setName("");
       setImage("");
       setCaption("");
-      setStatus(null);
+      setStatus({ value: "Active", label: "Active" });
+      setSubcategories([]);
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Failed to add category", "error");
     }
+  };
+
+  const removeSubcategory = (indexToRemove) => {
+    setSubcategories(subcategories.filter((_, index) => index !== indexToRemove));
   };
 
   return (
@@ -99,15 +107,43 @@ const AddCategory = () => {
           style={inputStyle}
         />
 
-        {/* ✅ Status Dropdown */}
-        <div>
-          <Select
-            options={statusOptions}
-            value={status}
-            onChange={setStatus}
-            placeholder="Select status..."
-          />
+        {/* Subcategory Input */}
+        <input
+          type="text"
+          placeholder="Add Subcategory (press Enter)"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              if (e.target.value.trim() !== "") {
+                setSubcategories([...subcategories, e.target.value.trim()]);
+                e.target.value = "";
+              }
+            }
+          }}
+          style={inputStyle}
+        />
+
+        {/* Show Added Subcategories */}
+        <div style={{ marginTop: "5px", display: "flex", flexWrap: "wrap", gap: "6px" }}>
+          {subcategories.map((sub, index) => (
+            <span
+              key={index}
+              onClick={() => removeSubcategory(index)}
+              style={{
+                padding: "6px 10px",
+                background: "#f0f0f0",
+                borderRadius: "6px",
+                fontSize: "14px",
+                cursor: "pointer",
+              }}
+            >
+              {sub} ✕
+            </span>
+          ))}
         </div>
+
+        {/* Status Dropdown */}
+        <Select options={statusOptions} value={status} onChange={setStatus} />
 
         <button
           type="submit"
@@ -128,7 +164,6 @@ const AddCategory = () => {
   );
 };
 
-// Input field style
 const inputStyle = {
   padding: "10px",
   border: "1px solid #ccc",

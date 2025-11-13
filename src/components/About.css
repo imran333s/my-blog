@@ -5,49 +5,44 @@
   font-family: "Inter", sans-serif;
 }
 
-/* Hero Section */
+/* Hero Image Section */
 .about-hero {
-  position: relative;
-  height: 320px;
-  background: url("https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1400&q=80") center top / cover no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-.hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.55);
+  height: auto;        /* keeps image proportions */
+  max-height: 600px;   /* optional max height */
+  overflow: hidden;
 }
 
-.hero-content {
-  position: relative;
+.hero-img {
+  width: 100%;
+  height: auto;       /* maintains original aspect ratio */
+  display: block;
+  object-fit: contain; /* avoid cropping or zoom */
+}
+
+/* Title & Subtitle below hero image */
+.hero-content-below {
   text-align: center;
-  color: #fff;
-  z-index: 1;
+  margin: 30px 20px;
+  color: #222;
 }
 
-.hero-content h1 {
+.hero-content-below h1 {
   font-size: 48px;
   font-weight: 700;
   margin-bottom: 10px;
 }
 
-.hero-content p {
+.hero-content-below p {
   font-size: 18px;
   opacity: 0.9;
 }
 
-/* Content Layout */
-.about-container {
+/* Main Content Layout */
+.about-content {
   max-width: 1000px;
   margin: auto;
-  padding: 60px 20px;
+  padding: 40px 20px;
   line-height: 1.8;
 }
 
