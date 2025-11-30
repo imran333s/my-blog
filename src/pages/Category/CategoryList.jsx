@@ -10,14 +10,20 @@ const CategoryList = () => {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const fetchCategories = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/api/categories`);
-      setCategories(res.data.reverse());
-    } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "Failed to fetch categories", "error");
-    }
-  };
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return Swal.fire("Error", "You are not authorized", "error");
+
+    const res = await axios.get(`${API_URL}/api/categories/admin`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setCategories(res.data.reverse());
+  } catch (err) {
+    console.error(err);
+    Swal.fire("Error", "Failed to fetch categories", "error");
+  }
+};
+
 
   useEffect(() => {
     fetchCategories();

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Select from "react-select"; // modern dropdown
 import BlogCard from "../../components/BlogCard";
-
+import "./News.css";
 const News = () => {
   const { category } = useParams();
   const resolvedCategory = (category || "all").toLowerCase();
@@ -166,8 +166,12 @@ const News = () => {
       </div>
 
       {/* Loading */}
+      {/* Loading Spinner */}
       {loading && (
-        <p style={{ textAlign: "center", marginTop: "20px" }}>Loading...</p>
+        <div className="news-loading-state">
+          <div className="news-spinner"></div>
+          <p>Loading news...</p>
+        </div>
       )}
 
       {/* Load More Button */}

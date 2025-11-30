@@ -200,45 +200,60 @@ exports.searchBlogs = async (req, res) => {
 
 exports.addBlog = async (req, res) => {
   try {
-    const { title, content, category, subcategory, image, status, videoLink } =
+    // console.log("📩 Incoming Add Blog Data:", req.body);
+
+    let { title, content, category, subcategory, image, status, videoLink } =
       req.body;
+
+    // Convert empty strings to null
+    subcategory = subcategory && subcategory !== "" ? subcategory : null;
+    image = image && image !== "" ? image : null;
+    videoLink = videoLink && videoLink !== "" ? videoLink : null;
+
     const validStatus = ["Active", "Inactive"];
-    const blogStatus = validStatus.includes(status) ? status : "Active";
+    status = validStatus.includes(status) ? status : "Active";
 
     const newBlog = await Blog.create({
       title,
       content,
-      category, // category ObjectId
-      subcategory, // subcategory ObjectId
+      category,
+      subcategory,
       image,
-      status: blogStatus,
+      status,
       videoLink,
     });
 
     res.status(201).json(newBlog);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 };
 
 exports.updateBlog = async (req, res) => {
   try {
-    const { title, content, image, videoLink, status, category, subcategory } =
+    let { title, content, category, subcategory, image, status, videoLink } =
       req.body;
+
+    // Convert empty strings to null
+    subcategory = subcategory && subcategory !== "" ? subcategory : null;
+    image = image && image !== "" ? image : null;
+    videoLink = videoLink && videoLink !== "" ? videoLink : null;
+    status = ["Active", "Inactive"].includes(status) ? status : "Active";
 
     const updatedBlog = await Blog.findByIdAndUpdate(
       req.params.id,
       {
         title,
         content,
+        category,
+        subcategory,
         image,
         videoLink,
-        status: ["Active", "Inactive"].includes(status) ? status : "Active",
-        category, // category ObjectId
-        subcategory, // subcategory ObjectId
+        status,
       },
       { new: true }
-    ).populate("category subcategory"); // populate both
+    ).populate("category subcategory");
 
     if (!updatedBlog)
       return res.status(404).json({ message: "Blog not found" });

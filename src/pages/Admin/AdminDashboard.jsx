@@ -12,7 +12,9 @@ import EditEmployee from "../Employee/EditEmployee";
 import NewsDashboard from "./NewsDashboard";
 import AdminEditContactSettings from "./AdminEditContactSettings";
 import AdminEditAboutSettings from "./AdminEditAboutSettings";
-
+import ChangePassword from "../../components/ChangePassword";
+import AddDepartment from "../Department/AddDepartment";
+import DepartmentList from "../Department/DepartmentList";
 const AdminDashboard = ({ onLogout }) => {
   const [activePage, setActivePage] = useState(
     localStorage.getItem("activePage") || "dashboard"
@@ -60,6 +62,13 @@ const AdminDashboard = ({ onLogout }) => {
         return <AdminEditContactSettings />;
       case "about-settings":
         return <AdminEditAboutSettings />;
+      case "change-password":
+        return <ChangePassword />;
+      case "add-department":
+        return <AddDepartment />;
+
+      case "department-list":
+        return <DepartmentList />;
 
       default:
         if (activePage.startsWith("edit-employee-")) {
@@ -107,7 +116,7 @@ const AdminDashboard = ({ onLogout }) => {
         {/* Sidebar */}
         <aside
           style={{
-            width: "160px",
+            width: "220px",
             background: "#405e7cff",
             padding: "5px 10px",
             boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
@@ -161,6 +170,20 @@ const AdminDashboard = ({ onLogout }) => {
           </button>
 
           <button
+            style={sidebarBtnStyle(activePage === "add-department")}
+            onClick={() => setActivePage("add-department")}
+          >
+            Add Department
+          </button>
+
+          <button
+            style={sidebarBtnStyle(activePage === "department-list")}
+            onClick={() => setActivePage("department-list")}
+          >
+            Department List
+          </button>
+
+          <button
             style={sidebarBtnStyle(activePage === "contact-settings")}
             onClick={() => setActivePage("contact-settings")}
           >
@@ -171,6 +194,12 @@ const AdminDashboard = ({ onLogout }) => {
             onClick={() => setActivePage("about-settings")}
           >
             Edit About Page
+          </button>
+          <button
+            style={sidebarBtnStyle(activePage === "change-password")}
+            onClick={() => setActivePage("change-password")}
+          >
+            Change Password
           </button>
         </aside>
 
@@ -184,7 +213,7 @@ const AdminDashboard = ({ onLogout }) => {
 // Sidebar button styles
 const sidebarBtnStyle = (active) => ({
   display: "block",
-  width: "90%",
+  width: "100%",
   padding: "7px 15px",
   marginBottom: "15px",
   border: "none",

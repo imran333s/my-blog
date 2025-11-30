@@ -75,11 +75,14 @@
   padding: 0;
   display: flex;
   align-items: center;
+  gap: 15px;
 }
 
-.nav-menu ul li {
-  margin-left: 30px;
-}
+/* .nav-menu ul li {
+  margin-left: 18px;
+  
+} */
+
 
 .nav-menu ul li a {
   color: #ffffff; /* White text */
@@ -102,6 +105,7 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.3s ease;
+ 
 }
 
 .admin-btn {
@@ -117,6 +121,7 @@
   background: #007bff;
   color: white;
   padding: 6px 6px;
+  margin-right: 50px;
 }
 .employee-btn:hover {
   background: #0056b3;

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Select from "react-select";
 
 const AddEmployee = () => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const [departments, setDepartments] = useState([]);
 
-  // Hardcoded role options
   const roleOptions = [
     { value: "Admin", label: "Admin" },
     { value: "Manager", label: "Manager" },
@@ -22,6 +22,7 @@ const AddEmployee = () => {
     role: { value: "Employee", label: "Employee" },
     startDate: "",
     department: "",
+    customDepartment: "",
     reportingManager: "",
   });
 
@@ -36,10 +37,14 @@ const AddEmployee = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const finalDepartment =
+      form.department === "Other" ? form.customDepartment : form.department;
+
     try {
       await axios.post(`${API_URL}/api/employees/add`, {
         ...form,
         role: form.role.value,
+        department: finalDepartment,
       });
 
       Swal.fire({
@@ -59,10 +64,10 @@ const AddEmployee = () => {
         role: { value: "Employee", label: "Employee" },
         startDate: "",
         department: "",
+        customDepartment: "",
         reportingManager: "",
       });
     } catch (err) {
-      console.error(err);
       Swal.fire({
         icon: "error",
         title: "Error!",
@@ -70,6 +75,12 @@ const AddEmployee = () => {
       });
     }
   };
+
+  useEffect(() => {
+    axios.get(`${API_URL}/api/departments`).then((res) => {
+      setDepartments(res.data);
+    });
+  }, []);
 
   return (
     <div className="addemployee-container">
@@ -80,52 +91,69 @@ const AddEmployee = () => {
         className="employee-form"
         autoComplete="off"
       >
-        {/* Input Fields */}
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          className="form-input"
-          value={form.name}
-          onChange={handleChange}
-          required
-        />
-
-        {/* ✅ Manually filled email and password fields (no autofill) */}
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address"
-          className="form-input"
-          value={form.email}
-          onChange={handleChange}
-          autoComplete="off"
-          required
-        />
-
+        {/* STOP AUTOFILL */}
+        <input type="text" name="fakeEmail" style={{ display: "none" }} />
         <input
           type="password"
-          name="password"
-          placeholder="Password"
-          className="form-input"
-          value={form.password}
-          onChange={handleChange}
+          name="fakePassword"
+          style={{ display: "none" }}
           autoComplete="new-password"
-          required
         />
 
-        <input
-          type="text"
-          name="mobile"
-          placeholder="Mobile Number"
-          className="form-input"
-          value={form.mobile}
-          onChange={handleChange}
-          required
-        />
+        {/* NAME */}
+        <div className="form-group">
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            className="form-input"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-        {/* ✅ Custom Date Input with visible placeholder */}
-        <div className="date-wrapper">
+        {/* EMAIL */}
+        <div className="form-group">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            className="form-input"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        {/* PASSWORD */}
+        <div className="form-group">
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="form-input"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        {/* MOBILE */}
+        <div className="form-group">
+          <input
+            type="text"
+            name="mobile"
+            placeholder="Mobile Number"
+            className="form-input"
+            value={form.mobile}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        {/* DOB */}
+        <div className="form-group">
           <input
             type={form.dob ? "date" : "text"}
             name="dob"
@@ -133,16 +161,14 @@ const AddEmployee = () => {
             className="form-input"
             value={form.dob}
             onFocus={(e) => (e.target.type = "date")}
-            onBlur={(e) => {
-              if (!form.dob) e.target.type = "text";
-            }}
+            onBlur={(e) => !form.dob && (e.target.type = "text")}
             onChange={handleChange}
             required
           />
         </div>
 
-        {/* Role Selector */}
-        <div className="select-container half-width">
+        {/* ROLE */}
+        <div className="form-group select-wrapper">
           <Select
             options={roleOptions}
             value={form.role}
@@ -151,8 +177,8 @@ const AddEmployee = () => {
           />
         </div>
 
-        {/* ✅ Custom Start Date Input with placeholder */}
-        <div className="date-wrapper">
+        {/* START DATE */}
+        <div className="form-group">
           <input
             type={form.startDate ? "date" : "text"}
             name="startDate"
@@ -160,105 +186,132 @@ const AddEmployee = () => {
             className="form-input"
             value={form.startDate}
             onFocus={(e) => (e.target.type = "date")}
-            onBlur={(e) => {
-              if (!form.startDate) e.target.type = "text";
-            }}
+            onBlur={(e) => !form.startDate && (e.target.type = "text")}
             onChange={handleChange}
             required
           />
         </div>
 
-        <input
-          type="text"
-          name="department"
-          placeholder="Department"
-          className="form-input"
-          value={form.department}
-          onChange={handleChange}
-          required
-        />
+        {/* DEPARTMENT + OTHER OPTION */}
+        <div className="form-group">
+          <select
+            name="department"
+            className="form-input"
+            value={form.department}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Department</option>
 
-        <input
-          type="text"
-          name="reportingManager"
-          placeholder="Reporting Manager"
-          className="form-input"
-          value={form.reportingManager}
-          onChange={handleChange}
-        />
+            {departments.map((d) => (
+              <option key={d._id} value={d.name}>
+                {d.name}
+              </option>
+            ))}
 
+            {/* NEW OPTION */}
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        {/* CUSTOM DEPARTMENT INPUT */}
+        {form.department === "Other" && (
+          <div className="form-group">
+            <input
+              type="text"
+              name="customDepartment"
+              placeholder="Enter Custom Department"
+              className="form-input"
+              value={form.customDepartment}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        )}
+
+        {/* REPORTING MANAGER */}
+        <div className="form-group">
+          <input
+            type="text"
+            name="reportingManager"
+            placeholder="Reporting Manager"
+            className="form-input"
+            value={form.reportingManager}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* SUBMIT */}
         <button type="submit" className="submit-btn">
           Add Employee
         </button>
       </form>
 
-      {/* Inline Styling for AddEmployee */}
+      {/* STYLES */}
       <style>{`
         .addemployee-container {
           max-width: 900px;
           margin: 0 auto;
-          padding: 20px;
-          background-color: #fff;
+          padding: 25px;
+          background: #fff;
         }
 
         .form-title {
-          font-size: 1.6rem;
+          font-size: 1.7rem;
           font-weight: bold;
           margin-bottom: 20px;
-          color: #333;
         }
 
         .employee-form {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 12px;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 35px;
         }
 
-        .form-input, .select-container {
-          flex: 1;
-          min-width: 260px;
-          padding: 8px;
+        .form-group {
+          margin-bottom: 18px;
+        }
+
+        .form-input {
+          width: 100%;
+          padding: 10px;
           border: 1px solid #ccc;
           border-radius: 6px;
-          font-size: 0.95rem;
+          font-size: 1rem;
         }
 
-        .form-input::placeholder {
-          color: #999;
-        }
-
-        .half-width {
-          flex: 0 0 45%;
+        .select-wrapper .css-yk16xz-control,
+        .select-wrapper .css-1pahdxg-control {
+          min-height: 42px !important;
+          height: 42px !important;
         }
 
         .submit-btn {
-          background-color: #007bff;
-          color: white;
+          grid-column: span 3;
+          padding: 12px;
+          background: #007bff;
           border: none;
-          padding: 10px 20px;
+          color: white;
+          font-size: 1.1rem;
           border-radius: 6px;
+          margin-top: 10px;
           cursor: pointer;
-          transition: background 0.3s ease;
+          transition: .3s;
         }
 
         .submit-btn:hover {
-          background-color: #0056b3;
+          background: #0056b3;
         }
 
-        /* 📱 Responsive Styles */
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .employee-form {
-            flex-direction: column;
+            grid-template-columns: repeat(2, 1fr);
           }
-          .form-input,
-          .select-container,
-          .half-width {
-            flex: 1 1 100%;
-            min-width: 100%;
-          }
-          .submit-btn {
-            width: 100%;
-            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+          .employee-form {
+            grid-template-columns: 1fr;
           }
         }
       `}</style>

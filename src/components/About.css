@@ -5,26 +5,25 @@
   font-family: "Inter", sans-serif;
 }
 
-/* Hero Image Section */
+/* Hero Image */
 .about-hero {
   width: 100%;
-  height: auto;        /* keeps image proportions */
-  max-height: 600px;   /* optional max height */
+  height: auto;
+  max-height: 600px;
   overflow: hidden;
 }
 
 .hero-img {
   width: 100%;
-  height: auto;       /* maintains original aspect ratio */
+  height: auto;
   display: block;
-  object-fit: contain; /* avoid cropping or zoom */
+  object-fit: cover;
 }
 
-/* Title & Subtitle below hero image */
+/* Hero title & subtitle */
 .hero-content-below {
   text-align: center;
   margin: 30px 20px;
-  color: #222;
 }
 
 .hero-content-below h1 {
@@ -38,25 +37,27 @@
   opacity: 0.9;
 }
 
-/* Main Content Layout */
-.about-content {
-  max-width: 1000px;
-  margin: auto;
-  padding: 40px 20px;
-  line-height: 1.8;
+/* Main Content Two Columns */
+.about-content.two-columns {
+  display: flex;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  flex-wrap: wrap;
 }
 
-.about-section {
-  margin-bottom: 50px;
+.left-column, .right-column {
+  flex: 1 1 45%;
 }
 
-.about-section h2 {
+.left-column h2, .right-column h2 {
   font-size: 28px;
   margin-bottom: 15px;
   position: relative;
 }
 
-.about-section h2::after {
+.left-column h2::after, .right-column h2::after {
   content: "";
   width: 60px;
   height: 3px;
@@ -66,25 +67,147 @@
   border-radius: 2px;
 }
 
-/* Features Grid */
-.features-grid {
+.left-column p {
+  line-height: 1.8;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+/* Services Grid in Right Column */
+.right-column .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(2, 1fr); /* Two cards per row */
   gap: 20px;
 }
 
-.feature-card {
+.right-column .service-card {
   padding: 18px;
   background: #f5f5f5;
   border-left: 5px solid #ff3232;
   border-radius: 6px;
   font-weight: 500;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-/* Signature */
-.signature {
-  text-align: right;
-  font-style: italic;
-  font-weight: 600;
-  margin-top: 30px;
+.right-column .service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
+
+.right-column .service-card h3 {
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+/* Responsive Adjustments */
+@media(max-width: 900px) {
+  .about-content.two-columns {
+    flex-direction: column;
+  }
+  .left-column, .right-column {
+    flex: 1 1 100%;
+  }
+}
+
+@media(max-width: 768px) {
+  .right-column .services-grid {
+    grid-template-columns: 1fr; /* Stack one card per row */
+  }
+}
+
+/* Who We Are Section (optional if you want a separate block) */
+.who-we-are {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fdfdfd;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.who-we-are h2 {
+  font-size: 32px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.who-we-are h2::after {
+  content: "";
+  width: 60px;
+  height: 3px;
+  background: #ff3232;
+  display: block;
+  margin: 8px auto 0 auto;
+  border-radius: 2px;
+}
+
+.who-we-are h3 {
+  font-size: 24px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.who-we-are p {
+  font-size: 16px;
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto;
+}
+/* Stats Section */
+/* Stats Section */
+.stats-section {
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 20px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  text-align: center;
+}
+
+.stat-card {
+  padding: 30px 20px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stat-card h3 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+/* Individual colors */
+.stat-card h3.green {
+  color: #4ded17; /* Happy Readers */
+}
+
+.stat-card h3.blue {
+  color: #3498db; /* News Uploaded */
+}
+
+.stat-card h3.purple {
+  color: #9b59b6; /* Team Members */
+}
+
+.stat-card p {
+  font-size: 16px;
+  color: #555;
+}
+
+/* Responsive */
+@media(max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: 1fr; /* stack one per row */
+  }
+}
+

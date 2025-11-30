@@ -1,9 +1,19 @@
 const Category = require("../models/Category");
 
-// ✅ Get all categories
+// Get all active categories (public)
 exports.getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.find();
+    const categories = await Category.find({ status: "Active" });
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ✅ Get all categories (admin view)
+exports.getAllCategoriesAdmin = async (req, res) => {
+  try {
+    const categories = await Category.find(); // no filter
     res.json(categories);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -1,0 +1,200 @@
+/* ===============================
+   Department List Styles
+================================= */
+.department-list .main-content {
+  padding: 0;
+  margin-bottom: 90px;
+  margin-top: 0;
+}
+
+.department-list .section-title {
+  margin-top: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* ===============================
+   Department Table Styling
+================================= */
+.department-list .admin-dept-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+.department-list .admin-dept-table th,
+.department-list .admin-dept-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align:center;
+  vertical-align: middle;
+}
+
+.department-list .admin-dept-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.department-list .admin-dept-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* ===============================
+   Action Buttons
+================================= */
+.department-list .action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+.department-list .edit-btn,
+.department-list .delete-btn {
+  border: none;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background-color: #f5f5f5;
+  transition: background 0.2s;
+  border: 1px solid #ccc;
+}
+
+.department-list .edit-btn:hover {
+  background-color: #a7dca2;
+}
+
+.department-list .delete-btn {
+  background-color: #d9534f;
+  color: #fff;
+}
+
+.department-list .delete-btn:hover {
+  background-color: #d8110a;
+}
+
+/* ===============================
+   Modal Styles
+================================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-box {
+  background: #fff;
+  padding: 25px;
+  width: 350px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.modal-box input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+.modal-btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.update-btn {
+  background: #1976d2;
+  color: #fff;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  width: 50%;
+}
+
+.cancel-btn {
+  background: #9e9e9e;
+  color: #fff;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  width: 50%;
+}
+
+/* ===============================
+   Responsive Table
+================================= */
+@media (max-width: 768px) {
+  .department-list .admin-dept-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .department-list .edit-btn,
+  .department-list .delete-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .department-list .admin-dept-table,
+  .department-list .admin-dept-table thead,
+  .department-list .admin-dept-table tbody,
+  .department-list .admin-dept-table th,
+  .department-list .admin-dept-table td,
+  .department-list .admin-dept-table tr {
+    display: block;
+  }
+
+  .department-list .admin-dept-table thead {
+    display: none;
+  }
+
+  .department-list .admin-dept-table tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  .department-list .admin-dept-table td {
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 5px;
+  }
+
+  .department-list .admin-dept-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+
+  .department-list .admin-dept-table td:last-child {
+    justify-content: center;
+    gap: 10px;
+  }
+}

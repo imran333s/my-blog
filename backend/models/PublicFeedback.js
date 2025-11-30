@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
 const PublicFeedbackSchema = new mongoose.Schema({
-  name: { type: String, default: "Anonymous" },
+  name: { type: String, default: "Anonymous", required: true },
 
-  email: { 
+  email: {
     type: String,
     trim: true,
     lowercase: true,
-    default: null
+    default: null,
   },
 
   category: {
@@ -23,15 +23,15 @@ const PublicFeedbackSchema = new mongoose.Schema({
     default: 0,
   },
 
-  message: { 
-    type: String, 
+  message: {
+    type: String,
     required: true,
-    trim: true
+    trim: true,
   },
 
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

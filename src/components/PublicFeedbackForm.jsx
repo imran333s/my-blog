@@ -23,15 +23,24 @@ const PublicFeedbackForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/public-feedback`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(feedback),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/public-feedback`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(feedback),
+        }
+      );
 
       if (res.ok) {
         setSubmitted(true);
-        setFeedback({ name: "", email: "", category: "", rating: 0, message: "" });
+        setFeedback({
+          name: "",
+          email: "",
+          category: "",
+          rating: 0,
+          message: "",
+        });
       }
     } catch (err) {
       console.error(err);
@@ -45,13 +54,13 @@ const PublicFeedbackForm = () => {
       <h2>Share Your Feedback</h2>
 
       <form onSubmit={handleSubmit}>
-        
         <input
           type="text"
           name="name"
-          placeholder="Your Name (optional)"
+          placeholder="Your Name "
           value={feedback.name}
           onChange={handleChange}
+          required
         />
 
         <input

@@ -10,12 +10,12 @@ const Navbar = () => {
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const [categories, setCategories] = useState([]); // <-- dynamic categories
   const searchRef = useRef(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [loginRole, setLoginRole] = useState("admin");
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef(null);
-
 
   // Detect scroll to apply background blur
   useEffect(() => {
@@ -26,14 +26,30 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Reset search on route change
   useEffect(() => {
     setSearchQuery("");
     setSuggestions([]);
   }, [location.pathname]);
 
+  // Fetch categories dynamically
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/categories`);
+        if (!res.ok) throw new Error("Failed to fetch categories");
+        const data = await res.json();
+        setCategories(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchCategories();
+  }, [API_URL]);
+
   // Search handler
   const handleSearch = () => {
-    if (searchQuery.trim().length === 0) return;
+    if (searchQuery.trim() === "") return;
     navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     setSearchQuery("");
     setSuggestions([]);
@@ -104,6 +120,7 @@ const Navbar = () => {
 
         <nav className="nav-menu">
           <ul>
+            {/* Search */}
             <li>
               <div className="search-box" ref={searchRef}>
                 <input
@@ -133,11 +150,12 @@ const Navbar = () => {
               </div>
             </li>
 
+            {/* Home */}
             <li>
               <Link to="/">Home</Link>
             </li>
 
-            {/* Dropdown */}
+            {/* News Dropdown (dynamic) */}
             <li className="dropdown" ref={dropdownRef}>
               <span
                 className="dropdown-title"
@@ -154,41 +172,22 @@ const Navbar = () => {
                     All
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    to="/news/sports"
-                    onClick={() => dropdownRef.current.classList.remove("open")}
-                  >
-                    Sports
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/news/business"
-                    onClick={() => dropdownRef.current.classList.remove("open")}
-                  >
-                    Business
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/news/politics"
-                    onClick={() => dropdownRef.current.classList.remove("open")}
-                  >
-                    Politics
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/news/entertainment"
-                    onClick={() => dropdownRef.current.classList.remove("open")}
-                  >
-                    Entertainment
-                  </Link>
-                </li>
+                {categories.map((cat) => (
+                  <li key={cat._id}>
+                    <Link
+                      to={`/news/${cat.name.toLowerCase()}`}
+                      onClick={() =>
+                        dropdownRef.current.classList.remove("open")
+                      }
+                    >
+                      {cat.name}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </li>
 
+            {/* Other links */}
             <li>
               <Link to="/about">About</Link>
             </li>
@@ -196,6 +195,7 @@ const Navbar = () => {
               <Link to="/contact">Contact Us</Link>
             </li>
 
+            {/* Login buttons */}
             <li>
               <button
                 onClick={() => openLoginModal("admin")}

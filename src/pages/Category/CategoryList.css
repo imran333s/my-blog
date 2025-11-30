@@ -58,8 +58,8 @@
 }
 
 .category-list .status-inactive {
-  color: red;
-  font-weight: bold;
+   background-color: #dc3545; /* Red */
+  /* font-weight: bold; */
 }
 
 /* ===============================

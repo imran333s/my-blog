@@ -1,12 +1,10 @@
-.public-feedback-container {
+.public-feedback-container { 
   width: 100%;
   padding: 10px;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-
-  /* remove center forcing */
   margin: 0; 
   text-align: left;
   height: auto; 
@@ -14,9 +12,8 @@
   margin-top: 30px;
 }
 
-
 .public-feedback-container h2 {
-  margin-top: 0px;;
+  margin-top: 0px;
   font-size: 1.6rem;
   margin-bottom: 15px;
   color: #222;
@@ -28,28 +25,47 @@
   gap: 15px;
 }
 
-
-.public-feedback-container input,
-.public-feedback-container textarea {
-  padding: 15px 20px;
-  font-size: 1rem;
+/* ✅ SMALLER Name & Email Inputs */
+.public-feedback-container input {
+  padding: 8px 12px;
+  font-size: 0.9rem;
   border: 1px solid #cccccc;
   border-radius: 8px;
   outline: none;
   transition: border 0.3s, box-shadow 0.3s;
 }
 
-.public-feedback-container input:focus,
-.public-feedback-container textarea:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+/* ✅ BIGGER Select Dropdown */
+.public-feedback-container select {
+  padding: 18px 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  outline: none;
+  background-color: #ffffff;
 }
 
+/* Textarea stays normal */
 .public-feedback-container textarea {
+  padding: 15px 20px;
+  font-size: 1rem;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  outline: none;
   min-height: 70px;
   resize: vertical;
 }
 
+/* Focus effects */
+.public-feedback-container input:focus,
+.public-feedback-container textarea:focus,
+.public-feedback-container select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Button */
 .public-feedback-container button {
   padding: 15px;
   font-size: 1rem;
@@ -73,12 +89,7 @@
   margin-top: 20px;
 }
 
-@media (max-width: 768px) {
-  .public-feedback-container {
-    padding: 30px 20px;
-    margin: 30px 10px;
-  }
-}
+/* Stars */
 .rating-stars {
   display: flex;
   gap: 6px;
@@ -94,4 +105,12 @@
 
 .star.active {
   color: #ffb400;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .public-feedback-container {
+    padding: 30px 20px;
+    margin: 30px 10px;
+  }
 }

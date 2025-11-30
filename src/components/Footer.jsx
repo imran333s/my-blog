@@ -56,16 +56,33 @@ const Footer = () => {
         <div className="footer-social">
           <h4>Follow Us</h4>
           <div className="social-icons">
-            <a href="#">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <i className="fab fa-facebook-f"></i>
             </a>
-            <a href="#">
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <i className="fab fa-twitter"></i>
             </a>
-            <a href="#">
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <i className="fab fa-instagram"></i>
             </a>
-            <a href="#">
+            <a
+            
+              href="https://www.youtube.com/@BrutIndia"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <i className="fab fa-youtube"></i>
             </a>
           </div>

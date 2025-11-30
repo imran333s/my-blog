@@ -8,7 +8,12 @@ const blogSchema = new mongoose.Schema({
     ref: "Category",
     required: true,
   },
-  subcategory: { type: mongoose.Schema.Types.ObjectId, ref: "Subcategory" }, // single subcategory
+  subcategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Subcategory",
+    required: false, // explicitly optional
+    default: null, // default to null if nothing is sent
+  },
   image: String,
   status: { type: String, enum: ["Active", "Inactive"], default: "Active" },
   videoLink: String,
