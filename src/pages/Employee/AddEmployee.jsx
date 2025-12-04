@@ -287,16 +287,18 @@ const AddEmployee = () => {
         }
 
         .submit-btn {
-          grid-column: span 3;
-          padding: 12px;
-          background: #007bff;
-          border: none;
-          color: white;
-          font-size: 1.1rem;
-          border-radius: 6px;
-          margin-top: 10px;
-          cursor: pointer;
-          transition: .3s;
+  padding: 12px 1px;      /* width controlled by horizontal padding */
+  background: #007bff;
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  border-radius: 6px;      /* slightly rounded corners */
+  margin-top: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+
+  /* Optional: make width match content */
+  display: inline-block;    
         }
 
         .submit-btn:hover {

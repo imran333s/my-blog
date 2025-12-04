@@ -87,7 +87,12 @@ const AdminDashboard = ({ onLogout }) => {
   useEffect(() => {
     const fetchAdminInfo = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/admin/me`); // no headers
+        const response = await axios.get(`${API_URL}/api/admin/me`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        // no headers
 
         const data = response.data;
         setAdminInfo({ name: data.name, role: data.role });

@@ -37,8 +37,11 @@ exports.loginAdmin = async (req, res) => {
 
 exports.getAdminProfile = async (req, res) => {
   try {
-    const admin = await Admin.findOne().select("-password");
-    if (!admin) return res.status(404).json({ message: "Admin not found" });
+    const admin = await Admin.findById(req.user.id).select("-password");
+
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
 
     res.json({
       name: admin.name,
@@ -46,7 +49,7 @@ exports.getAdminProfile = async (req, res) => {
       role: admin.role,
       websiteName: "News Website",
     });
-  } catch {
+  } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -57,30 +60,44 @@ exports.getDashboardStats = async (req, res) => {
     const totalNews = await Blog.countDocuments();
     const totalCategories = await Category.countDocuments();
     const totalDepartments = await Department.countDocuments();
-    const totalEmployees = await Employee.countDocuments();
-    const totalAdmins = await Admin.countDocuments();
 
-    const activeNews = await Blog.countDocuments({ status: "active" });
-    const inactiveNews = await Blog.countDocuments({ status: "inactive" });
-
-    const activeEmployees = await Employee.countDocuments({ status: "active" });
-    const inactiveEmployees = await Employee.countDocuments({
-      status: "inactive",
+    // ⭐ Count ONLY non-admin employees
+    const totalEmployees = await Employee.countDocuments({
+      role: { $ne: "Admin" },
     });
 
-    const totalMessages = await Message.countDocuments(); // ⭐ NEW
+    // ⭐ Admin counts (super admin + admins inside employee table)
+    const superAdmins = await Admin.countDocuments();
+    const normalAdmins = await Employee.countDocuments({ role: "Admin" });
+    const totalAdmins = superAdmins + normalAdmins;
+
+  const activeNews = await Blog.countDocuments({ status: "Active" });
+const inactiveNews = await Blog.countDocuments({ status: "Inactive" });
+
+
+    const activeEmployees = await Employee.countDocuments({
+      status: "active",
+      role: { $ne: "Admin" },
+    });
+
+    const inactiveEmployees = await Employee.countDocuments({
+      status: "inactive",
+      role: { $ne: "Admin" },
+    });
+
+    const totalMessages = await Message.countDocuments();
 
     res.json({
       totalNews,
       totalCategories,
       totalDepartments,
-      totalEmployees,
-      totalAdmins,
+      totalEmployees, // ✔ Non-admin employees only
+      totalAdmins, // ✔ Superadmin + admin roles inside employees
       activeNews,
       inactiveNews,
       activeEmployees,
       inactiveEmployees,
-      totalMessages, // ⭐ NEW
+      totalMessages,
     });
   } catch (err) {
     res.status(500).json({ error: "Server Error" });

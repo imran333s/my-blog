@@ -103,76 +103,151 @@ const AddBlog = () => {
   };
 
   return (
-    <div className="addblog-container">
-      <h2 className="form-title">Add News</h2>
+    <div
+      style={{
+        maxWidth: "600px",
+        margin: "10px auto",
+        padding: "30px 10px",
+        background: "#fff",
+        borderRadius: "16px",
+        boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+      }}
+    >
+      <h2
+        style={{
+          textAlign: "center",
+          fontSize: "28px",
+          fontWeight: "700",
+          marginBottom: "25px",
+          color: "#222",
+        }}
+      >
+        Add News
+      </h2>
 
-      <form onSubmit={handleSubmit} className="blog-form">
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "18px",
+        }}
+      >
         {/* Title */}
         <input
           type="text"
-          className="form-input"
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
+          style={{
+            padding: "12px 16px",
+            borderRadius: "10px",
+            border: "1px solid #dcdcdc",
+            background: "#fafafa",
+            fontSize: "15px",
+            outline: "none",
+          }}
         />
 
         {/* Image */}
         <input
           type="text"
-          className="form-input"
           placeholder="Image URL"
           value={image}
           onChange={(e) => setImage(e.target.value)}
+          style={{
+            padding: "12px 16px",
+            borderRadius: "10px",
+            border: "1px solid #dcdcdc",
+            background: "#fafafa",
+            fontSize: "15px",
+          }}
         />
 
         {/* Category */}
-        <Select
-          options={categoryOptions}
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-          placeholder="Select Category"
-        />
+        <div style={{ marginBottom: "5px" }}>
+          <Select
+            options={categoryOptions}
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            placeholder="Select Category"
+          />
+        </div>
 
         {/* Subcategory */}
-        <Select
-          options={subcategoryOptions}
-          value={selectedSubcategory}
-          onChange={setSelectedSubcategory}
-          placeholder="Select Subcategory"
-          isDisabled={subcategoryOptions.length === 0}
-        />
+        <div style={{ marginBottom: "5px" }}>
+          <Select
+            options={subcategoryOptions}
+            value={selectedSubcategory}
+            onChange={setSelectedSubcategory}
+            placeholder="Select Subcategory"
+            isDisabled={subcategoryOptions.length === 0}
+          />
+        </div>
 
         {/* Status */}
-        <Select
-          options={statusOptions}
-          value={status}
-          onChange={setStatus}
-          placeholder="Select Status"
-        />
+        <div style={{ marginBottom: "5px" }}>
+          <Select
+            options={statusOptions}
+            value={status}
+            onChange={setStatus}
+            placeholder="Select Status"
+          />
+        </div>
 
-        {/* Video link */}
+        {/* Video Link */}
         <input
           type="text"
-          className="form-input"
           placeholder="Video Link (optional)"
           value={videoLink}
           onChange={(e) => setVideoLink(e.target.value)}
+          style={{
+            padding: "12px 16px",
+            borderRadius: "10px",
+            border: "1px solid #dcdcdc",
+            background: "#fafafa",
+            fontSize: "15px",
+          }}
         />
 
-        {/* Content */}
+        {/* Description */}
         <textarea
-          className="form-textarea"
           placeholder="Description"
           rows="6"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
-        />
+          style={{
+            padding: "12px 16px",
+            borderRadius: "10px",
+            border: "1px solid #dcdcdc",
+            background: "#fafafa",
+            fontSize: "15px",
+            resize: "vertical",
+          }}
+        ></textarea>
 
-        <button type="submit" className="submit-btn">
-          Add News
-        </button>
+        {/* Submit Button */}
+     <button
+  style={{
+    padding: "10px 16px",
+    backgroundColor: "#4a90e2",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+    fontSize: "15px",
+    fontWeight: "600",
+    width: "fit-content",   // 👈 IMPORTANT
+    cursor: "pointer",
+    whiteSpace: "nowrap",   // 👈 Prevents stretching
+  }}
+  onClick={() => navigate("/add-news")}
+>
+  Add News
+</button>
+
+
       </form>
     </div>
   );
