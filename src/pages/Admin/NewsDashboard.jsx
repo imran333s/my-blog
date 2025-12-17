@@ -5,27 +5,36 @@ import "./NewsDashboard.css";
 const NewsDashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchDashboardData = async () => {
+      setLoading(true);
+      setError("");
+
       try {
-        setLoading(true);
         const token = localStorage.getItem("token");
 
-        const response = await axios.get(
-          `${API_URL}/api/admin/dashboard-stats`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await axios.get(`${API_URL}/api/dashboard-stats`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        // Normalize error if API returns a message property
+        if (response.data.message) {
+          throw new Error(response.data.message);
+        }
 
         setStats(response.data);
-      } catch (error) {
-        console.error("Failed to fetch dashboard stats:", error);
-        setError("Failed to load dashboard data. Please try again.");
+      } catch (err) {
+        // Normalize all errors to a string
+        const errorMessage =
+          err.response?.data?.message ||
+          err.message ||
+          "Failed to load dashboard data.";
+        setError(errorMessage);
+        setStats(null);
       } finally {
         setLoading(false);
       }
@@ -34,6 +43,7 @@ const NewsDashboard = () => {
     fetchDashboardData();
   }, [API_URL]);
 
+  // Loading state
   if (loading) {
     return (
       <div className="dashboard-container loading-state">
@@ -43,6 +53,7 @@ const NewsDashboard = () => {
     );
   }
 
+  // Error state
   if (error) {
     return (
       <div className="dashboard-container error-state">
@@ -51,20 +62,43 @@ const NewsDashboard = () => {
     );
   }
 
-  // ✅ Added Total Departments
+  // No data
+  if (!stats) {
+    return (
+      <div className="dashboard-container error-state">
+        <p style={{ color: "red" }}>No dashboard data available</p>
+      </div>
+    );
+  }
+
+  // Dashboard boxes
+
   const boxes = [
-    { title: "Total News", value: stats.totalNews },
-    { title: "Total Categories", value: stats.totalCategories },
-    { title: "Total Departments", value: stats.totalDepartments }, // NEW
-    { title: "Total Employees", value: stats.totalEmployees },
-    { title: "Active News", value: stats.activeNews },
-    { title: "Inactive News", value: stats.inactiveNews },
-    { title: "Inquiry Received", value: stats.totalMessages },
-    { title: "Active Employees", value: stats.activeEmployees },
-    { title: "Inactive Employees", value: stats.inactiveEmployees },
-    { title: "Total Admins", value: stats.totalAdmins },
+    // 📌 Content Performance
+    { title: "Total News", value: stats.totalNews || 0 },
+    { title: "Active News", value: stats.activeNews || 0 },
+    { title: "Inactive News", value: stats.inactiveNews || 0 },
+
+    // 📂 Structure
+    { title: "Total Categories", value: stats.totalCategories || 0 },
+    { title: "Total Departments", value: stats.totalDepartments || 0 },
+
+    // 👥 Team / Users
+    { title: "Total Employees", value: stats.totalEmployees || 0 },
+    { title: "Active Employees", value: stats.activeEmployees || 0 },
+    { title: "Total Managers", value: stats.totalManagers || 0 },
+    { title: "Total Admins", value: stats.totalAdmins || 0 },
+
+    // 📩 Engagement
+    { title: "Inquiry Received", value: stats.totalMessages || 0 },
+    {
+      title: "Public Feedback Received",
+      value: stats.totalPublicFeedback || 0,
+    },
   ];
 
+  // Debugging: log all box values
+  boxes.forEach((box) => console.log(box.title, box.value, typeof box.value));
   return (
     <div className="dashboard-container">
       <h2 className="dashboard-title">Admin Dashboard 📰</h2>
@@ -73,7 +107,13 @@ const NewsDashboard = () => {
         {boxes.map((box, index) => (
           <div className="dashboard-box" key={index}>
             <h3>{box.title}</h3>
-            <p>{box.value}</p>
+            <p>
+              {box.value !== null && box.value !== undefined
+                ? typeof box.value === "object"
+                  ? JSON.stringify(box.value)
+                  : box.value
+                : 0}
+            </p>
           </div>
         ))}
       </div>

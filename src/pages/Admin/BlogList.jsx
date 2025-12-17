@@ -7,6 +7,7 @@ import EditBlogModal from "./EditBlog";
 import { useBlogs } from "../../hooks/useBlogs";
 import { deleteBlog } from "../../services/blogService";
 import { useFetchCategories } from "../../hooks/useFetchCategories";
+import Loader from "../../components/Loader"; // ✅ Import your Loader
 
 const blogsPerPage = 5;
 
@@ -21,7 +22,7 @@ const AdminBlogList = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [editingBlogId, setEditingBlogId] = useState(null);
-  const [viewBlog, setViewBlog] = useState(null); // ✅ View State
+  const [viewBlog, setViewBlog] = useState(null);
 
   const filters = {
     categories: selectedCategories.length
@@ -46,7 +47,7 @@ const AdminBlogList = () => {
     (currentPage - 1) * blogsPerPage,
     currentPage * blogsPerPage
   );
-  // console.log("Blogs in table:", currentBlogs);
+
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -87,6 +88,12 @@ const AdminBlogList = () => {
     return () => (document.body.style.overflow = "auto");
   }, [editingBlogId, viewBlog]);
 
+  // ✅ Show Loader while fetching blogs
+  if (loading) return <Loader text="Loading News..." />;
+
+  if (error)
+    return <p style={{ color: "red", textAlign: "center" }}>{error}</p>;
+
   return (
     <main className="main-content">
       <div className="container">
@@ -111,11 +118,7 @@ const AdminBlogList = () => {
           }}
         />
 
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p>{error}</p>
-        ) : currentBlogs.length === 0 ? (
+        {currentBlogs.length === 0 ? (
           <p>No blogs found</p>
         ) : (
           <>
@@ -125,7 +128,7 @@ const AdminBlogList = () => {
               blogsPerPage={blogsPerPage}
               onEdit={setEditingBlogId}
               onDelete={handleDelete}
-              onView={(blog) => setViewBlog(blog)} // ✅ View Button
+              onView={(blog) => setViewBlog(blog)}
               convertToEmbedURL={convertToEmbedURL}
             />
 
@@ -146,7 +149,6 @@ const AdminBlogList = () => {
           />
         )}
 
-        {/* ✅ Inline Blog Preview Modal */}
         {viewBlog && (
           <div
             style={{
@@ -198,11 +200,11 @@ const AdminBlogList = () => {
                   style={{
                     width: "100%",
                     maxHeight: "250px",
-                    objectFit: "contain", // ← CHANGE THIS
+                    objectFit: "contain",
                     borderRadius: "8px",
                     marginBottom: "15px",
-                    background: "#000", // optional (makes black border look clean)
-                    padding: "5px", // optional
+                    background: "#000",
+                    padding: "5px",
                   }}
                 />
               )}

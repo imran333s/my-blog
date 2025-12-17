@@ -5,25 +5,34 @@ import "./EmployeeDetails.css";
 const EmployeeDetails = ({ employeeId, isOpen, onClose }) => {
   const [employee, setEmployee] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (!employeeId) return;
+    if (!employeeId || !isOpen) return;
+
+    console.log("Fetching Employee Details for ID:", employeeId);
+
     const fetchEmployee = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/employees/${employeeId}`);
+        const res = await axios.get(`${API_URL}/api/users/${employeeId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        console.log("Employee detail response:", res.data);
         setEmployee(res.data);
       } catch (err) {
         console.error("Error fetching employee details:", err);
       }
     };
+
     fetchEmployee();
-  }, [employeeId, API_URL]);
+  }, [employeeId, isOpen, API_URL, token]);
 
   return (
     <div className={`drawer-overlay ${isOpen ? "open" : ""}`} onClick={onClose}>
       <div
         className={`drawer ${isOpen ? "slide-in" : ""}`}
-        onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="drawer-header">
           <h2>Employee Details</h2>
@@ -54,7 +63,7 @@ const EmployeeDetails = ({ employeeId, isOpen, onClose }) => {
                 <strong>Role:</strong> {employee.role}
               </p>
               <p>
-                <strong>Department:</strong> {employee.department}
+                <strong>Department:</strong> {employee.department || "N/A"}
               </p>
               <p>
                 <strong>Reporting Manager:</strong>{" "}

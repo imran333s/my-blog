@@ -1,6 +1,7 @@
 const express = require("express");
 const Message = require("../models/Message"); // updated
-
+const auth = require("../middleware/auth");
+const allowRoles = require("../middleware/allowRoles");
 const router = express.Router();
 
 // Create a new message
@@ -15,8 +16,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Get all messages
-router.get("/", async (req, res) => {
+// Get all messages (Admin only)
+router.get("/", auth, allowRoles("admin", "manager"), async (req, res) => {
   try {
     const messages = await Message.find().sort({ createdAt: -1 });
     res.json(messages);

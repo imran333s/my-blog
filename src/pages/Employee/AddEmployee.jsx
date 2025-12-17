@@ -8,9 +8,9 @@ const AddEmployee = () => {
   const [departments, setDepartments] = useState([]);
 
   const roleOptions = [
-    { value: "Admin", label: "Admin" },
-    { value: "Manager", label: "Manager" },
-    { value: "Employee", label: "Employee" },
+    { value: "admin", label: "Admin" },
+    { value: "manager", label: "Manager" },
+    { value: "employee", label: "Employee" },
   ];
 
   const [form, setForm] = useState({
@@ -19,7 +19,7 @@ const AddEmployee = () => {
     mobile: "",
     password: "",
     dob: "",
-    role: { value: "Employee", label: "Employee" },
+    role: { value: "employee", label: "Employee" },
     startDate: "",
     department: "",
     customDepartment: "",
@@ -36,16 +36,16 @@ const AddEmployee = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const finalDepartment =
       form.department === "Other" ? form.customDepartment : form.department;
 
     try {
-      await axios.post(`${API_URL}/api/employees/add`, {
-        ...form,
-        role: form.role.value,
-        department: finalDepartment,
-      });
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `${API_URL}/api/users/`,
+        { ...form, role: form.role.value, department: finalDepartment },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       Swal.fire({
         icon: "success",
@@ -61,7 +61,7 @@ const AddEmployee = () => {
         mobile: "",
         password: "",
         dob: "",
-        role: { value: "Employee", label: "Employee" },
+        role: { value: "employee", label: "Employee" },
         startDate: "",
         department: "",
         customDepartment: "",
@@ -71,26 +71,75 @@ const AddEmployee = () => {
       Swal.fire({
         icon: "error",
         title: "Error!",
-        text: "Failed to add employee.",
+        text:
+          err.response?.data?.message ||
+          "Failed to add employee. Make sure you have permission.",
       });
     }
   };
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/departments`).then((res) => {
-      setDepartments(res.data);
-    });
-  }, []);
+    const token = localStorage.getItem("token");
+    axios
+      .get(`${API_URL}/api/departments`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setDepartments(res.data))
+      .catch((err) =>
+        console.error("Failed to load departments:", err.response?.data)
+      );
+  }, [API_URL]);
+
+  // Inline style objects
+  const styles = {
+    container: {
+      maxWidth: "900px",
+      margin: "0 auto",
+      padding: "25px",
+      background: "#fff",
+    },
+    title: {
+      fontSize: "1.7rem",
+      fontWeight: "bold",
+      marginBottom: "20px",
+    },
+    form: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: "35px",
+    },
+    formGroup: {
+      marginBottom: "18px",
+    },
+    input: {
+      width: "100%",
+      padding: "10px",
+      border: "1px solid #ccc",
+      borderRadius: "6px",
+      fontSize: "1rem",
+    },
+    submitBtn: {
+      padding: "12px 20px",
+      background: "#007bff",
+      border: "none",
+      color: "white",
+      fontSize: "1.1rem",
+      borderRadius: "6px",
+      marginTop: "10px",
+      cursor: "pointer",
+      transition: "0.3s",
+      display: "inline-block",
+    },
+    submitBtnHover: {
+      background: "#0056b3",
+    },
+  };
 
   return (
-    <div className="addemployee-container">
-      <h2 className="form-title">Add Employee</h2>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Add Employee</h2>
 
-      <form
-        onSubmit={handleSubmit}
-        className="employee-form"
-        autoComplete="off"
-      >
+      <form onSubmit={handleSubmit} style={styles.form} autoComplete="off">
         {/* STOP AUTOFILL */}
         <input type="text" name="fakeEmail" style={{ display: "none" }} />
         <input
@@ -101,12 +150,12 @@ const AddEmployee = () => {
         />
 
         {/* NAME */}
-        <div className="form-group">
+        <div style={styles.formGroup}>
           <input
             type="text"
             name="name"
             placeholder="Full Name"
-            className="form-input"
+            style={styles.input}
             value={form.name}
             onChange={handleChange}
             required
@@ -114,12 +163,12 @@ const AddEmployee = () => {
         </div>
 
         {/* EMAIL */}
-        <div className="form-group">
+        <div style={styles.formGroup}>
           <input
             type="email"
             name="email"
             placeholder="Email Address"
-            className="form-input"
+            style={styles.input}
             value={form.email}
             onChange={handleChange}
             required
@@ -127,12 +176,12 @@ const AddEmployee = () => {
         </div>
 
         {/* PASSWORD */}
-        <div className="form-group">
+        <div style={styles.formGroup}>
           <input
             type="password"
             name="password"
             placeholder="Password"
-            className="form-input"
+            style={styles.input}
             value={form.password}
             onChange={handleChange}
             required
@@ -140,12 +189,12 @@ const AddEmployee = () => {
         </div>
 
         {/* MOBILE */}
-        <div className="form-group">
+        <div style={styles.formGroup}>
           <input
             type="text"
             name="mobile"
             placeholder="Mobile Number"
-            className="form-input"
+            style={styles.input}
             value={form.mobile}
             onChange={handleChange}
             required
@@ -153,12 +202,12 @@ const AddEmployee = () => {
         </div>
 
         {/* DOB */}
-        <div className="form-group">
+        <div style={styles.formGroup}>
           <input
             type={form.dob ? "date" : "text"}
             name="dob"
             placeholder="Date of Birth"
-            className="form-input"
+            style={styles.input}
             value={form.dob}
             onFocus={(e) => (e.target.type = "date")}
             onBlur={(e) => !form.dob && (e.target.type = "text")}
@@ -168,7 +217,7 @@ const AddEmployee = () => {
         </div>
 
         {/* ROLE */}
-        <div className="form-group select-wrapper">
+        <div style={styles.formGroup}>
           <Select
             options={roleOptions}
             value={form.role}
@@ -178,12 +227,12 @@ const AddEmployee = () => {
         </div>
 
         {/* START DATE */}
-        <div className="form-group">
+        <div style={styles.formGroup}>
           <input
             type={form.startDate ? "date" : "text"}
             name="startDate"
             placeholder="Start Date"
-            className="form-input"
+            style={styles.input}
             value={form.startDate}
             onFocus={(e) => (e.target.type = "date")}
             onBlur={(e) => !form.startDate && (e.target.type = "text")}
@@ -192,36 +241,33 @@ const AddEmployee = () => {
           />
         </div>
 
-        {/* DEPARTMENT + OTHER OPTION */}
-        <div className="form-group">
+        {/* DEPARTMENT */}
+        <div style={styles.formGroup}>
           <select
             name="department"
-            className="form-input"
+            style={styles.input}
             value={form.department}
             onChange={handleChange}
             required
           >
             <option value="">Select Department</option>
-
             {departments.map((d) => (
               <option key={d._id} value={d.name}>
                 {d.name}
               </option>
             ))}
-
-            {/* NEW OPTION */}
             <option value="Other">Other</option>
           </select>
         </div>
 
-        {/* CUSTOM DEPARTMENT INPUT */}
+        {/* CUSTOM DEPARTMENT */}
         {form.department === "Other" && (
-          <div className="form-group">
+          <div style={styles.formGroup}>
             <input
               type="text"
               name="customDepartment"
               placeholder="Enter Custom Department"
-              className="form-input"
+              style={styles.input}
               value={form.customDepartment}
               onChange={handleChange}
               required
@@ -230,93 +276,22 @@ const AddEmployee = () => {
         )}
 
         {/* REPORTING MANAGER */}
-        <div className="form-group">
+        <div style={styles.formGroup}>
           <input
             type="text"
             name="reportingManager"
             placeholder="Reporting Manager"
-            className="form-input"
+            style={styles.input}
             value={form.reportingManager}
             onChange={handleChange}
           />
         </div>
 
         {/* SUBMIT */}
-        <button type="submit" className="submit-btn">
+        <button type="submit" style={styles.submitBtn}>
           Add Employee
         </button>
       </form>
-
-      {/* STYLES */}
-      <style>{`
-        .addemployee-container {
-          max-width: 900px;
-          margin: 0 auto;
-          padding: 25px;
-          background: #fff;
-        }
-
-        .form-title {
-          font-size: 1.7rem;
-          font-weight: bold;
-          margin-bottom: 20px;
-        }
-
-        .employee-form {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 35px;
-        }
-
-        .form-group {
-          margin-bottom: 18px;
-        }
-
-        .form-input {
-          width: 100%;
-          padding: 10px;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          font-size: 1rem;
-        }
-
-        .select-wrapper .css-yk16xz-control,
-        .select-wrapper .css-1pahdxg-control {
-          min-height: 42px !important;
-          height: 42px !important;
-        }
-
-        .submit-btn {
-  padding: 12px 1px;      /* width controlled by horizontal padding */
-  background: #007bff;
-  border: none;
-  color: white;
-  font-size: 1.1rem;
-  border-radius: 6px;      /* slightly rounded corners */
-  margin-top: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-
-  /* Optional: make width match content */
-  display: inline-block;    
-        }
-
-        .submit-btn:hover {
-          background: #0056b3;
-        }
-
-        @media (max-width: 900px) {
-          .employee-form {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-
-        @media (max-width: 600px) {
-          .employee-form {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
     </div>
   );
 };

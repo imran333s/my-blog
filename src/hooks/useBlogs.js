@@ -19,11 +19,19 @@ export const useBlogs = (filters = {}) => {
       if (filters.sort) activeFilters.sort = filters.sort;
 
       const data = await fetchBlogs(activeFilters);
-      // 👇 ADD THIS LINE HERE
+
+      // Debug log
       console.log("Fetched blogs:", data.length || data.blogs?.length);
+
+      // Ensure blogs is always an array
       setBlogs(Array.isArray(data) ? data : data.blogs || []);
     } catch (err) {
-      setError(err.response?.data || err.message);
+      // Normalize error as a string for React
+      const message =
+        err?.message || // thrown by fetchBlogs
+        err?.response?.data?.message || // API error message
+        "Failed to fetch blogs.";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -31,7 +39,7 @@ export const useBlogs = (filters = {}) => {
 
   useEffect(() => {
     loadBlogs();
-  }, [JSON.stringify(filters)]);
+  }, [JSON.stringify(filters)]); // re-fetch when filters change
 
   return { blogs, loading, error, reload: loadBlogs };
 };

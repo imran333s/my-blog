@@ -3,27 +3,31 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import "./CategoryList.css";
 import EditCategoryModal from "./EditCategoryModal";
+import Loader from "../../components/Loader"; // import your Loader component
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [loading, setLoading] = useState(true); // ✅ loading state
   const API_URL = process.env.REACT_APP_API_URL;
 
   const fetchCategories = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) return Swal.fire("Error", "You are not authorized", "error");
+    try {
+      setLoading(true); // ✅ show loader
+      const token = localStorage.getItem("token");
+      if (!token) return Swal.fire("Error", "You are not authorized", "error");
 
-    const res = await axios.get(`${API_URL}/api/categories/admin`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setCategories(res.data.reverse());
-  } catch (err) {
-    console.error(err);
-    Swal.fire("Error", "Failed to fetch categories", "error");
-  }
-};
-
+      const res = await axios.get(`${API_URL}/api/categories/admin`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCategories(res.data.reverse());
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Failed to fetch categories", "error");
+    } finally {
+      setLoading(false); // ✅ hide loader
+    }
+  };
 
   useEffect(() => {
     fetchCategories();
@@ -58,10 +62,14 @@ const CategoryList = () => {
     }
   };
 
-  // ✅ Updated — now opens modal instead of navigating
   const handleEdit = (id) => {
     setSelectedCategory(id);
   };
+
+  // ✅ Show loader while fetching
+  if (loading) {
+    return <Loader text="Loading Categories..." />;
+  }
 
   return (
     <div className="category-list">
@@ -140,7 +148,6 @@ const CategoryList = () => {
         </div>
       </main>
 
-      {/* ✅ Modal appears when selectedCategory is set */}
       {selectedCategory && (
         <EditCategoryModal
           isOpen={true}

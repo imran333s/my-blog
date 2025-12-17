@@ -6,6 +6,7 @@ import "./EditEmployee.css";
 
 const EditEmployeeModal = ({ employeeId, isOpen, onClose, onUpdate }) => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const token = localStorage.getItem("token"); // JWT token
 
   const [formData, setFormData] = useState({
     name: "",
@@ -26,12 +27,18 @@ const EditEmployeeModal = ({ employeeId, isOpen, onClose, onUpdate }) => {
     { value: "Employee", label: "Employee" },
   ];
 
-  // Fetch existing employee
+  // Fetch employee details
   useEffect(() => {
-    if (!isOpen) return; // fetch only when modal is open
+    if (!isOpen) return;
+
     const fetchEmployee = async () => {
+      setLoading(true);
       try {
-        const res = await axios.get(`${API_URL}/api/employees/${employeeId}`);
+        // ✅ Updated endpoint to match EmployeeList
+        const res = await axios.get(`${API_URL}/api/users/${employeeId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         const data = res.data;
         setFormData({
           name: data.name || "",
@@ -50,8 +57,9 @@ const EditEmployeeModal = ({ employeeId, isOpen, onClose, onUpdate }) => {
         setLoading(false);
       }
     };
+
     fetchEmployee();
-  }, [employeeId, API_URL, isOpen]);
+  }, [employeeId, API_URL, isOpen, token]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -60,9 +68,12 @@ const EditEmployeeModal = ({ employeeId, isOpen, onClose, onUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`${API_URL}/api/employees/${employeeId}`, formData);
+      // ✅ Updated endpoint to match EmployeeList
+      await axios.put(`${API_URL}/api/users/${employeeId}`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       Swal.fire("Success", "Employee updated successfully!", "success");
-      onUpdate && onUpdate(); // call parent update function if provided
+      onUpdate && onUpdate(); // refresh parent list
       onClose();
     } catch (err) {
       console.error(err);
@@ -70,7 +81,7 @@ const EditEmployeeModal = ({ employeeId, isOpen, onClose, onUpdate }) => {
     }
   };
 
-  if (!isOpen) return null; // do not render if modal is closed
+  if (!isOpen) return null;
   if (loading) return <p>Loading...</p>;
 
   return (

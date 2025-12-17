@@ -156,21 +156,32 @@
 /* ===============================
    Role Styling
 ================================= */
+/* Role Styling */
 .emp-status-label {
   padding: 3px 6px;
   border-radius: 4px;
   color: white;
   font-size: 0.85rem;
   text-transform: capitalize;
+  font-weight: 500; /* optional for better visibility */
 }
 
-.emp-status-active {
-  background-color: #28a745;
+/* Admin → Green */
+.emp-status-admin {
+  background-color: #28a745; /* green */
 }
 
-.emp-status-inactive {
-  background-color: #ffc107;
+/* Manager → Blue */
+.emp-status-manager {
+  background-color: #007bff; /* blue */
 }
+
+/* Employee → Yellow */
+.emp-status-employee {
+  background-color: #ffc107; /* yellow */
+  color: #333; /* better contrast on yellow */
+}
+
 /* Drawer Overlay */
 .drawer-overlay {
   position: fixed;

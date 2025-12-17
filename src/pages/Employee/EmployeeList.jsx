@@ -2,26 +2,30 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import "./EmployeeList.css";
-import EditEmployeeModal from "./EditEmployee"; // ✅ Edit Modal
-import EmployeeDetails from "./EmployeeDetails"; // ✅ Slide-In Drawer
-
+import EditEmployeeModal from "./EditEmployee";
+import EmployeeDetails from "./EmployeeDetails";
+import Loader from "../../components/Loader";
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-
-  // ✅ For slide-in drawer
   const [viewDrawerOpen, setViewDrawerOpen] = useState(false);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
-
+  const [loading, setLoading] = useState(true);
   const API_URL = process.env.REACT_APP_API_URL;
+  const token = localStorage.getItem("token");
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/employees`);
+      setLoading(true);
+      const res = await axios.get(`${API_URL}/api/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setEmployees(res.data);
     } catch (err) {
       console.error("Error fetching employees:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -29,13 +33,12 @@ const EmployeeList = () => {
     fetchEmployees();
   }, []);
 
-  // ✅ Open slide-in drawer for View
   const handleView = (id) => {
+    console.log("Viewing employee:", id);
     setSelectedEmployeeId(id);
     setViewDrawerOpen(true);
   };
 
-  // ✅ Open modal for Edit
   const handleEdit = (id) => {
     setSelectedEmployee(id);
     setModalOpen(true);
@@ -44,7 +47,7 @@ const EmployeeList = () => {
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      text: "This employee will be permanently deleted.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -54,12 +57,15 @@ const EmployeeList = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`${API_URL}/api/employees/${id}`);
+        await axios.delete(`${API_URL}/api/users/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         setEmployees((prev) => prev.filter((emp) => emp._id !== id));
 
         Swal.fire({
           title: "Deleted!",
-          text: "Employee has been deleted.",
+          text: "Employee record successfully removed.",
           icon: "success",
           timer: 2000,
           showConfirmButton: false,
@@ -67,14 +73,17 @@ const EmployeeList = () => {
       } catch (err) {
         console.error("Error deleting employee:", err);
         Swal.fire({
-          title: "Error!",
-          text: "Failed to delete employee.",
+          title: "Error",
+          text: "Could not delete employee",
           icon: "error",
         });
       }
     }
   };
-
+  // ✅ Show loader while fetching
+  if (loading) {
+    return <Loader text="Loading Employees..." />;
+  }
   return (
     <div className="employee-main-content">
       <h2 className="employee-section-title">Employee List</h2>
@@ -95,24 +104,27 @@ const EmployeeList = () => {
             </tr>
           </thead>
           <tbody>
-            {employees.slice(0, 5).map((emp, index) => (
+            {employees.map((emp, index) => (
               <tr key={emp._id}>
                 <td>{index + 1}</td>
                 <td>{emp.name}</td>
                 <td>{emp.email}</td>
                 <td>{emp.mobile}</td>
-                <td>{emp.dob?.split("T")[0]}</td>
+                <td>{emp.dob?.split("T")[0] || "N/A"}</td>
                 <td>
                   <span
                     className={`emp-status-label ${
-                      emp.role?.toLowerCase() === "admin"
-                        ? "emp-status-active"
-                        : "emp-status-inactive"
+                      emp.role === "admin"
+                        ? "emp-status-admin"
+                        : emp.role === "manager"
+                          ? "emp-status-manager"
+                          : "emp-status-employee"
                     }`}
                   >
                     {emp.role}
                   </span>
                 </td>
+
                 <td className="actions-cell">
                   <button
                     className="emp-view-btn emp-small-btn"
@@ -139,7 +151,7 @@ const EmployeeList = () => {
         </table>
       )}
 
-      {/* ✅ Edit Employee Modal */}
+      {/* Edit Modal */}
       {modalOpen && selectedEmployee && (
         <EditEmployeeModal
           employeeId={selectedEmployee}
@@ -149,7 +161,7 @@ const EmployeeList = () => {
         />
       )}
 
-      {/* ✅ Employee Details Slide-in Drawer */}
+      {/* Slide-in Drawer */}
       <EmployeeDetails
         employeeId={selectedEmployeeId}
         isOpen={viewDrawerOpen}

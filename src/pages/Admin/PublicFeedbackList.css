@@ -1,0 +1,128 @@
+/* ===============================
+   Public Feedback – Admin Styles
+================================= */
+
+.feedback-list {
+  background-color: #f9fafb;
+  padding: 10px 5px;
+}
+
+/* Title */
+.feedback-list .section-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #1f2937;
+  letter-spacing: 0.3px;
+}
+
+/* Table Wrapper */
+.feedback-list .table-wrapper {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* Table */
+.feedback-list .admin-feedback-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;
+  font-size: 14px;
+}
+
+/* Header Cells */
+.feedback-list .admin-feedback-table th {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  padding: 14px 12px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* Body Cells */
+.feedback-list .admin-feedback-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #374151;
+  vertical-align: top;
+}
+
+/* Row Hover Effect */
+.feedback-list .admin-feedback-table tr {
+  transition: background-color 0.2s ease;
+}
+
+.feedback-list .admin-feedback-table tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Rating Badge */
+.feedback-list .rating-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #e0e7ff;
+  color: #3730a3;
+}
+
+/* Category Badge */
+.feedback-list .category-badge {
+  display: inline-block;
+  background-color: #dcfce7;
+  color: #166534;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Message Text */
+.feedback-list .message-text {
+  max-width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+/* User Info */
+.feedback-list .user-name {
+  font-weight: 600;
+  color: #111827;
+}
+
+.feedback-list .user-email {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Empty State */
+.feedback-list .empty-state {
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  padding: 30px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .feedback-list .admin-feedback-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .feedback-list .message-text {
+    max-width: 180px;
+  }
+}

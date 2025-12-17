@@ -2,22 +2,25 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import "./DepartmentList.css"; // ✅ Import CSS
-
+import Loader from "../../components/Loader";
 const DepartmentList = () => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [departments, setDepartments] = useState([]);
 
   const [editingDept, setEditingDept] = useState(null);
   const [editName, setEditName] = useState("");
-
+  const [loading, setLoading] = useState(true);
   const fetchDepts = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(`${API_URL}/api/departments`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setDepartments(res.data.reverse());
     } catch (err) {
       Swal.fire("Error", "Failed to load departments", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,7 +57,9 @@ const DepartmentList = () => {
       await axios.put(
         `${API_URL}/api/departments/update/${editingDept._id}`,
         { name: editName },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
       );
       Swal.fire("Updated!", "Department updated successfully.", "success");
       setEditingDept(null);
@@ -63,7 +68,10 @@ const DepartmentList = () => {
       Swal.fire("Error", "Failed to update", "error");
     }
   };
-
+  // ✅ Show loader while fetching
+  if (loading) {
+    return <Loader text="Loading Department List..." />;
+  }
   return (
     <div className="department-list">
       <main className="main-content">

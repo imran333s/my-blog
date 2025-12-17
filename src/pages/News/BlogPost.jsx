@@ -32,8 +32,8 @@ const BlogPost = () => {
     fetchBlog();
   }, [id, API_URL]);
 
-  if (loading) return <p className="loading">Loading blog...</p>;
-  if (!blog) return <p className="not-found">Blog not found.</p>;
+  if (loading) return <p className="loading">Loading News...</p>;
+  if (!blog) return <p className="not-found">News not found.</p>;
 
   const convertToEmbedURL = (url) => {
     if (!url) return "";
