@@ -6,9 +6,10 @@ import Loader from "../../components/Loader";
 const EnquiryList = () => {
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
-  const token = localStorage.getItem("token");
+  // ✅ Environment-safe API URL
+  const API_URL = process.env.REACT_APP_API_URL ;
 
   // Scroll to top when component loads
   useEffect(() => {
@@ -17,26 +18,58 @@ const EnquiryList = () => {
 
   useEffect(() => {
     fetchEnquiries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchEnquiries = async () => {
     try {
+      const token = localStorage.getItem("token");
+
+      // 🔒 Handle missing token
+      if (!token) {
+        setError("Unauthorized. Please login again.");
+        setLoading(false);
+        return;
+      }
+
       const res = await axios.get(`${API_URL}/api/feedback`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setEnquiries(res.data);
+
+      setEnquiries(res.data || []);
+      setError("");
     } catch (err) {
       console.error("Failed to fetch enquiries:", err);
+
+      if (err.response?.status === 401) {
+        setError("Session expired. Please login again.");
+        localStorage.removeItem("token");
+      } else {
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to load enquiries"
+        );
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Custom loader added
+  // ✅ Loader
   if (loading) {
     return <Loader text="Loading enquiries..." />;
+  }
+
+  // ❌ Error state
+  if (error) {
+    return (
+      <div className="enquiry-list">
+        <p style={{ textAlign: "center", color: "red" }}>{error}</p>
+      </div>
+    );
   }
 
   return (

@@ -9,13 +9,16 @@ const LoginModal = ({ isOpen, onClose }) => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  // ✅ API URL (works locally + Netlify)
+  const API_URL = process.env.REACT_APP_API_URL ;
+
   if (!isOpen) return null;
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${API_URL}/api/auth/login`,
         {
           email,
           password,
@@ -36,7 +39,7 @@ const LoginModal = ({ isOpen, onClose }) => {
 
         onClose();
 
-        // REDIRECT BASED ON ROLE
+        // REDIRECT BASED ON ROLE (unchanged)
         if (userRole === "admin") {
           navigate("/admin/dashboard");
         } else if (userRole === "manager") {
@@ -85,7 +88,6 @@ const LoginModal = ({ isOpen, onClose }) => {
           className="close-btn"
           onClick={() => {
             onClose();
-            // navigate("/");
           }}
         >
           ✖

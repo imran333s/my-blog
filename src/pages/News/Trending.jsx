@@ -5,24 +5,27 @@ import "./Trending.css";
 
 const Trending = () => {
   const [trending, setTrending] = useState([]);
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchTrending = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:5000/api/blogs/trending/public"
+        const { data } = await axios.get(
+          `${API_URL}/api/blogs/trending/public`
         );
-        setTrending(res.data);
+        setTrending(data);
       } catch (err) {
         console.error("❌ Error fetching trending blogs:", err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchTrending();
-  }, []);
+  }, [API_URL]);
 
   return (
     <div className="page-wrapper">
@@ -66,7 +69,8 @@ const Trending = () => {
                   <div className="trending-heading">{blog.title}</div>
 
                   <div className="content-snippet">
-                    {blog.content.replace(/<[^>]+>/g, "").slice(0, 120)}...
+                    {blog.content.replace(/<[^>]+>/g, "").slice(0, 120)}
+                    ...
                   </div>
 
                   <Link
@@ -74,7 +78,7 @@ const Trending = () => {
                     className="read-more"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    Read More <i className="fas fa-arrow-right"></i>
+                    Read More →
                   </Link>
                 </div>
               </div>

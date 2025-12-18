@@ -7,43 +7,69 @@ const NewsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const API_URL = process.env.REACT_APP_API_URL ;
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      setLoading(true);
-      setError("");
+    let isMounted = true;
 
+    const fetchDashboardData = async () => {
       try {
+        setLoading(true);
+        setError("");
+
         const token = localStorage.getItem("token");
 
-        const response = await axios.get(`${API_URL}/api/dashboard-stats`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        // Normalize error if API returns a message property
-        if (response.data.message) {
-          throw new Error(response.data.message);
+        if (!token) {
+          if (isMounted) {
+            setError("Unauthorized. Please login again.");
+            setLoading(false);
+          }
+          return;
         }
 
-        setStats(response.data);
+        const { data } = await axios.get(
+          `${API_URL}/api/dashboard-stats`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (isMounted) {
+          setStats(data || null);
+        }
       } catch (err) {
-        // Normalize all errors to a string
+        if (!isMounted) return;
+
         const errorMessage =
           err.response?.data?.message ||
           err.message ||
           "Failed to load dashboard data.";
+
         setError(errorMessage);
         setStats(null);
+
+        // Auto logout if token expired
+        if (err.response?.status === 401) {
+          localStorage.removeItem("token");
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchDashboardData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [API_URL]);
 
-  // Loading state
+  /* -------------------- UI STATES -------------------- */
+
   if (loading) {
     return (
       <div className="dashboard-container loading-state">
@@ -53,7 +79,6 @@ const NewsDashboard = () => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="dashboard-container error-state">
@@ -62,7 +87,6 @@ const NewsDashboard = () => {
     );
   }
 
-  // No data
   if (!stats) {
     return (
       <div className="dashboard-container error-state">
@@ -71,25 +95,21 @@ const NewsDashboard = () => {
     );
   }
 
-  // Dashboard boxes
+  /* -------------------- DASHBOARD DATA -------------------- */
 
   const boxes = [
-    // 📌 Content Performance
     { title: "Total News", value: stats.totalNews || 0 },
     { title: "Active News", value: stats.activeNews || 0 },
     { title: "Inactive News", value: stats.inactiveNews || 0 },
 
-    // 📂 Structure
     { title: "Total Categories", value: stats.totalCategories || 0 },
     { title: "Total Departments", value: stats.totalDepartments || 0 },
 
-    // 👥 Team / Users
     { title: "Total Employees", value: stats.totalEmployees || 0 },
     { title: "Active Employees", value: stats.activeEmployees || 0 },
     { title: "Total Managers", value: stats.totalManagers || 0 },
     { title: "Total Admins", value: stats.totalAdmins || 0 },
 
-    // 📩 Engagement
     { title: "Inquiry Received", value: stats.totalMessages || 0 },
     {
       title: "Public Feedback Received",
@@ -97,8 +117,6 @@ const NewsDashboard = () => {
     },
   ];
 
-  // Debugging: log all box values
-  boxes.forEach((box) => console.log(box.title, box.value, typeof box.value));
   return (
     <div className="dashboard-container">
       <h2 className="dashboard-title">Admin Dashboard 📰</h2>
@@ -107,13 +125,7 @@ const NewsDashboard = () => {
         {boxes.map((box, index) => (
           <div className="dashboard-box" key={index}>
             <h3>{box.title}</h3>
-            <p>
-              {box.value !== null && box.value !== undefined
-                ? typeof box.value === "object"
-                  ? JSON.stringify(box.value)
-                  : box.value
-                : 0}
-            </p>
+            <p>{box.value}</p>
           </div>
         ))}
       </div>

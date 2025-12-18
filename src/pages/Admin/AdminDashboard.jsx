@@ -30,17 +30,19 @@ const AdminDashboard = ({ onLogout }) => {
 
   const [websiteName] = useState("News Pulse");
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+  // ✅ Environment-safe API URL
+  const API_URL = process.env.REACT_APP_API_URL ;
 
   // Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("activePage");
     if (onLogout) onLogout();
-    // navigate("/");
+    navigate("/");
   };
 
-  // Save active page to localStorage
+  // Save active page
   useEffect(() => {
     localStorage.setItem("activePage", activePage);
   }, [activePage]);
@@ -50,33 +52,39 @@ const AdminDashboard = ({ onLogout }) => {
     const fetchUserInfo = async () => {
       try {
         setLoading(true);
+
         const token = localStorage.getItem("token");
+        if (!token) {
+          handleLogout();
+          return;
+        }
 
         const response = await axios.get(`${API_URL}/api/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        // Normalize role to string
         setUserInfo({
           name: response.data.name || "",
-          role: response.data.role ? response.data.role.toLowerCase() : "",
+          role: response.data.role?.toLowerCase() || "",
         });
-        setError(""); // clear any previous error
+
+        setError("");
       } catch (err) {
         console.error("Failed to fetch user info:", err);
 
-        let message = "Failed to fetch user info";
-        if (err.response?.data) {
-          message =
-            typeof err.response.data.message === "string"
-              ? err.response.data.message
-              : JSON.stringify(err.response.data);
-        } else if (err.message) {
-          message = err.message;
+        // 🔒 Auto logout on auth failure
+        if (err.response?.status === 401) {
+          handleLogout();
+          return;
         }
 
-        setError(message);
-        setUserInfo({ name: "", role: "" });
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to fetch user info"
+        );
       } finally {
         setLoading(false);
       }
@@ -85,7 +93,7 @@ const AdminDashboard = ({ onLogout }) => {
     fetchUserInfo();
   }, [API_URL]);
 
-  // RBAC-based sidebar items
+  // RBAC sidebar
   const sidebarItems = [
     { key: "dashboard", label: "Dashboard", roles: ["admin", "manager"] },
     {
@@ -131,7 +139,6 @@ const AdminDashboard = ({ onLogout }) => {
     },
   ];
 
-  // Render main content based on active page
   const renderContent = () => {
     switch (activePage) {
       case "dashboard":
@@ -166,10 +173,8 @@ const AdminDashboard = ({ onLogout }) => {
         return <ChangePassword />;
       case "public-feedback":
         return <PublicFeedbackList />;
-
       case "enquiry-list":
         return <EnquiryList />;
-
       default:
         if (activePage.startsWith("edit-employee-")) {
           const id = activePage.replace("edit-employee-", "");
@@ -184,7 +189,7 @@ const AdminDashboard = ({ onLogout }) => {
     }
   };
 
-  // if (loading) return <Loader text="Loading admin panel..." />;
+  if (loading) return <Loader text="Loading admin panel..." />;
 
   if (error)
     return (
@@ -198,25 +203,21 @@ const AdminDashboard = ({ onLogout }) => {
       style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
     >
       <AdminHeader
-        adminName={userInfo.name || ""}
-        role={userInfo.role || ""}
+        adminName={userInfo.name}
+        role={userInfo.role}
         onLogout={handleLogout}
         websiteName={websiteName}
       />
 
       <div style={{ display: "flex", flex: 1 }}>
-        {/* Sidebar */}
         <aside
           style={{
             width: "220px",
             background: "#405e7cff",
             padding: "5px 10px",
-            boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
           }}
         >
-          <h2 style={{ fontSize: "1.5rem", marginBottom: "10px" }}>
-            Admin Panel
-          </h2>
+          <h2>Admin Panel</h2>
 
           {sidebarItems
             .filter((item) => item.roles.includes(userInfo.role))
@@ -230,34 +231,25 @@ const AdminDashboard = ({ onLogout }) => {
             ))}
         </aside>
 
-        {/* Main content */}
         <main style={{ flex: 1, padding: "20px" }}>{renderContent()}</main>
       </div>
     </div>
   );
 };
 
-// Sidebar button component
 const SidebarButton = ({ active, onClick, label }) => (
   <button
     onClick={onClick}
     style={{
-      display: "block",
       width: "100%",
       padding: "7px 15px",
       marginBottom: "15px",
       border: "none",
       borderRadius: "8px",
-      background: active ? "linear-gradient(90deg, #79da84ff)" : "#374151",
+      background: active ? "#79da84" : "#374151",
       color: active ? "#1f2937" : "#e5e7eb",
-      textAlign: "left",
       cursor: "pointer",
       fontWeight: 600,
-      fontSize: "0.95rem",
-      boxShadow: active
-        ? "0 4px 12px rgba(160, 206, 99, 0.5)"
-        : "0 2px 5px rgba(0,0,0,0.15)",
-      transition: "all 0.3s ease",
     }}
   >
     {label}
