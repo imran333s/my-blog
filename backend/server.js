@@ -16,53 +16,55 @@ const aboutSettingsRoutes = require("./routes/aboutSettingsRoutes");
 const subcategoryRoutes = require("./routes/subcategoryRoutes");
 const departmentRoutes = require("./routes/departmentRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+
 const app = express();
 
-// Middleware
-app.use(cors());
+/* =======================
+   ✅ CORS CONFIG (FIXED)
+======================= */
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://my-blog-s.netlify.app",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(bodyParser.json());
 
 // Database connection
 connectDB();
 
 // Routes
-app.use("/api/auth", authRoutes); // login/signup
-app.use("/api/users", userRoutes); // RBAC: Admin/Manager
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/categories", categoryRoutes);
-app.use("/api/feedback", feedbackRoutes); // admin panel
-app.use("/api/public-feedback", publicFeedbackRoute); // public
-app.use("/api/contact-settings", contactSettingsRoutes); // admin only
-app.use("/api/about-settings", aboutSettingsRoutes); // admin only
-app.use("/api/subcategories", subcategoryRoutes); // admin only
-app.use("/api/departments", departmentRoutes); // admin only
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/public-feedback", publicFeedbackRoute);
+app.use("/api/contact-settings", contactSettingsRoutes);
+app.use("/api/about-settings", aboutSettingsRoutes);
+app.use("/api/subcategories", subcategoryRoutes);
+app.use("/api/departments", departmentRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: "Server error" });
-});
-
-// Optional: reset admin password route (for testing/dev only)
-const User = require("./models/User"); // Use User model for all roles
-app.get("/reset-admin-pass", async (req, res) => {
-  try {
-    const admin = await User.findOne({
-      email: "imran33s786@gmail.com",
-      role: "admin",
-    });
-    if (!admin) return res.send("Admin not found!");
-
-    const newPassword = "Admin@123";
-    admin.password = newPassword; // plain text, schema will hash automatically
-    await admin.save();
-
-    res.send("Password successfully reset to: " + newPassword);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error resetting password");
-  }
+  res.status(500).json({ message: err.message || "Server error" });
 });
 
 const PORT = process.env.PORT || 5000;
