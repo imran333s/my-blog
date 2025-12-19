@@ -20,30 +20,24 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const app = express();
 
 /* =======================
-   ✅ CORS CONFIG (FIXED)
+   ✅ CORS CONFIG (FINAL)
 ======================= */
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://news-management-project.netlify.app/",
-];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: [
+      "http://localhost:3000",
+      "https://news-management-project.netlify.app",
+    ],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
+// ✅ Required for preflight requests
 app.use(bodyParser.json());
+app.use(express.json());
 
 // Database connection
 connectDB();
