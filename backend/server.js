@@ -24,7 +24,7 @@ const app = express();
 ======================= */
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://newsmanagementsystem.netlify.app",
+  "https://news-management-project.netlify.app/",
 ];
 
 app.use(
