@@ -197,19 +197,8 @@ const Navbar = () => {
 
             {/* Login buttons */}
             <li>
-              <button
-                onClick={() => openLoginModal("admin")}
-                className="admin-btn"
-              >
-                Admin Login
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => openLoginModal("employee")}
-                className="employee-btn"
-              >
-                Employee Login
+              <button onClick={() => openLoginModal()} className="login-btn">
+                Login
               </button>
             </li>
           </ul>

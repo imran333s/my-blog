@@ -49,7 +49,9 @@
 }
 
 .nav-menu {
-  margin-left: auto;
+
+  margin-left:130px;
+  margin-right: 50px;
 }
 
 .logo {
@@ -61,6 +63,7 @@
   font-weight: 700;
   color: #222;
   text-decoration: none;
+  
 }
 
 .logo-img {
@@ -75,13 +78,11 @@
   padding: 0;
   display: flex;
   align-items: center;
+
   gap: 15px;
 }
 
-/* .nav-menu ul li {
-  margin-left: 18px;
-  
-} */
+
 
 
 .nav-menu ul li a {
@@ -98,7 +99,7 @@
 }
 
 /* ---------- BUTTONS ---------- */
-.admin-btn,
+.login-btn,
 .register-btn,
 .employee-btn {
   border: none;
@@ -108,24 +109,17 @@
  
 }
 
-.admin-btn {
+.login-btn
+ {
   background: #007bff;
   color: white;
   padding: 6px 12px;
 }
-.admin-btn:hover {
+.login-btn:hover {
   background: #0056b3;
 }
 
-.employee-btn {
-  background: #007bff;
-  color: white;
-  padding: 6px 6px;
-  margin-right: 50px;
-}
-.employee-btn:hover {
-  background: #0056b3;
-}
+
 
 .register-btn {
   background: #00070e;
@@ -142,7 +136,8 @@
   width: 250px;
   flex-shrink: 0;
   display: inline-block;
-  margin-right: 150px;
+  margin-right: 300px;
+
 }
 
 .search-box input {
