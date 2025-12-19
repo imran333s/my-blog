@@ -31,3 +31,13 @@
   color: #334155;
   font-weight: 500;
 }
+@media (max-width: 600px) {
+  .global-loading-container p {
+    font-size: 14px;
+  }
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+  }
+}

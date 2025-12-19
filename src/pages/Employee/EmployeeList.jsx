@@ -106,12 +106,13 @@ const EmployeeList = () => {
           <tbody>
             {employees.map((emp, index) => (
               <tr key={emp._id}>
-                <td>{index + 1}</td>
-                <td>{emp.name}</td>
-                <td>{emp.email}</td>
-                <td>{emp.mobile}</td>
-                <td>{emp.dob?.split("T")[0] || "N/A"}</td>
-                <td>
+                <td data-label="S.No">{index + 1}</td>
+                <td data-label="Name">{emp.name}</td>
+                <td data-label="Email">{emp.email}</td>
+                <td data-label="Mobile">{emp.mobile}</td>
+                <td data-label="DOB">{emp.dob?.split("T")[0] || "N/A"}</td>
+
+                <td data-label="Role">
                   <span
                     className={`emp-status-label ${
                       emp.role === "admin"
@@ -125,7 +126,7 @@ const EmployeeList = () => {
                   </span>
                 </td>
 
-                <td className="actions-cell">
+                <td data-label="Actions" className="actions-cell">
                   <button
                     className="emp-view-btn emp-small-btn"
                     onClick={() => handleView(emp._id)}

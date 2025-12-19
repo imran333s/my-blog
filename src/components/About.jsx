@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./About.css";
+import Loader from "../components/Loader";
 
 const About = () => {
   const [settings, setSettings] = useState(null);
@@ -11,7 +12,7 @@ const About = () => {
       .catch((err) => console.error("Fetch Error:", err));
   }, []);
 
-  if (!settings) return <p>Loading About Page...</p>;
+  if (!settings) return <Loader text="Loading About Page..." />;
 
   const services = [
     {

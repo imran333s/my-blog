@@ -195,4 +195,12 @@
     justify-content: center;
     gap: 10px;
   }
+
+.category-list .action-buttons {
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2"; // ✅ ADD THIS
 import "./Contact.css";
+import Loader from "../components/Loader"; // adjust path if needed
 
 const Contact = () => {
   const [settings, setSettings] = useState(null);
@@ -58,8 +59,7 @@ const Contact = () => {
       });
     }
   };
-
-  if (!settings) return <p>Loading...</p>;
+  if (!settings) return <Loader text="Loading About Page..." />;
 
   return (
     <div className="contact-page">

@@ -92,9 +92,11 @@ const DepartmentList = () => {
               <tbody>
                 {departments.map((d, index) => (
                   <tr key={d._id}>
-                    <td>{index + 1}</td>
-                    <td>{d.name}</td>
-                    <td className="action-buttons">
+                    <td data-label="S.No">{index + 1}</td>
+
+                    <td data-label="Department">{d.name}</td>
+
+                    <td data-label="Actions" className="action-buttons">
                       <button
                         className="edit-btn"
                         onClick={() => {
@@ -105,6 +107,7 @@ const DepartmentList = () => {
                       >
                         ✏️
                       </button>
+
                       <button
                         className="delete-btn"
                         onClick={() => deleteDept(d._id)}

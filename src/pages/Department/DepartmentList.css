@@ -171,6 +171,10 @@
   .department-list .admin-dept-table thead {
     display: none;
   }
+.department-list .action-buttons {
+  justify-content: center;
+  gap: 12px;
+}
 
   .department-list .admin-dept-table tr {
     margin-bottom: 15px;
@@ -196,5 +200,10 @@
   .department-list .admin-dept-table td:last-child {
     justify-content: center;
     gap: 10px;
+  }
+    .department-list .action-buttons {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed #ddd;
   }
 }

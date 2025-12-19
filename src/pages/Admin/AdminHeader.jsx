@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { jwtDecode as jwt_decode } from "jwt-decode";
+import "./AdminHeader.css"; // ✅ Import the new CSS
 
 const AdminHeader = ({ websiteName, onLogout }) => {
   const [user, setUser] = useState({ name: "", role: "" });
@@ -31,8 +32,8 @@ const AdminHeader = ({ websiteName, onLogout }) => {
       confirmButtonText: "Yes, logout!",
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem("token"); // remove JWT
-        onLogout(); // call parent logout logic
+        localStorage.removeItem("token");
+        onLogout();
         Swal.fire({
           title: "Logged out!",
           text: "You have been successfully logged out.",
@@ -45,42 +46,16 @@ const AdminHeader = ({ websiteName, onLogout }) => {
   };
 
   return (
-    <header
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "5px 50px",
-        backgroundColor: "#1f2937",
-        color: "#fff",
-        boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-        position: "sticky",
-        top: 0,
-        zIndex: 1000,
-      }}
-    >
-      <div
-        style={{ fontSize: "1rem", fontWeight: "bold", marginLeft: "180px" }}
-      >
-        {websiteName}
-      </div>
+    <header className="admin-header">
+      <div className="website-name">{websiteName}</div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-        <div>
-          Signed in as: {user.name} ({user.role})
+      <div className="header-right">
+        <div className="user-info">
+          <span className="user-name">{user.name}</span>
+          <span className="user-role">({user.role})</span>
         </div>
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: "8px 15px",
-            border: "none",
-            borderRadius: "6px",
-            backgroundColor: "#dc3545",
-            color: "#fff",
-            cursor: "pointer",
-            fontWeight: 600,
-          }}
-        >
+
+        <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
       </div>

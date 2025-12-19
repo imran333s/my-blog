@@ -1,0 +1,104 @@
+/* ===============================
+   Header Container
+================================= */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 50px;
+  background-color: #1f2937;
+  color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Website Name */
+.admin-header .website-name {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-left: 180px;
+}
+
+/* Right Side: User Info + Logout */
+.admin-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* User Info */
+.user-info {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Name + Role */
+.user-info .user-name {
+  font-weight: 500;
+}
+
+.user-info .user-role {
+  margin-left: 5px;
+}
+
+/* Logout Button */
+.logout-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  background-color: #dc3545;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #b71c1c;
+}
+
+/* ===============================
+   Responsive Mobile
+================================= */
+@media (max-width: 768px) {
+  .admin-header {
+    padding: 5px 20px;
+  }
+
+  .admin-header .website-name {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .header-right {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  /* Stack name and role on mobile */
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+  }
+
+  .user-info .user-role {
+    margin-left: 0;
+    font-size: 12px;
+    opacity: 0.85;
+  }
+
+  .logout-btn {
+    width: 100%;
+  }
+}

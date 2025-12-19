@@ -94,8 +94,9 @@ const CategoryList = () => {
               <tbody>
                 {categories.map((cat, index) => (
                   <tr key={cat._id}>
-                    <td>{index + 1}</td>
-                    <td>
+                    <td data-label="S.No">{index + 1}</td>
+
+                    <td data-label="Image">
                       {cat.image ? (
                         <img
                           src={cat.image}
@@ -106,13 +107,16 @@ const CategoryList = () => {
                         "No Image"
                       )}
                     </td>
-                    <td>{cat.name}</td>
-                    <td>
+
+                    <td data-label="Name">{cat.name}</td>
+
+                    <td data-label="Caption">
                       {cat.caption?.length > 100
                         ? cat.caption.substring(0, 100) + "..."
                         : cat.caption}
                     </td>
-                    <td>
+
+                    <td data-label="Status">
                       <span
                         className={
                           cat.status?.trim().toLowerCase() === "active"
@@ -123,7 +127,8 @@ const CategoryList = () => {
                         {cat.status}
                       </span>
                     </td>
-                    <td className="action-buttons">
+
+                    <td data-label="Actions" className="action-buttons">
                       <button
                         onClick={() => handleEdit(cat._id)}
                         className="edit-btn small-btn"

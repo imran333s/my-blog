@@ -1,5 +1,5 @@
 import React from "react";
-import "./BlogList.css"; // Import CSS here
+import "./BlogList.css";
 
 export const BlogTable = ({
   blogs,
@@ -26,23 +26,26 @@ export const BlogTable = ({
           <th>Action</th>
         </tr>
       </thead>
+
       <tbody>
         {blogs.map((blog, index) => (
           <tr key={blog._id}>
-            <td>{(currentPage - 1) * blogsPerPage + index + 1}</td>
-            <td>
+            <td data-label="S.No">
+              {(currentPage - 1) * blogsPerPage + index + 1}
+            </td>
+
+            <td data-label="Image">
               {blog.image ? (
                 <img src={blog.image} alt={blog.title} className="blog-thumb" />
               ) : (
                 "No Image"
               )}
             </td>
-            <td>
+
+            <td data-label="Video">
               {blog.videoLink ? (
                 <iframe
                   src={convertToEmbedURL(blog.videoLink)}
-                  width="120"
-                  height="60"
                   frameBorder="0"
                   allow="autoplay; encrypted-media"
                   allowFullScreen
@@ -52,8 +55,10 @@ export const BlogTable = ({
                 "No Video"
               )}
             </td>
-            <td>{blog.title}</td>
-            <td>
+
+            <td data-label="Title">{blog.title}</td>
+
+            <td data-label="Content">
               <div
                 dangerouslySetInnerHTML={{
                   __html:
@@ -64,19 +69,25 @@ export const BlogTable = ({
                 style={{ maxHeight: "60px", overflow: "hidden" }}
               />
             </td>
-            <td>
+
+            <td data-label="Category">
               {blog.category?.name || "N/A"}
               {blog.subcategory?.name ? ` → ${blog.subcategory.name}` : ""}
             </td>
 
-            <td>
+            <td data-label="Status">
               <span
-                className={`status-label ${blog.status?.trim().toLowerCase() === "active" ? "status-active" : "status-inactive"}`}
+                className={`status-label ${
+                  blog.status?.trim().toLowerCase() === "active"
+                    ? "status-active"
+                    : "status-inactive"
+                }`}
               >
                 {blog.status}
               </span>
             </td>
-            <td className="action-buttons">
+
+            <td data-label="Actions">
               <button
                 onClick={() => onView(blog)}
                 className="view-btn small-btn"
@@ -90,6 +101,7 @@ export const BlogTable = ({
               >
                 ✏️
               </button>
+
               <button
                 onClick={() => onDelete(blog._id)}
                 className="delete-btn small-btn"

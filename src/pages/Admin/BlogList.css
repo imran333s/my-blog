@@ -3,27 +3,25 @@
 ================================= */
 
 .main-content {
-  padding: 0 0;
-  margin-bottom: 90px;
-  margin-top: 0;
+  padding: 0;
+  margin: 0 0 90px;
 }
 
 .section-title {
-  margin-top: 0;
   font-size: 32px;
   font-weight: 400;
   color: #333;
-  margin-bottom: 0;
   text-align: center;
+  margin-bottom: 10px;
 }
 
 /* ===============================
-   Blog Table Styling
+   Blog Table Styling (Desktop)
 ================================= */
+
 .admin-blog-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1px;
   border-bottom: 1px solid #ccc;
 }
 
@@ -32,6 +30,7 @@
   border: 1px solid #ddd;
   padding: 10px;
   text-align: left;
+  vertical-align: middle;
 }
 
 .admin-blog-table th {
@@ -39,35 +38,95 @@
   font-weight: bold;
 }
 
-.admin-blog-table img {
-  width: 70px;
+.admin-blog-table img,
+.blog-thumb {
+  width: 80px;
   height: 50px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 6px;
+}
+
+.admin-blog-table iframe {
+  width: 120px;
+  height: 60px;
+  border-radius: 6px;
 }
 
 /* ===============================
-   Action Buttons
+   Action Buttons (Desktop)
 ================================= */
-.small-btn {
-  padding: 6px 12px;
-  font-size: 14px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
- 
 
-.view-btn {
-  background-color: transparent;
-  border: none;
+
+/* Action cell */
+.admin-blog-table td:last-child {
+  border-bottom: none !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Common button box */
+.admin-blog-table td:last-child button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 16px;
+  padding: 0;
   cursor: pointer;
-  font-size: 18px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  transition: all 0.2s ease;
+}
+
+/* View button */
+.admin-blog-table .view-btn {
+  color: #333;
+}
+
+/* Edit button */
+.admin-blog-table .edit-btn {
+  color: #333;
+}
+
+/* Delete button (RED) */
+.admin-blog-table .delete-btn {
+  /* background-color: #f44336; */
+  color: #f44336;
+  border: none;
+}
+
+/* Hover effects */
+.admin-blog-table td:last-child button:hover {
+  background-color: #e0e0e0;
+}
+
+.admin-blog-table .delete-btn:hover {
+  background-color: #d32f2f;
 }
 
 /* ===============================
-   Responsive Table
+   Mobile fine-tuning
 ================================= */
+@media (max-width: 600px) {
+  .admin-blog-table td:last-child {
+    padding-top: 12px;
+  }
+
+  .admin-blog-table td:last-child button {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+}
+
+/* ===============================
+   Tablet (Scrollable Table)
+================================= */
+
 @media (max-width: 768px) {
   .admin-blog-table {
     display: block;
@@ -76,7 +135,7 @@
   }
 
   .admin-blog-table img {
-    width: 50px;
+    width: 60px;
     height: 40px;
   }
 
@@ -89,14 +148,15 @@
 /* ===============================
    Mobile Card Layout
 ================================= */
+
 @media (max-width: 600px) {
   .admin-blog-table,
   .admin-blog-table thead,
   .admin-blog-table tbody,
-  .admin-blog-table th,
-  .admin-blog-table td,
-  .admin-blog-table tr {
+  .admin-blog-table tr,
+  .admin-blog-table td {
     display: block;
+    width: 100%;
   }
 
   .admin-blog-table thead {
@@ -105,112 +165,66 @@
 
   .admin-blog-table tr {
     margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
     padding: 10px;
     background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   }
 
   .admin-blog-table td {
     border: none;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 8px 5px;
+    font-size: 14px;
   }
 
   .admin-blog-table td::before {
     content: attr(data-label);
-    font-weight: bold;
+    font-weight: 600;
+    color: #555;
+    min-width: 90px;
     text-transform: capitalize;
   }
 
+  /* Actions on mobile */
   .admin-blog-table td:last-child {
     justify-content: center;
-    gap: 10px;
+    padding-top: 10px;
+  }
+
+  .admin-blog-table td:last-child button {
+    width: 36px;
+    height: 36px;
   }
 }
 
 /* ===============================
-   Remove horizontal lines from Action column
+   Pagination
 ================================= */
-.admin-blog-table td:last-child {
-  border-bottom: none !important;
-}
-/* ===============================
-   Action Buttons Layout Update
-================================= */
-.admin-blog-table td:last-child {
-  border-bottom: none !important;
-  display: flex;
-  flex-direction: row; /* 🟢 align buttons in one row */
-  justify-content: center; /* center them horizontally */
-  align-items: center;
-  gap: 8px; /* space between buttons */
-  padding-top: 25px;
-}
-
-
-/* Top row: view + edit side by side */
-.admin-blog-table td:last-child .top-row {
-  display: flex;
-  gap: 5px;
-}
-
-/* Buttons inside small boxes */
-.admin-blog-table td:last-child button {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  font-size: 16px;
-  padding: 0;
-  border: 1px solid #ccc;
-  background-color: #f5f5f5;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.admin-blog-table td:last-child button:hover {
-  background-color: #e0e0e0;
-}
-
-/* Delete button special styling */
-.admin-blog-table td:last-child .delete-btn {
-  background-color: #f44336;
-  color: #fff;
-  border: none;
-  
-}
-
-.admin-blog-table td:last-child .delete-btn:hover {
-  background-color: #d32f2f;
-}
-
-
 
 .pagination-container {
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 8px;
   margin-top: 20px;
 }
 
 .pagination-btn {
-  background-color: #f0f0f0;
+  background: #f0f0f0;
   border: none;
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-  transition: all 0.2s;
 }
 
-.pagination-btn:hover:not(:disabled) {
-  background-color: #007bff;
-  color: white;
+.pagination-btn:hover:not(:disabled),
+.active-page {
+  background: #007bff;
+  color: #fff;
 }
 
 .pagination-btn:disabled {
@@ -218,46 +232,23 @@
   cursor: not-allowed;
 }
 
-.active-page {
-  background-color: #007bff;
-  color: white;
-}
+/* ===============================
+   Filters Section
+================================= */
 
-
-
-/* Main wrapper: left + right */
 .filters-wrapper {
   display: flex;
-  justify-content: space-between; /* left & right */
-  align-items: flex-start;
+  justify-content: space-between;
   gap: 20px;
+  flex-wrap: wrap;
   margin-bottom: 10px;
-  flex-wrap: wrap; /* responsive */
-  margin-top: 0px;
 }
 
-/* Left side: Category + Status stacked */
 .filters-left {
- display: flex;
-  flex-direction: row; /* side by side */
-  gap: 10px;           /* space between category & status */
-  align-items: flex-start; /* align top edges */
-  margin-top: 0;       /* remove extra spacing */
-
+  display: flex;
+  gap: 10px;
 }
 
-/* Right side: Sort */
-.sort-box {
-  padding-top: 5px;
-  min-width: 150px;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  font-weight: bold;
-   gap: 5px;
-}
-
-/* Category / Status box */
 .filter-box {
   border: 1px solid #ccc;
   padding: 10px;
@@ -265,46 +256,43 @@
   cursor: pointer;
 }
 
-.filter-box div:first-child {
+.sort-box {
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-weight: bold;
 }
 
-.filter-options {
-  margin-top: 10px;
+/* Mobile filters */
+@media (max-width: 768px) {
+  .filters-wrapper {
+    flex-direction: column;
+  }
+
+  .filters-left,
+  .filter-box,
+  .sort-box {
+    width: 100%;
+  }
 }
 
-.filter-options div {
-  margin-bottom: 5px;
-}
+/* ===============================
+   Status Labels
+================================= */
 
 .status-label {
-  padding: 2px 4px;
-  border-radius: 1px;
-  /* font-weight: bold; */
-  text-transform: capitalize;
+  padding: 2px 6px;
+  border-radius: 4px;
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  text-transform: capitalize;
 }
 
 .status-active {
-  background-color: #28a745; /* Green */
+  background: #28a745;
 }
 
 .status-inactive {
-  background-color: #dc3545; /* Red */
-}
-.blog-thumb {
-  width: 80px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 6px;
-}
-.admin-blog-table td {
-  vertical-align: middle;
-  padding: 8px;
-}
-.admin-blog-table iframe {
-  width: 120px !important;
-  height: 60px !important;
-  border-radius: 6px;
+  background: #dc3545;
 }

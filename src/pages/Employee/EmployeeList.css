@@ -28,8 +28,8 @@
 .employee-list-table th,
 .employee-list-table td {
   border: 1px solid #ddd;
-  padding: 10px;
   text-align: left;
+  
 }
 
 .employee-list-table th {
@@ -38,59 +38,67 @@
 }
 
 /* ===============================
-   Action Buttons
+   Action Buttons (Desktop + Mobile)
 ================================= */
-.emp-small-btn {
 
-  padding: 6px 10px;
-  font-size: 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.emp-view-btn {
- background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-}
-
-.emp-edit-btn {
-  background-color: #fff3cd;
-}
-
-.emp-delete-btn {
-  background-color: #d32f2f;
-}
-
-.emp-view-btn:hover {
- /* background-color: #d32f2f; */
-}
-
-.emp-edit-btn:hover {
-  
-}
-
-.emp-delete-btn:hover {
-  background-color: #d21111;
-}
-
-
-
-/* Action buttons container in table */
-.employee-actions {
-  display: flex;
-  justify-content: center;
-  gap: 12px; /* space between buttons */
-}
-
-/* Apply spacing for desktop table */
 .employee-list-table td.actions-cell {
   display: flex;
   justify-content: center;
-  gap: 12px; /* space between View, Edit, Delete */
+  align-items: center;
+  gap: 10px;
+}
+
+/* Common button box */
+.emp-small-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* View */
+.emp-view-btn {
+  background: #f5f5f5;
+}
+
+/* Edit */
+.emp-edit-btn {
+  background: #f5f5f5
+}
+
+/* Delete (RED) */
+.emp-delete-btn {
+ background: #f5f5f5;
+  color: #d32f2f;
+  border: none;
+}
+
+.emp-delete-btn:hover {
+  background: #b71c1c;
+}
+
+/* ===============================
+   Mobile fine-tuning
+================================= */
+@media (max-width: 600px) {
+  .employee-list-table td.actions-cell {
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .emp-small-btn {
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
+  }
 }
 
 /* ===============================
