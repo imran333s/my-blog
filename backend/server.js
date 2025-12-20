@@ -27,6 +27,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
+      "https://news-managemnent-system.vercel.app",
       "https://news-management-project.netlify.app",
     ],
     credentials: true,
