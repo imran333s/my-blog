@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import "./EditCategory.css";
+import api from "../../services/api"; // ✅ use central api
 
 const EditCategoryModal = ({ isOpen, onClose, categoryId, onUpdated }) => {
-  const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     name: "",
     image: "",
@@ -20,11 +19,9 @@ const EditCategoryModal = ({ isOpen, onClose, categoryId, onUpdated }) => {
 
     const fetchData = async () => {
       try {
-        const categoryRes = await axios.get(
-          `${API_URL}/api/categories/${categoryId}`
-        );
-        const subRes = await axios.get(
-          `${API_URL}/api/subcategories?category=${categoryId}`
+        const categoryRes = await api.get(`/api/categories/${categoryId}`);
+        const subRes = await api.get(
+          `/api/subcategories?category=${categoryId}`
         );
 
         setFormData({
@@ -42,36 +39,24 @@ const EditCategoryModal = ({ isOpen, onClose, categoryId, onUpdated }) => {
     };
 
     fetchData();
-  }, [categoryId, API_URL]);
+  }, [categoryId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ Add new subcategory
   const handleAddSubcategory = async () => {
     if (!newSubcategory.trim()) return;
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return Swal.fire("Error", "Not authorized", "error");
+      const res = await api.post("/api/subcategories", {
+        name: newSubcategory.trim(),
+        category: categoryId,
+        status: "Active",
+      });
 
-      const res = await axios.post(
-        `${API_URL}/api/subcategories`,
-        {
-          name: newSubcategory.trim(),
-          category: categoryId,
-          status: "Active",
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      // ✅ handle both response shapes
       const addedSub = res.data?.data || res.data;
-
-      if (!addedSub || !addedSub.name) {
-        throw new Error("Invalid response from server");
-      }
+      if (!addedSub || !addedSub.name) throw new Error("Invalid response");
 
       setSubcategories((prev) => [...prev, addedSub]);
       setNewSubcategory("");
@@ -89,7 +74,6 @@ const EditCategoryModal = ({ isOpen, onClose, categoryId, onUpdated }) => {
     }
   };
 
-  // ✅ Delete subcategory
   const handleRemoveSubcategory = async (id, name) => {
     const confirm = await Swal.fire({
       title: `Delete "${name}"?`,
@@ -102,15 +86,8 @@ const EditCategoryModal = ({ isOpen, onClose, categoryId, onUpdated }) => {
     if (!confirm.isConfirmed) return;
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return Swal.fire("Error", "Not authorized", "error");
-
-      await axios.delete(`${API_URL}/api/subcategories/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      await api.delete(`/api/subcategories/${id}`);
       setSubcategories(subcategories.filter((s) => s._id !== id));
-
       Swal.fire("Deleted!", `${name} removed successfully.`, "success");
     } catch (error) {
       console.error("Delete subcategory error:", error);
@@ -120,14 +97,9 @@ const EditCategoryModal = ({ isOpen, onClose, categoryId, onUpdated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
-    if (!token) return Swal.fire("Error", "Not authorized", "error");
 
     try {
-      await axios.put(`${API_URL}/api/categories/${categoryId}`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      await api.put(`/api/categories/${categoryId}`, formData);
       Swal.fire({
         icon: "success",
         title: "Updated!",
@@ -135,7 +107,6 @@ const EditCategoryModal = ({ isOpen, onClose, categoryId, onUpdated }) => {
         timer: 1500,
         showConfirmButton: false,
       });
-
       onUpdated();
       onClose();
     } catch (err) {
@@ -185,19 +156,17 @@ const EditCategoryModal = ({ isOpen, onClose, categoryId, onUpdated }) => {
 
           <label>Subcategories</label>
           <div className="subcategory-list">
-            {subcategories
-              .filter(Boolean) // ✅ skip undefined/null
-              .map((sub) => (
-                <div key={sub._id || sub.name} className="subcategory-item">
-                  <span>{sub.name}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSubcategory(sub._id, sub.name)}
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+            {subcategories.filter(Boolean).map((sub) => (
+              <div key={sub._id || sub.name} className="subcategory-item">
+                <span>{sub.name}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveSubcategory(sub._id, sub.name)}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
           </div>
 
           <div className="subcategory-input">

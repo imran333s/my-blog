@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../services/api"; // ✅ Use your central api instance
 
 const AddSubcategory = () => {
   const [categories, setCategories] = useState([]);
@@ -7,13 +7,19 @@ const AddSubcategory = () => {
   const [subCategory, setSubCategory] = useState("");
   const [message, setMessage] = useState("");
 
+  // Fetch all categories
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/categories`)
-      .then((res) => {
+    const fetchCategories = async () => {
+      try {
+        const res = await api.get("/api/categories"); // ✅ use api instance
         setCategories(res.data);
-      })
-      .catch((err) => console.error(err));
+      } catch (err) {
+        console.error(err);
+        setMessage("Failed to load categories.");
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -25,20 +31,10 @@ const AddSubcategory = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/categories/add-subcategory`,
-        {
-          categoryName: selectedCategory,
-          subcategory: subCategory,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await api.post("/api/categories/add-subcategory", {
+        categoryName: selectedCategory,
+        subcategory: subCategory,
+      });
 
       setMessage("✅ Subcategory added successfully!");
       setSubCategory("");
@@ -51,7 +47,7 @@ const AddSubcategory = () => {
     <div className="add-subcategory-container" style={{ padding: "20px" }}>
       <h2>Add Subcategory</h2>
 
-      {message && <p style={{ color: "green" }}>{message}</p>}
+      {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
 
       <form onSubmit={handleSubmit}>
         {/* Dropdown */}
@@ -79,10 +75,23 @@ const AddSubcategory = () => {
           required
         />
 
-        <button type="submit">Add Subcategory</button>
+        <button type="submit" style={buttonStyle}>
+          Add Subcategory
+        </button>
       </form>
     </div>
   );
+};
+
+const buttonStyle = {
+  marginTop: "10px",
+  padding: "10px 16px",
+  backgroundColor: "#007bff",
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontWeight: "bold",
 };
 
 export default AddSubcategory;

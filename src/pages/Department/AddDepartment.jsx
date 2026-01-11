@@ -1,36 +1,31 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
+import api from "../../services/api"; // ✅ use central api
 
 const AddDepartment = () => {
-  const API_URL = process.env.REACT_APP_API_URL;
-
   const [name, setName] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!name.trim()) {
+      return Swal.fire("Error", "Department name cannot be empty", "error");
+    }
+
     try {
-      await axios.post(
-        `${API_URL}/api/departments/add`,
-        { name },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await api.post("/api/departments/add", { name: name.trim() });
 
       Swal.fire({
         icon: "success",
         title: "Department Added!",
-        text: "New Department added successfully.",
+        text: "New department added successfully.",
         timer: 1500,
         showConfirmButton: false,
       });
 
       setName("");
     } catch (err) {
+      console.error("Add department error:", err);
       Swal.fire("Error", "Failed to add department", "error");
     }
   };

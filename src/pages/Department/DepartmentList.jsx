@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
-import "./DepartmentList.css"; // ✅ Import CSS
+import "./DepartmentList.css";
 import Loader from "../../components/Loader";
-const DepartmentList = () => {
-  const API_URL = process.env.REACT_APP_API_URL;
-  const [departments, setDepartments] = useState([]);
+import api from "../../services/api"; // ✅ use centralized api
 
+const DepartmentList = () => {
+  const [departments, setDepartments] = useState([]);
   const [editingDept, setEditingDept] = useState(null);
   const [editName, setEditName] = useState("");
   const [loading, setLoading] = useState(true);
+
   const fetchDepts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_URL}/api/departments`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const res = await api.get("/api/departments");
       setDepartments(res.data.reverse());
     } catch (err) {
+      console.error("Fetch departments error:", err);
       Swal.fire("Error", "Failed to load departments", "error");
     } finally {
       setLoading(false);
@@ -28,7 +27,7 @@ const DepartmentList = () => {
     fetchDepts();
   }, []);
 
-  const deleteDept = async (id) => {
+  const deleteDept = async (id, name) => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
       text: "This department will be permanently deleted.",
@@ -42,36 +41,37 @@ const DepartmentList = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      await axios.delete(`${API_URL}/api/departments/delete/${id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      Swal.fire("Deleted!", "Department removed successfully.", "success");
+      await api.delete(`/api/departments/delete/${id}`);
+      Swal.fire("Deleted!", `${name} removed successfully.`, "success");
       fetchDepts();
     } catch (err) {
-      Swal.fire("Error", "Failed to delete", "error");
+      console.error("Delete department error:", err);
+      Swal.fire("Error", "Failed to delete department", "error");
     }
   };
 
   const updateDept = async () => {
+    if (!editName.trim()) {
+      return Swal.fire("Error", "Department name cannot be empty", "error");
+    }
+
     try {
-      await axios.put(
-        `${API_URL}/api/departments/update/${editingDept._id}`,
-        { name: editName },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      await api.put(`/api/departments/update/${editingDept._id}`, {
+        name: editName.trim(),
+      });
       Swal.fire("Updated!", "Department updated successfully.", "success");
       setEditingDept(null);
       fetchDepts();
     } catch (err) {
-      Swal.fire("Error", "Failed to update", "error");
+      console.error("Update department error:", err);
+      Swal.fire("Error", "Failed to update department", "error");
     }
   };
-  // ✅ Show loader while fetching
+
   if (loading) {
     return <Loader text="Loading Department List..." />;
   }
+
   return (
     <div className="department-list">
       <main className="main-content">
@@ -93,9 +93,7 @@ const DepartmentList = () => {
                 {departments.map((d, index) => (
                   <tr key={d._id}>
                     <td data-label="S.No">{index + 1}</td>
-
                     <td data-label="Department">{d.name}</td>
-
                     <td data-label="Actions" className="action-buttons">
                       <button
                         className="edit-btn"
@@ -110,7 +108,7 @@ const DepartmentList = () => {
 
                       <button
                         className="delete-btn"
-                        onClick={() => deleteDept(d._id)}
+                        onClick={() => deleteDept(d._id, d.name)}
                         title="Delete"
                       >
                         🗑️

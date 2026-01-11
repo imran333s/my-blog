@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import axios from "axios";
+
 import Swal from "sweetalert2";
 import Select from "react-select";
-
+import api from "../../services/api";
 const statusOptions = [
   { value: "Active", label: "Active" },
   { value: "Inactive", label: "Inactive" },
@@ -26,7 +26,7 @@ const AddCategory = () => {
     }
 
     try {
-      await axios.post(
+      await api.post(
         `${API_URL}/api/categories`,
         {
           name,
@@ -61,7 +61,9 @@ const AddCategory = () => {
   };
 
   const removeSubcategory = (indexToRemove) => {
-    setSubcategories(subcategories.filter((_, index) => index !== indexToRemove));
+    setSubcategories(
+      subcategories.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   return (
@@ -124,7 +126,14 @@ const AddCategory = () => {
         />
 
         {/* Show Added Subcategories */}
-        <div style={{ marginTop: "5px", display: "flex", flexWrap: "wrap", gap: "6px" }}>
+        <div
+          style={{
+            marginTop: "5px",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "6px",
+          }}
+        >
           {subcategories.map((sub, index) => (
             <span
               key={index}

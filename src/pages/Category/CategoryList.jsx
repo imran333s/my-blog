@@ -1,31 +1,26 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import "./CategoryList.css";
 import EditCategoryModal from "./EditCategoryModal";
-import Loader from "../../components/Loader"; // import your Loader component
+import Loader from "../../components/Loader"; // ✅ your loader
+import api from "../../services/api"; // ✅ use central api
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ loading state
-  const API_URL = process.env.REACT_APP_API_URL;
+  const [loading, setLoading] = useState(true);
 
+  // Fetch categories
   const fetchCategories = async () => {
     try {
-      setLoading(true); // ✅ show loader
-      const token = localStorage.getItem("token");
-      if (!token) return Swal.fire("Error", "You are not authorized", "error");
-
-      const res = await axios.get(`${API_URL}/api/categories/admin`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      setLoading(true); // show loader
+      const res = await api.get("/api/categories/admin"); // ✅ api handles token
       setCategories(res.data.reverse());
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Failed to fetch categories", "error");
     } finally {
-      setLoading(false); // ✅ hide loader
+      setLoading(false); // hide loader
     }
   };
 
@@ -33,6 +28,7 @@ const CategoryList = () => {
     fetchCategories();
   }, []);
 
+  // Delete category
   const handleDelete = async (id) => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
@@ -46,13 +42,8 @@ const CategoryList = () => {
 
     if (!confirm.isConfirmed) return;
 
-    const token = localStorage.getItem("token");
-    if (!token) return Swal.fire("Error", "You are not authorized", "error");
-
     try {
-      await axios.delete(`${API_URL}/api/categories/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/api/categories/${id}`); // ✅ api handles token
 
       Swal.fire("Deleted!", "Category has been deleted.", "success");
       setCategories(categories.filter((cat) => cat._id !== id));
@@ -66,10 +57,8 @@ const CategoryList = () => {
     setSelectedCategory(id);
   };
 
-  // ✅ Show loader while fetching
-  if (loading) {
-    return <Loader text="Loading Categories..." />;
-  }
+  // Loader while fetching
+  if (loading) return <Loader text="Loading Categories..." />;
 
   return (
     <div className="category-list">

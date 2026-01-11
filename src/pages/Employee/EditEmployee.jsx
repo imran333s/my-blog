@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import Select from "react-select";
+import api from "../../services/api"; // ✅ centralized api
 import "./EditEmployee.css";
 
 const EditEmployeeModal = ({ employeeId, isOpen, onClose, onUpdate }) => {
-  const API_URL = process.env.REACT_APP_API_URL;
-  const token = localStorage.getItem("token"); // JWT token
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -29,17 +26,14 @@ const EditEmployeeModal = ({ employeeId, isOpen, onClose, onUpdate }) => {
 
   // Fetch employee details
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !employeeId) return;
 
     const fetchEmployee = async () => {
       setLoading(true);
       try {
-        // ✅ Updated endpoint to match EmployeeList
-        const res = await axios.get(`${API_URL}/api/users/${employeeId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
+        const res = await api.get(`/api/users/${employeeId}`);
         const data = res.data;
+
         setFormData({
           name: data.name || "",
           email: data.email || "",
@@ -59,21 +53,22 @@ const EditEmployeeModal = ({ employeeId, isOpen, onClose, onUpdate }) => {
     };
 
     fetchEmployee();
-  }, [employeeId, API_URL, isOpen, token]);
+  }, [employeeId, isOpen]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleRoleChange = (selected) => {
+    setFormData({ ...formData, role: selected.value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // ✅ Updated endpoint to match EmployeeList
-      await axios.put(`${API_URL}/api/users/${employeeId}`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.put(`/api/users/${employeeId}`, formData);
       Swal.fire("Success", "Employee updated successfully!", "success");
-      onUpdate && onUpdate(); // refresh parent list
+      onUpdate && onUpdate();
       onClose();
     } catch (err) {
       console.error(err);
@@ -93,71 +88,32 @@ const EditEmployeeModal = ({ employeeId, isOpen, onClose, onUpdate }) => {
         <h2>Edit Employee</h2>
         <form className="edit-employee-form" onSubmit={handleSubmit}>
           <label>Name:</label>
-          <input
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
+          <input name="name" value={formData.name} onChange={handleChange} required />
 
           <label>Email:</label>
-          <input
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
+          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
 
           <label>Mobile:</label>
-          <input
-            name="mobile"
-            value={formData.mobile}
-            onChange={handleChange}
-            required
-          />
+          <input name="mobile" value={formData.mobile} onChange={handleChange} required />
 
           <label>Date of Birth:</label>
-          <input
-            name="dob"
-            type="date"
-            value={formData.dob}
-            onChange={handleChange}
-            required
-          />
+          <input type="date" name="dob" value={formData.dob} onChange={handleChange} required />
 
           <label>Role:</label>
           <Select
             options={roleOptions}
             value={roleOptions.find((opt) => opt.value === formData.role)}
-            onChange={(selected) =>
-              setFormData({ ...formData, role: selected.value })
-            }
+            onChange={handleRoleChange}
           />
 
           <label>Start Date:</label>
-          <input
-            name="startDate"
-            type="date"
-            value={formData.startDate}
-            onChange={handleChange}
-            required
-          />
+          <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} required />
 
           <label>Department:</label>
-          <input
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-            required
-          />
+          <input name="department" value={formData.department} onChange={handleChange} required />
 
           <label>Reporting Manager:</label>
-          <input
-            name="reportingManager"
-            value={formData.reportingManager}
-            onChange={handleChange}
-          />
+          <input name="reportingManager" value={formData.reportingManager} onChange={handleChange} />
 
           <button type="submit" className="update-employee-btn">
             Update Employee

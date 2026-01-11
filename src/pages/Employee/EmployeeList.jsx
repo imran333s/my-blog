@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import "./EmployeeList.css";
+import api from "../../services/api"; // ✅ centralized api
 import EditEmployeeModal from "./EditEmployee";
 import EmployeeDetails from "./EmployeeDetails";
 import Loader from "../../components/Loader";
+import "./EmployeeList.css";
+
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -12,15 +13,11 @@ const EmployeeList = () => {
   const [viewDrawerOpen, setViewDrawerOpen] = useState(false);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const API_URL = process.env.REACT_APP_API_URL;
-  const token = localStorage.getItem("token");
 
   const fetchEmployees = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_URL}/api/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get("/api/users");
       setEmployees(res.data);
     } catch (err) {
       console.error("Error fetching employees:", err);
@@ -34,7 +31,6 @@ const EmployeeList = () => {
   }, []);
 
   const handleView = (id) => {
-    console.log("Viewing employee:", id);
     setSelectedEmployeeId(id);
     setViewDrawerOpen(true);
   };
@@ -57,12 +53,8 @@ const EmployeeList = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`${API_URL}/api/users/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
+        await api.delete(`/api/users/${id}`);
         setEmployees((prev) => prev.filter((emp) => emp._id !== id));
-
         Swal.fire({
           title: "Deleted!",
           text: "Employee record successfully removed.",
@@ -80,10 +72,9 @@ const EmployeeList = () => {
       }
     }
   };
-  // ✅ Show loader while fetching
-  if (loading) {
-    return <Loader text="Loading Employees..." />;
-  }
+
+  if (loading) return <Loader text="Loading Employees..." />;
+
   return (
     <div className="employee-main-content">
       <h2 className="employee-section-title">Employee List</h2>
@@ -111,40 +102,23 @@ const EmployeeList = () => {
                 <td data-label="Email">{emp.email}</td>
                 <td data-label="Mobile">{emp.mobile}</td>
                 <td data-label="DOB">{emp.dob?.split("T")[0] || "N/A"}</td>
-
                 <td data-label="Role">
                   <span
                     className={`emp-status-label ${
                       emp.role === "admin"
                         ? "emp-status-admin"
                         : emp.role === "manager"
-                          ? "emp-status-manager"
-                          : "emp-status-employee"
+                        ? "emp-status-manager"
+                        : "emp-status-employee"
                     }`}
                   >
                     {emp.role}
                   </span>
                 </td>
-
                 <td data-label="Actions" className="actions-cell">
-                  <button
-                    className="emp-view-btn emp-small-btn"
-                    onClick={() => handleView(emp._id)}
-                  >
-                    👁️
-                  </button>
-                  <button
-                    className="emp-edit-btn emp-small-btn"
-                    onClick={() => handleEdit(emp._id)}
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    className="emp-delete-btn emp-small-btn"
-                    onClick={() => handleDelete(emp._id)}
-                  >
-                    🗑️
-                  </button>
+                  <button className="emp-view-btn emp-small-btn" onClick={() => handleView(emp._id)}>👁️</button>
+                  <button className="emp-edit-btn emp-small-btn" onClick={() => handleEdit(emp._id)}>✏️</button>
+                  <button className="emp-delete-btn emp-small-btn" onClick={() => handleDelete(emp._id)}>🗑️</button>
                 </td>
               </tr>
             ))}
@@ -152,7 +126,6 @@ const EmployeeList = () => {
         </table>
       )}
 
-      {/* Edit Modal */}
       {modalOpen && selectedEmployee && (
         <EditEmployeeModal
           employeeId={selectedEmployee}
@@ -162,7 +135,6 @@ const EmployeeList = () => {
         />
       )}
 
-      {/* Slide-in Drawer */}
       <EmployeeDetails
         employeeId={selectedEmployeeId}
         isOpen={viewDrawerOpen}

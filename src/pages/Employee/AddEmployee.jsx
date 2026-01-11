@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import Select from "react-select";
+import api from "../../services/api"; // ✅ centralized api
 
 const AddEmployee = () => {
-  const API_URL = process.env.REACT_APP_API_URL;
   const [departments, setDepartments] = useState([]);
 
   const roleOptions = [
@@ -40,12 +39,11 @@ const AddEmployee = () => {
       form.department === "Other" ? form.customDepartment : form.department;
 
     try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        `${API_URL}/api/users/`,
-        { ...form, role: form.role.value, department: finalDepartment },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post("/api/users/", {
+        ...form,
+        role: form.role.value,
+        department: finalDepartment,
+      });
 
       Swal.fire({
         icon: "success",
@@ -68,6 +66,7 @@ const AddEmployee = () => {
         reportingManager: "",
       });
     } catch (err) {
+      console.error(err);
       Swal.fire({
         icon: "error",
         title: "Error!",
@@ -79,18 +78,17 @@ const AddEmployee = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${API_URL}/api/departments`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setDepartments(res.data))
-      .catch((err) =>
-        console.error("Failed to load departments:", err.response?.data)
-      );
-  }, [API_URL]);
+    const fetchDepartments = async () => {
+      try {
+        const res = await api.get("/api/departments");
+        setDepartments(res.data);
+      } catch (err) {
+        console.error("Failed to load departments:", err);
+      }
+    };
+    fetchDepartments();
+  }, []);
 
-  // Inline style objects
   const styles = {
     container: {
       maxWidth: "900px",
@@ -98,19 +96,13 @@ const AddEmployee = () => {
       padding: "25px",
       background: "#fff",
     },
-    title: {
-      fontSize: "1.7rem",
-      fontWeight: "bold",
-      marginBottom: "20px",
-    },
+    title: { fontSize: "1.7rem", fontWeight: "bold", marginBottom: "20px" },
     form: {
       display: "grid",
       gridTemplateColumns: "repeat(3, 1fr)",
       gap: "35px",
     },
-    formGroup: {
-      marginBottom: "18px",
-    },
+    formGroup: { marginBottom: "18px" },
     input: {
       width: "100%",
       padding: "10px",
@@ -127,20 +119,13 @@ const AddEmployee = () => {
       borderRadius: "6px",
       marginTop: "10px",
       cursor: "pointer",
-      transition: "0.3s",
-      display: "inline-block",
-    },
-    submitBtnHover: {
-      background: "#0056b3",
     },
   };
 
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Add Employee</h2>
-
       <form onSubmit={handleSubmit} style={styles.form} autoComplete="off">
-        {/* STOP AUTOFILL */}
         <input type="text" name="fakeEmail" style={{ display: "none" }} />
         <input
           type="password"
@@ -149,7 +134,6 @@ const AddEmployee = () => {
           autoComplete="new-password"
         />
 
-        {/* NAME */}
         <div style={styles.formGroup}>
           <input
             type="text"
@@ -162,7 +146,6 @@ const AddEmployee = () => {
           />
         </div>
 
-        {/* EMAIL */}
         <div style={styles.formGroup}>
           <input
             type="email"
@@ -175,7 +158,6 @@ const AddEmployee = () => {
           />
         </div>
 
-        {/* PASSWORD */}
         <div style={styles.formGroup}>
           <input
             type="password"
@@ -188,7 +170,6 @@ const AddEmployee = () => {
           />
         </div>
 
-        {/* MOBILE */}
         <div style={styles.formGroup}>
           <input
             type="text"
@@ -201,7 +182,6 @@ const AddEmployee = () => {
           />
         </div>
 
-        {/* DOB */}
         <div style={styles.formGroup}>
           <input
             type={form.dob ? "date" : "text"}
@@ -216,7 +196,6 @@ const AddEmployee = () => {
           />
         </div>
 
-        {/* ROLE */}
         <div style={styles.formGroup}>
           <Select
             options={roleOptions}
@@ -226,7 +205,6 @@ const AddEmployee = () => {
           />
         </div>
 
-        {/* START DATE */}
         <div style={styles.formGroup}>
           <input
             type={form.startDate ? "date" : "text"}
@@ -241,7 +219,6 @@ const AddEmployee = () => {
           />
         </div>
 
-        {/* DEPARTMENT */}
         <div style={styles.formGroup}>
           <select
             name="department"
@@ -260,7 +237,6 @@ const AddEmployee = () => {
           </select>
         </div>
 
-        {/* CUSTOM DEPARTMENT */}
         {form.department === "Other" && (
           <div style={styles.formGroup}>
             <input
@@ -275,7 +251,6 @@ const AddEmployee = () => {
           </div>
         )}
 
-        {/* REPORTING MANAGER */}
         <div style={styles.formGroup}>
           <input
             type="text"
@@ -287,7 +262,6 @@ const AddEmployee = () => {
           />
         </div>
 
-        {/* SUBMIT */}
         <button type="submit" style={styles.submitBtn}>
           Add Employee
         </button>
